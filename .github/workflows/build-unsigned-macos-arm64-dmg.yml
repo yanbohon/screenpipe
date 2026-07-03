@@ -1,4 +1,4 @@
-name: Build unsigned macOS ARM DMG
+name: Build debug unsigned macOS ARM DMG
 
 on:
   workflow_dispatch:
@@ -16,14 +16,14 @@ on:
           - macos-26
           - macos-latest
   schedule:
-    # First pass: daily latest-main build. Increase frequency after the manual build is stable.
+    # Daily latest-main debug build for personal local testing.
     - cron: "17 3 * * *"
 
 permissions:
   contents: read
 
 concurrency:
-  group: unsigned-macos-arm64-dmg-${{ github.ref }}
+  group: debug-unsigned-macos-arm64-dmg-${{ github.ref }}
   cancel-in-progress: true
 
 env:
@@ -32,7 +32,7 @@ env:
 
 jobs:
   build:
-    name: Build unsigned arm64 DMG
+    name: Build debug unsigned arm64 DMG
     runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runner || 'macos-26' }}
     timeout-minutes: 150
 
@@ -80,7 +80,7 @@ jobs:
         continue-on-error: true
         with:
           workspaces: screenpipe/apps/screenpipe-app-tauri/src-tauri
-          shared-key: unsigned-macos-arm64
+          shared-key: debug-unsigned-macos-arm64
           cache-bin: false
 
       - name: Cache frontend dependencies
@@ -174,7 +174,7 @@ jobs:
           echo "c++ wrapper: ${wrapper_dir}/c++"
           echo "xcrun wrapper: ${wrapper_dir}/xcrun"
 
-      - name: Build unsigned DMG
+      - name: Build debug unsigned DMG
         shell: bash
         working-directory: screenpipe/apps/screenpipe-app-tauri
         env:
@@ -186,21 +186,15 @@ jobs:
           CXXFLAGS: "-mmacosx-version-min=14.0 -mcpu=apple-m1 -U__ARM_FEATURE_MATMUL_INT8"
           CMAKE_C_FLAGS: "-mmacosx-version-min=14.0"
           CMAKE_CXX_FLAGS: "-mmacosx-version-min=14.0"
-          CARGO_PROFILE_RELEASE_LTO: "false"
-          CARGO_PROFILE_RELEASE_OPT_LEVEL: "3"
-          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "16"
-          CARGO_PROFILE_RELEASE_STRIP: none
-          CARGO_PROFILE_RELEASE_PANIC: unwind
-          CARGO_PROFILE_RELEASE_INCREMENTAL: "true"
         run: |
           set -euo pipefail
           export PATH="${WRAPPER_DIR}:${PATH}"
 
-          bundle_dir="src-tauri/target/${TARGET}/release/bundle"
+          bundle_dir="src-tauri/target/${TARGET}/debug/bundle"
           rm -rf "${bundle_dir}" 2>/dev/null || true
-          find "src-tauri/target/${TARGET}/release/build" -maxdepth 1 -name "mlx-sys-*" -exec rm -rf {} + 2>/dev/null || true
+          find "src-tauri/target/${TARGET}/debug/build" -maxdepth 1 -name "mlx-sys-*" -exec rm -rf {} + 2>/dev/null || true
 
-          bunx tauri build -v --no-sign \
+          bunx tauri build -v --debug --no-sign \
             --target "${TARGET}" \
             --features metal,parakeet-mlx,rfdetr-mlx,redact-onnx-coreml
 
@@ -213,7 +207,7 @@ jobs:
           SHORT_SHA: ${{ steps.meta.outputs.short_sha }}
         run: |
           set -euo pipefail
-          bundle_dir="apps/screenpipe-app-tauri/src-tauri/target/${TARGET}/release/bundle"
+          bundle_dir="apps/screenpipe-app-tauri/src-tauri/target/${TARGET}/debug/bundle"
           app_dir="${bundle_dir}/macos"
           dmg_dir="${bundle_dir}/dmg"
           mkdir -p "${dmg_dir}"
@@ -246,7 +240,7 @@ jobs:
           cp -R "${app}" "${stage}/"
           ln -s /Applications "${stage}/Applications"
 
-          dmg="${dmg_dir}/screenpipe-${VERSION}-${SHORT_SHA}-aarch64-unsigned.dmg"
+          dmg="${dmg_dir}/screenpipe-${VERSION}-${SHORT_SHA}-aarch64-debug-unsigned.dmg"
           hdiutil create \
             -volname "Screenpipe" \
             -srcfolder "${stage}" \
@@ -269,10 +263,10 @@ jobs:
           set -euo pipefail
           hdiutil imageinfo "${DMG}" | sed -n '1,80p'
 
-      - name: Upload unsigned DMG artifact
+      - name: Upload debug unsigned DMG artifact
         uses: actions/upload-artifact@v4
         with:
-          name: screenpipe-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.short_sha }}-macos-arm64-unsigned-dmg
+          name: screenpipe-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.short_sha }}-macos-arm64-debug-unsigned-dmg
           path: screenpipe/${{ steps.package.outputs.dmg }}
           if-no-files-found: error
           retention-days: 14
