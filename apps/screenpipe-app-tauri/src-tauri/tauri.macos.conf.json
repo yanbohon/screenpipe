@@ -4,6 +4,7 @@
         "macOS": {
             "entitlements": "entitlements.plist",
             "hardenedRuntime": true,
+            "minimumSystemVersion": "14.0",
             "exceptionDomain": "screenpipe.com",
             "provisioningProfile": null,
             "dmg": {

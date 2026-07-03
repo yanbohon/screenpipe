@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       upstream_ref:
-        description: "screenpipe/screenpipe ref to build: branch, tag, or commit SHA"
+        description: "repository ref to build: branch, tag, or commit SHA"
         required: false
         default: "main"
       runner:
@@ -37,10 +37,10 @@ jobs:
     timeout-minutes: 150
 
     steps:
-      - name: Checkout upstream source
+      - name: Checkout source
         uses: actions/checkout@v4
         with:
-          repository: screenpipe/screenpipe
+          repository: ${{ github.repository }}
           ref: ${{ env.UPSTREAM_REF }}
           path: screenpipe
           fetch-depth: 1
