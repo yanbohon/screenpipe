@@ -1,0 +1,278 @@
+name: Build unsigned macOS ARM DMG
+
+on:
+  workflow_dispatch:
+    inputs:
+      upstream_ref:
+        description: "screenpipe/screenpipe ref to build: branch, tag, or commit SHA"
+        required: false
+        default: "main"
+      runner:
+        description: "macOS runner label. Use macos-26 for Apple Silicon when available."
+        required: false
+        type: choice
+        default: "macos-26"
+        options:
+          - macos-26
+          - macos-latest
+  schedule:
+    # First pass: daily latest-main build. Increase frequency after the manual build is stable.
+    - cron: "17 3 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: unsigned-macos-arm64-dmg-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  UPSTREAM_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.upstream_ref || 'main' }}
+  TARGET: aarch64-apple-darwin
+
+jobs:
+  build:
+    name: Build unsigned arm64 DMG
+    runs-on: ${{ github.event_name == 'workflow_dispatch' && inputs.runner || 'macos-26' }}
+    timeout-minutes: 150
+
+    steps:
+      - name: Checkout upstream source
+        uses: actions/checkout@v4
+        with:
+          repository: screenpipe/screenpipe
+          ref: ${{ env.UPSTREAM_REF }}
+          path: screenpipe
+          fetch-depth: 1
+
+      - name: Resolve source metadata
+        id: meta
+        shell: bash
+        working-directory: screenpipe
+        run: |
+          set -euo pipefail
+          sha="$(git rev-parse HEAD)"
+          short_sha="$(git rev-parse --short=12 HEAD)"
+          version="$(sed -n 's/^version = "\(.*\)"/\1/p' apps/screenpipe-app-tauri/src-tauri/Cargo.toml | head -1)"
+          echo "sha=${sha}" >> "$GITHUB_OUTPUT"
+          echo "short_sha=${short_sha}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+          echo "Building screenpipe ${version} from ${sha}"
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: stable
+          targets: ${{ env.TARGET }}
+
+      - name: Rust cache
+        uses: Swatinem/rust-cache@v2
+        continue-on-error: true
+        with:
+          workspaces: screenpipe/apps/screenpipe-app-tauri/src-tauri
+          shared-key: unsigned-macos-arm64
+          cache-bin: false
+
+      - name: Cache frontend dependencies
+        uses: actions/cache@v4
+        with:
+          path: screenpipe/apps/screenpipe-app-tauri/node_modules
+          key: ${{ runner.os }}-screenpipe-bun-${{ hashFiles('screenpipe/apps/screenpipe-app-tauri/bun.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-screenpipe-bun-
+
+      - name: Cache sidecar binaries
+        uses: actions/cache@v4
+        with:
+          path: |
+            screenpipe/apps/screenpipe-app-tauri/src-tauri/ffmpeg
+            screenpipe/apps/screenpipe-app-tauri/src-tauri/ffmpeg-*
+            screenpipe/apps/screenpipe-app-tauri/src-tauri/ffprobe-*
+            screenpipe/apps/screenpipe-app-tauri/src-tauri/bun-*
+            screenpipe/apps/screenpipe-app-tauri/src-tauri/ui_monitor-*
+            screenpipe/apps/screenpipe-app-tauri/src-tauri/mlx.metallib
+          key: ${{ runner.os }}-${{ env.TARGET }}-sidecars-${{ hashFiles('screenpipe/apps/screenpipe-app-tauri/scripts/pre_build.js') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.TARGET }}-sidecars-
+
+      - name: Install macOS build dependencies
+        shell: bash
+        run: |
+          set -euo pipefail
+          eval "$(/opt/homebrew/bin/brew shellenv 2>/dev/null || /usr/local/bin/brew shellenv 2>/dev/null || true)"
+          echo "/opt/homebrew/bin" >> "$GITHUB_PATH"
+          echo "/opt/homebrew/sbin" >> "$GITHUB_PATH"
+          brew list ffmpeg >/dev/null 2>&1 || brew install ffmpeg
+          brew list wget >/dev/null 2>&1 || brew install wget
+          brew list jq >/dev/null 2>&1 || brew install jq
+
+      - name: Verify Metal toolchain
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! xcrun -sdk macosx metal -v >/tmp/metal-version.log 2>&1; then
+            cat /tmp/metal-version.log || true
+            xcodebuild -downloadComponent MetalToolchain
+          fi
+          xcrun -sdk macosx metal -v
+
+      - name: Install frontend dependencies
+        shell: bash
+        working-directory: screenpipe/apps/screenpipe-app-tauri
+        run: bun install
+
+      - name: Patch macOS minimum version for MLX
+        shell: bash
+        working-directory: screenpipe
+        run: |
+          set -euo pipefail
+          for file in \
+            apps/screenpipe-app-tauri/src-tauri/tauri.conf.json \
+            apps/screenpipe-app-tauri/src-tauri/tauri.macos.conf.json
+          do
+            tmp="$(mktemp)"
+            jq '.bundle.macOS.minimumSystemVersion = "14.0"' "$file" > "$tmp"
+            mv "$tmp" "$file"
+            echo "${file}: $(jq -r '.bundle.macOS.minimumSystemVersion' "$file")"
+          done
+
+      - name: Install compiler wrappers for macOS 14 target
+        id: wrappers
+        shell: bash
+        run: |
+          set -euo pipefail
+          wrapper_dir="${RUNNER_TEMP}/compiler-wrapper"
+          mkdir -p "$wrapper_dir"
+
+          for tool in cc c++ xcrun; do
+            real_path="$(command -v "$tool")"
+            cat > "${wrapper_dir}/${tool}" <<EOF
+          #!/bin/bash
+          new=()
+          for x in "\$@"; do
+            [[ "\$x" == -mmacosx-version-min=* ]] && x="-mmacosx-version-min=14.0"
+            new+=("\$x")
+          done
+          exec "${real_path}" "\${new[@]}"
+          EOF
+            chmod +x "${wrapper_dir}/${tool}"
+          done
+
+          echo "WRAPPER_DIR=${wrapper_dir}" >> "$GITHUB_ENV"
+          echo "${wrapper_dir}" >> "$GITHUB_PATH"
+          echo "cc wrapper: ${wrapper_dir}/cc"
+          echo "c++ wrapper: ${wrapper_dir}/c++"
+          echo "xcrun wrapper: ${wrapper_dir}/xcrun"
+
+      - name: Build unsigned DMG
+        shell: bash
+        working-directory: screenpipe/apps/screenpipe-app-tauri
+        env:
+          SCREENPIPE_RELEASE_TARGET: ${{ env.TARGET }}
+          TAURI_BUNDLER_DMG_IGNORE_CI: true
+          MACOSX_DEPLOYMENT_TARGET: "14.0"
+          CMAKE_OSX_DEPLOYMENT_TARGET: "14.0"
+          CFLAGS: "-mmacosx-version-min=14.0 -mcpu=apple-m1 -U__ARM_FEATURE_MATMUL_INT8"
+          CXXFLAGS: "-mmacosx-version-min=14.0 -mcpu=apple-m1 -U__ARM_FEATURE_MATMUL_INT8"
+          CMAKE_C_FLAGS: "-mmacosx-version-min=14.0"
+          CMAKE_CXX_FLAGS: "-mmacosx-version-min=14.0"
+          CARGO_PROFILE_RELEASE_LTO: "false"
+          CARGO_PROFILE_RELEASE_OPT_LEVEL: "3"
+          CARGO_PROFILE_RELEASE_CODEGEN_UNITS: "16"
+          CARGO_PROFILE_RELEASE_STRIP: none
+          CARGO_PROFILE_RELEASE_PANIC: unwind
+          CARGO_PROFILE_RELEASE_INCREMENTAL: "true"
+        run: |
+          set -euo pipefail
+          export PATH="${WRAPPER_DIR}:${PATH}"
+
+          bundle_dir="src-tauri/target/${TARGET}/release/bundle"
+          rm -rf "${bundle_dir}" 2>/dev/null || true
+          find "src-tauri/target/${TARGET}/release/build" -maxdepth 1 -name "mlx-sys-*" -exec rm -rf {} + 2>/dev/null || true
+
+          bunx tauri build -v --no-sign \
+            --target "${TARGET}" \
+            --features metal,parakeet-mlx,rfdetr-mlx,redact-onnx-coreml
+
+      - name: Inject MLX metallib and rebuild DMG
+        id: package
+        shell: bash
+        working-directory: screenpipe
+        env:
+          VERSION: ${{ steps.meta.outputs.version }}
+          SHORT_SHA: ${{ steps.meta.outputs.short_sha }}
+        run: |
+          set -euo pipefail
+          bundle_dir="apps/screenpipe-app-tauri/src-tauri/target/${TARGET}/release/bundle"
+          app_dir="${bundle_dir}/macos"
+          dmg_dir="${bundle_dir}/dmg"
+          mkdir -p "${dmg_dir}"
+
+          shopt -s nullglob
+          apps=( "${app_dir}"/*.app )
+          if [ ${#apps[@]} -eq 0 ]; then
+            echo "::error::No .app bundle found in ${app_dir}"
+            exit 1
+          fi
+
+          app="${apps[0]}"
+          res_lib="${app}/Contents/Resources/mlx.metallib"
+          if [ -f "${res_lib}" ]; then
+            size="$(stat -f%z "${res_lib}")"
+            if [ "${size}" -ge 1000000 ]; then
+              cp "${res_lib}" "${app}/Contents/MacOS/mlx.metallib"
+              echo "Injected mlx.metallib into ${app}/Contents/MacOS/mlx.metallib (${size} bytes)"
+            else
+              echo "::warning::mlx.metallib is only ${size} bytes; leaving DMG unsigned but MLX runtime may not work"
+            fi
+          else
+            echo "::warning::No Contents/Resources/mlx.metallib found; MLX runtime may not work"
+          fi
+
+          rm -f "${dmg_dir}"/*.dmg
+          stage="${RUNNER_TEMP}/screenpipe-dmg-stage"
+          rm -rf "${stage}"
+          mkdir -p "${stage}"
+          cp -R "${app}" "${stage}/"
+          ln -s /Applications "${stage}/Applications"
+
+          dmg="${dmg_dir}/screenpipe-${VERSION}-${SHORT_SHA}-aarch64-unsigned.dmg"
+          hdiutil create \
+            -volname "Screenpipe" \
+            -srcfolder "${stage}" \
+            -ov \
+            -format UDZO \
+            -imagekey zlib-level=9 \
+            "${dmg}"
+
+          rm -rf "${stage}"
+          test -s "${dmg}"
+          ls -lh "${dmg}"
+          echo "dmg=${dmg}" >> "$GITHUB_OUTPUT"
+
+      - name: Verify DMG metadata
+        shell: bash
+        working-directory: screenpipe
+        env:
+          DMG: ${{ steps.package.outputs.dmg }}
+        run: |
+          set -euo pipefail
+          hdiutil imageinfo "${DMG}" | sed -n '1,80p'
+
+      - name: Upload unsigned DMG artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenpipe-${{ steps.meta.outputs.version }}-${{ steps.meta.outputs.short_sha }}-macos-arm64-unsigned-dmg
+          path: screenpipe/${{ steps.package.outputs.dmg }}
+          if-no-files-found: error
+          retention-days: 14
