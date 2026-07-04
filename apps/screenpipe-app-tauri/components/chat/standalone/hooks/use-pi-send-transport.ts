@@ -33,6 +33,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
     abortControllerRef,
     activePipeExecution,
     activePreset,
+    activePresetRef,
     attachedDocsRef,
     autoSendBypassRef,
     buildProviderConfig,
@@ -79,6 +80,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
     stagePendingAttachments,
     syncThinkingLevelAfterStart,
   } = options;
+  const getActivePreset = () => activePresetRef?.current ?? activePreset;
   const { enqueuePiMessage } = createPiMessageQueueTransport(
     options,
     (message, displayLabel, imageDataUrls) =>
@@ -312,8 +314,8 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
         role: "assistant",
         content: t("chat.loader.processing"),
         timestamp: Date.now(),
-        model: activePreset?.model,
-        provider: activePreset?.provider,
+        model: getActivePreset()?.model,
+        provider: getActivePreset()?.provider,
       } as any);
       storeState.actions.setStreaming(sidNow, {
         streamingMessageId: assistantMessageId,
@@ -334,8 +336,8 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
     }
 
     posthog.capture("chat_message_sent", {
-      provider: activePreset?.provider,
-      model: activePreset?.model,
+      provider: getActivePreset()?.provider,
+      model: getActivePreset()?.model,
       has_images: outgoingImages.length > 0 || !!prefillFrameId,
       has_context: !!prefillContext,
       message_index: messages.filter((m) => m.role === "user").length,
@@ -383,8 +385,8 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
           role: "assistant",
           content: t("chat.loader.processing"),
           timestamp: Date.now(),
-          model: activePreset?.model,
-          provider: activePreset?.provider,
+          model: getActivePreset()?.model,
+          provider: getActivePreset()?.provider,
         },
       ]);
 
@@ -441,7 +443,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
       }
 
       const providerPreflight = await preflightChatProvider(
-        activePreset,
+        getActivePreset(),
         fetch,
         2500,
         t,
@@ -540,9 +542,10 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
         const rawError = result.error;
         let errorMsg: string;
         let retryPrompt: string | undefined;
+        const currentPreset = getActivePreset();
         const providerError = buildProviderErrorMessage(
           rawError,
-          activePreset,
+          currentPreset,
           t,
         );
 
@@ -555,7 +558,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
           rawError.includes("has died") ||
           rawError.includes("Pi not initialized")
         ) {
-          const provider = activePreset?.provider;
+          const provider = currentPreset?.provider;
           errorMsg =
             provider === "native-ollama"
               ? t("chat.errors.ollamaNotRunning")
@@ -566,7 +569,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
           retryPrompt = userMessage;
         } else if (rawError.includes("not found")) {
           errorMsg = t("chat.errors.modelNameNotFound", {
-            model: activePreset?.model ?? "",
+            model: currentPreset?.model ?? "",
           });
         } else {
           errorMsg = rawError;
@@ -592,7 +595,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
       piMessageIdRef.current = null;
       const rawError =
         error instanceof Error ? error.message : t("chat.toasts.unknownError");
-      const providerError = buildProviderErrorMessage(rawError, activePreset, t);
+      const providerError = buildProviderErrorMessage(rawError, getActivePreset(), t);
       setMessages((prev) =>
         prev.map((m) =>
           m.id === assistantMessageId
@@ -618,7 +621,7 @@ export function usePiSendTransport(options: PiSendTransportOptions) {
   ) {
     if (
       (!canChat && !autoSendBypassRef.current) ||
-      (!activePreset && !autoSendBypassRef.current)
+      (!getActivePreset() && !autoSendBypassRef.current)
     )
       return;
     const trimmed = userMessage.trim();

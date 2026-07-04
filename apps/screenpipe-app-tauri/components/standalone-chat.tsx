@@ -79,6 +79,7 @@ import {
 } from "@/components/chat/standalone/hooks/use-chat-window-events";
 import { useI18n } from "@/lib/i18n/provider";
 import type { ContentBlock, Message } from "@/lib/chat/types";
+import { useChatStore } from "@/lib/stores/chat-store";
 import { AGENT_TOPICS, type AgentEventEnvelope } from "@/lib/events/types";
 
 // Session ID is per-conversation — set on mount (new conv) and updated on load/new.
@@ -194,11 +195,29 @@ export function StandaloneChat({
     setInput,
     inputRef,
   });
-  const [messages, setMessages] = useState<Message[]>([]);
+  // Local buffer for regular (agent) sessions. Pipe-watch sessions source
+  // their messages from the chat store instead — see the `messages` derivation
+  // below, after `conversationId` is known.
+  const [localMessages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStreaming, setIsStreaming] = useState(false);
   const [highlightedMessageId, setHighlightedMessageId] = useState<string | null>(null);
   const [activePreset, setActivePreset] = useState<AIPreset | undefined>();
+  const activePresetRef = useRef<AIPreset | undefined>(activePreset);
+  activePresetRef.current = activePreset;
+
+  const handleSetActivePreset = useCallback((preset: AIPreset | undefined | ((prev: AIPreset | undefined) => AIPreset | undefined)) => {
+    if (typeof preset === "function") {
+      setActivePreset((prev) => {
+        const next = preset(prev);
+        activePresetRef.current = next;
+        return next;
+      });
+    } else {
+      activePresetRef.current = preset;
+      setActivePreset(preset);
+    }
+  }, []);
   const isStreamingRef = useRef(false);
   // Mirrors of streaming-relevant state so the unmount-snapshot effect (which
   // runs with `[]` deps) can read the latest values instead of stale closures.
@@ -487,6 +506,21 @@ export function StandaloneChat({
   const [conversationId, setConversationId] = useState<string | null>(
     initialSessionIdRef.current,
   );
+
+  // Pipe-watch sessions keep their messages in the chat store, not in this
+  // component's local state. Read them from the store directly and fall back to
+  // the local buffer for regular sessions, instead of an effect that mirrored
+  // the store into local state (an extra render + a frame of stale messages).
+  // Pipe-watch and regular sessions are mutually exclusive — the agent
+  // foreground handler early-returns for pipe-watch — so the two sources never
+  // feed the same session. Every `messages` reader below is unchanged.
+  const pipeWatchMessages = useChatStore((state) =>
+    conversationId && state.sessions[conversationId]?.kind === "pipe-watch"
+      ? state.sessions[conversationId]?.messages
+      : undefined,
+  );
+  const messages = (pipeWatchMessages ?? localMessages) as Message[];
+
   const {
     consumePendingAttachments,
     stagePendingAttachments,
@@ -704,6 +738,7 @@ export function StandaloneChat({
     pendingDocsRef,
     settings,
     selectedPreset: activePreset ?? null,
+    selectedPresetRef: activePresetRef,
     inlineHistoryEnabled: !hideInlineHistory,
   });
   const loadConversationRef = useRef(loadConversation);
@@ -755,7 +790,7 @@ export function StandaloneChat({
   });
   useChatWindowSyncEvents({
     aiPresets: settings?.aiPresets,
-    setActivePreset,
+    setActivePreset: handleSetActivePreset,
   });
 
   const {
@@ -767,7 +802,6 @@ export function StandaloneChat({
     startPipeExecution,
   } = useChatSessionRuntime({
     conversationId,
-    setMessages,
     setIsLoading,
     setIsStreaming,
     isLoading,
@@ -797,7 +831,7 @@ export function StandaloneChat({
     syncThinkingLevelAfterStart,
   } = usePiSessionLifecycle({
     activePreset,
-    setActivePreset,
+    setActivePreset: handleSetActivePreset,
     aiPresets: settings.aiPresets,
     isSettingsLoaded,
     shouldFreezePresetSelection: Boolean(activePipeExecution),
@@ -838,7 +872,7 @@ export function StandaloneChat({
 
   usePipeWatchSession({
     aiPresets: settings.aiPresets,
-    setActivePreset,
+    setActivePreset: handleSetActivePreset,
     startPipeExecution,
     loadConversationRef,
     setIsStreaming,
@@ -857,6 +891,7 @@ export function StandaloneChat({
     abortControllerRef,
     activePipeExecution,
     activePreset,
+    activePresetRef,
     attachedDocsRef,
     autoSendBypassRef,
     buildProviderConfig,
@@ -1106,6 +1141,7 @@ export function StandaloneChat({
 
   usePiForegroundEvents({
     activePreset,
+    activePresetRef,
     buildProviderConfig,
     cancelStreamingMessageRender,
     clearPipeExecution,
@@ -1485,7 +1521,7 @@ export function StandaloneChat({
           activePipeExecution,
           currentQueueSessionId,
           onPresetSaved: handlePiRestart,
-          onSelectPreset: setActivePreset,
+          onSelectPreset: handleSetActivePreset,
         }}
         connectBanner={{
           show: showConnectBanner,

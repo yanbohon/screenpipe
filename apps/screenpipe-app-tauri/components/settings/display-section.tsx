@@ -20,13 +20,14 @@ import type { SettingsField } from "./settings-search";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useI18n } from "@/lib/i18n/provider";
 import { SUPPORTED_LOCALES, type Locale } from "@/lib/i18n/types";
+import { ManagedSwitch } from "@/components/enterprise-locked-setting";
 
 /** Settings search index for this section. Co-located with the component so adding a field here means updating one file. See `SettingsField` in `./settings-search` for the schema. */
 export const searchIndex: SettingsField[] = [
   { label: "Language", i18nKey: "settings.display.language.label", anchor: "display-ui-language", keywords: ["locale", "interface", "ui", "中文", "简体中文"] },
   { label: "Theme", i18nKey: "settings.display.theme.title", anchor: "display-theme", keywords: ["dark", "light", "appearance"] },
   { label: "Font Size", i18nKey: "settings.display.fontSize.title", anchor: "display-font-size" },
-  { label: "Disable Timeline", i18nKey: "settings.display.disableTimeline.title", anchor: "display-disable-timeline", keywords: ["timeline", "rewind"] },
+  { label: "Timeline / rewind", i18nKey: "settings.display.disableTimeline.title", anchor: "display-disable-timeline", keywords: ["timeline", "rewind", "backend"] },
   { label: "Timeline Mode", i18nKey: "settings.display.timelineMode.title", anchor: "display-timeline-mode", keywords: ["overlay", "window"] },
   { label: "Chat Always on Top", i18nKey: "settings.display.chatAlwaysOnTop.title", anchor: "display-chat-always-on-top", keywords: ["pin", "window"] },
   { label: "Show Shortcut Reminder", i18nKey: "settings.display.shortcutReminder.title", anchor: "display-shortcut-reminder" },
@@ -204,10 +205,12 @@ export function DisplaySection() {
                   <p className="text-xs text-muted-foreground">{t("settings.display.disableTimeline.description")}</p>
                 </div>
               </div>
-              <Switch
+              <ManagedSwitch
+                settingKey="disableTimeline"
                 id="disableTimeline"
-                checked={settings?.disableTimeline ?? false}
+                checked={!(settings?.disableTimeline ?? false)}
                 onCheckedChange={async (checked) => {
+                  const disabled = !checked;
                   // Collapse double-invoke (rapid toggle / re-render) into one
                   // restart — two overlapping stop/spawn cycles raced before.
                   if (timelineRestartingRef.current) return;
@@ -215,12 +218,12 @@ export function DisplaySection() {
                   try {
                     // Persist first (awaited) so the backend reads the new value
                     // on restart and the shortcut-reminder guard sees it.
-                    await updateSettings({ disableTimeline: checked });
+                    await updateSettings({ disableTimeline: disabled });
                     // The screenpipe shortcut only opens the timeline, so its
                     // reminder overlay is meaningless once the timeline is off —
                     // tear it down on disable, restore it on re-enable.
                     try {
-                      if (checked) {
+                      if (disabled) {
                         await commands.hideShortcutReminder();
                       } else if (settings?.showShortcutOverlay) {
                         await commands.showShortcutReminder(settings.showScreenpipeShortcut);
@@ -234,7 +237,7 @@ export function DisplaySection() {
                       await new Promise((r) => setTimeout(r, 500));
                       await commands.spawnScreenpipe(null);
                       toast({
-                        title: checked
+                        title: disabled
                           ? t("settings.display.disableTimeline.toast.disabled")
                           : t("settings.display.disableTimeline.toast.enabled"),
                         description: t("settings.display.disableTimeline.toast.description"),

@@ -48,6 +48,7 @@ const POST_STREAM_SIDE_EFFECT_DELAY_MS = 1_500;
 
 export function usePiForegroundEvents({
   activePreset,
+  activePresetRef,
   buildProviderConfig,
   cancelStreamingMessageRender,
   clearPipeExecution,
@@ -128,6 +129,7 @@ export function usePiForegroundEvents({
     t,
   ]);
 
+  const getActivePreset = () => activePresetRef?.current ?? activePreset;
   // Listen for Pi / pipe events.
   //
   // Stage 3 of the events refactor: the panel registers with the
@@ -188,8 +190,8 @@ export function usePiForegroundEvents({
           role: "assistant",
           content: "Processing...",
           timestamp: Date.now(),
-          model: activePreset?.model,
-          provider: activePreset?.provider,
+          model: getActivePreset()?.model,
+          provider: getActivePreset()?.provider,
         });
         return base;
       });
@@ -207,8 +209,8 @@ export function usePiForegroundEvents({
           role: "assistant",
           content: "Processing...",
           timestamp: Date.now(),
-          model: activePreset?.model,
-          provider: activePreset?.provider,
+          model: getActivePreset()?.model,
+          provider: getActivePreset()?.provider,
         } as any);
         storeState.actions.setStreaming(sidNow, {
           streamingMessageId: newAssistantId,
@@ -567,7 +569,7 @@ export function usePiForegroundEvents({
           } else {
             const providerError = buildProviderErrorMessage(
               fullError,
-              activePreset,
+              getActivePreset(),
               tRef.current,
             );
             if (providerError) {
@@ -747,8 +749,8 @@ export function usePiForegroundEvents({
               : {}),
             ...(nextUserIntent === "steer" ? { steeredResponse: true } : {}),
             timestamp: Date.now(),
-            model: activePreset?.model,
-            provider: activePreset?.provider,
+            model: getActivePreset()?.model,
+            provider: getActivePreset()?.provider,
           };
 
           let nextRows: Message[] | null = null;
@@ -936,7 +938,7 @@ export function usePiForegroundEvents({
               content = modelRequiresBusinessMessageRef.current;
             } else {
               content =
-                buildProviderErrorMessage(errStr, activePreset, tRef.current) ||
+                buildProviderErrorMessage(errStr, getActivePreset(), tRef.current) ||
                 errStr;
             }
           }
@@ -1001,7 +1003,7 @@ export function usePiForegroundEvents({
                 content =
                   buildProviderErrorMessage(
                     lastErr,
-                    activePreset,
+                    getActivePreset(),
                     tRef.current,
                   ) ||
                   tRef.current("chat.message.errorWithMessage", {
@@ -1010,7 +1012,7 @@ export function usePiForegroundEvents({
                 emptyResponseRetryPrompt =
                   lastUserMessageRef.current || undefined;
               } else {
-                content = buildNoResponseMessage(activePreset, tRef.current);
+                content = buildNoResponseMessage(getActivePreset(), tRef.current);
                 emptyResponseRetryPrompt =
                   lastUserMessageRef.current || undefined;
               }
@@ -1041,8 +1043,8 @@ export function usePiForegroundEvents({
           });
           if (!isPipeWatch) {
             const analyticsPayload = {
-              provider: activePreset?.provider,
-              model: activePreset?.model,
+              provider: getActivePreset()?.provider,
+              model: getActivePreset()?.model,
               has_tool_use: blocksSnapshot.some((b) => b.type === "tool"),
               response_length: streamedText?.length ?? 0,
             };
@@ -1206,7 +1208,7 @@ export function usePiForegroundEvents({
           } else {
             const providerError = buildProviderErrorMessage(
               errorStr,
-              activePreset,
+              getActivePreset(),
               tRef.current,
             );
             if (providerError) {
@@ -1280,8 +1282,8 @@ export function usePiForegroundEvents({
                 ? "model_not_allowed"
                 : "other";
         posthog.capture("chat_response_error", {
-          provider: activePreset?.provider,
-          model: activePreset?.model,
+          provider: getActivePreset()?.provider,
+          model: getActivePreset()?.model,
           error_type: errorCategory,
         });
         piStreamingTextRef.current = "";

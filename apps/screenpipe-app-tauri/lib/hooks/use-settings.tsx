@@ -654,6 +654,7 @@ let DEFAULT_SETTINGS: Settings = {
 			searchShortcut: "Control+Super+K",
 			lockVaultShortcut: "Super+Shift+L",
 			disableVision: false,
+			disableScreenshots: false,
 			useAllMonitors: true,
 			showShortcutOverlay: true,
 			chatHistory: {

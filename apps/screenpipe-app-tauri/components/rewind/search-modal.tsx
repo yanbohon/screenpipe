@@ -25,6 +25,7 @@ import { showChatWithPrefill } from "@/lib/chat-utils";
 import { ThumbnailHighlightOverlay } from "./thumbnail-highlight-overlay";
 import { localFetch, getApiBaseUrl, appendAuthToken } from "@/lib/api";
 import { buildBoundedFacetSql, sanitizeFts5Query } from "@/lib/search/facet-sql";
+import { searchInputBehaviorProps } from "@/lib/search-input-behavior";
 
 interface SpeakerResult {
   id: number;
@@ -304,12 +305,9 @@ const FrameThumbnail = ({
   const [src, setSrc] = useState(appendAuthToken(`${getApiBaseUrl()}/frames/${frameId}`));
   const retryCount = useRef(0);
 
-  useEffect(() => {
-    setSrc(appendAuthToken(`${getApiBaseUrl()}/frames/${frameId}`));
-    setIsLoading(true);
-    setHasError(false);
-    retryCount.current = 0;
-  }, [frameId]);
+  // State resets on a new frameId via `key={frameId}` at each render site —
+  // the initializers above already produce the correct fresh values, so no
+  // reset effect is needed.
 
   return (
     <div className="aspect-video bg-muted relative overflow-hidden">
@@ -1523,6 +1521,7 @@ export function SearchModal({ isOpen, onClose, onNavigateToTimestamp, embedded =
                   >
                     {frameId ? (
                       <FrameThumbnail
+                        key={frameId}
                         frameId={frameId}
                         alt={transcription.transcription || transcription.speaker_name}
                         unavailableLabel={t("rewind.searchModal.thumbnailUnavailable")}
@@ -1654,6 +1653,7 @@ export function SearchModal({ isOpen, onClose, onNavigateToTimestamp, embedded =
                   className="cursor-pointer rounded overflow-hidden border border-border hover:border-foreground/50 transition-all duration-150"
                 >
                   <FrameThumbnail
+                    key={frame.frame_id}
                     frameId={frame.frame_id}
                     alt={frame.tag_names.join(", ")}
                     unavailableLabel={t("rewind.searchModal.thumbnailUnavailable")}
@@ -2107,6 +2107,7 @@ export function SearchModal({ isOpen, onClose, onNavigateToTimestamp, embedded =
                     >
                       <div className="relative">
                         <FrameThumbnail
+                          key={result.frame_id}
                           frameId={result.frame_id}
                           alt={`${result.app_name} - ${result.window_name}`}
                           unavailableLabel={t("rewind.searchModal.thumbnailUnavailable")}
@@ -2268,10 +2269,7 @@ export function SearchModal({ isOpen, onClose, onNavigateToTimestamp, embedded =
               "flex-1 bg-transparent text-foreground placeholder:text-muted-foreground/60 outline-none",
               standalone ? "text-base" : "text-sm",
             )}
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
+            {...searchInputBehaviorProps}
           />
           {(isSearching || isSearchingTags) && <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />}
           {query && (
@@ -2379,10 +2377,7 @@ export function SearchModal({ isOpen, onClose, onNavigateToTimestamp, embedded =
             }}
             placeholder={t("rewind.searchModal.placeholder")}
             className="flex-1 bg-transparent text-foreground placeholder:text-muted-foreground text-sm outline-none"
-            autoComplete="off"
-            autoCorrect="off"
-            autoCapitalize="off"
-            spellCheck={false}
+            {...searchInputBehaviorProps}
           />
           {(isSearching || isSearchingTags) && <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />}
           {query && (

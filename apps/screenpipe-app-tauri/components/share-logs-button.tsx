@@ -118,20 +118,34 @@ export const ShareLogsButton = ({
   const captureLastFiveMinutes = async () => {
     setIsLoadingVideo(true);
     try {
+      const captureEnd = new Date();
+      const captureStart = new Date(captureEnd.getTime() - 5 * 60 * 1000);
+      const sqlString = (value: string) => value.replace(/'/g, "''");
       const response = await localFetch("/raw_sql", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: `
-            SELECT * FROM video_chunks
-            ORDER BY id DESC
-            LIMIT 6
+            SELECT
+              vc.device_name,
+              vc.file_path,
+              vc.id
+            FROM video_chunks vc
+            JOIN frames f ON f.video_chunk_id = vc.id
+            WHERE datetime(f.timestamp) >= datetime('${sqlString(captureStart.toISOString())}')
+              AND datetime(f.timestamp) <= datetime('${sqlString(captureEnd.toISOString())}')
+              AND COALESCE(vc.file_path, '') <> ''
+              AND vc.file_path NOT LIKE 'cloud://%'
+            GROUP BY vc.id, vc.file_path, vc.device_name
+            ORDER BY MIN(datetime(f.timestamp)) ASC, vc.id ASC
+            LIMIT 18
           `,
         }),
       });
 
       if (!response.ok) throw new Error("failed to fetch video chunks");
       const chunks = (await response.json()) as VideoChunk[];
+      if (!chunks.length) throw new Error("no recent video chunks found");
 
       const mergeResponse = await localFetch("/experimental/frames/merge", {
         method: "POST",

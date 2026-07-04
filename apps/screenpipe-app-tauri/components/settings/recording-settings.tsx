@@ -26,11 +26,12 @@ export const searchIndex: SettingsField[] = [
   // conditional: platform/OS-gated (Windows-only / macOS CoreAudio tap).
   { label: "Echo cancellation mode", i18nKey: "settings.recording.aec.title", keywords: ["echo", "aec", "voiceprocessingio", "wasapi"], conditional: true },
   { label: "CoreAudio system audio capture", i18nKey: "settings.recording.coreaudio.title", keywords: ["coreaudio", "system audio"], conditional: true },
-  { label: "Screen recording", i18nKey: "settings.recording.screenRecording.title", keywords: ["screen", "video"] },
-  { label: "Use all monitors", i18nKey: "settings.recording.monitors.useAllTitle", keywords: ["monitor", "display"] },
+  { label: "Screen context capture", i18nKey: "settings.recording.screenRecording.title", keywords: ["screen", "video", "accessibility"] },
+  { label: "Screenshot images", i18nKey: "settings.recording.screenshotImages.title", keywords: ["screenshot", "pixels", "ocr", "jpeg"] },
+  { label: "Use all monitors", i18nKey: "settings.recording.monitors.useAllTitle", keywords: ["monitor", "display"], conditional: true },
   // conditional: monitor picker only renders when "Use all monitors" is off — paired right under that toggle.
   { label: "Monitors", i18nKey: "settings.recording.monitors.title", conditional: true },
-  { label: "Recording quality", i18nKey: "settings.recording.videoQuality.title", keywords: ["fps", "quality"] },
+  { label: "Recording quality", i18nKey: "settings.recording.videoQuality.title", keywords: ["fps", "quality"], conditional: true },
   // conditional: hidden when screen recording is off (same gate as Recording quality).
   { label: "Capture frequency", i18nKey: "settings.recording.captureFrequency.title", keywords: ["screenshot", "interval", "idle", "cadence", "every", "minimum"], conditional: true },
   { label: "HD recording for meetings", i18nKey: "settings.recording.hd.title", keywords: ["hd", "meeting"] },
@@ -334,6 +335,7 @@ const SERVER_RESTART_SETTINGS = new Set<keyof SettingsStore>([
   "piiBackend",
   "useChineseMirror",
   "enableWorkflowEvents",
+  "disableSnapshotCompaction",
 ]);
 
 type AudioPipelineSnapshot = {
@@ -2136,6 +2138,8 @@ export function RecordingSettings() {
 
   const aecMode = getAecMode(settings, isMacOS, isWindows);
   const aecDetails = getAecModeDetails(aecMode, t);
+  const screenContextEnabled = !settings.disableVision;
+  const screenshotImagesEnabled = screenContextEnabled && !(settings.disableScreenshots ?? false);
 
   const handleAecModeChange = useCallback((mode: AecMode) => {
     handleSettingsChange(getAecModeSettings(mode), true);
@@ -2736,7 +2740,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
   };
 
   return (
-    <div className="space-y-5" ref={sectionRootRef}>
+    <div className="space-y-5" data-testid="section-settings-recording" ref={sectionRootRef}>
       <p className="text-muted-foreground text-sm mb-4">
         {t("settings.recording.description")}
       </p>
@@ -3831,7 +3835,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
       <div className="space-y-2 pt-2">
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">{t("settings.recording.section.screen")}</h2>
 
-        {/* Screen Recording Toggle */}
+        {/* Screen context capture toggle */}
         <Card className="border-border bg-card">
           <CardContent className="px-3 py-2.5">
             <div className="flex items-center justify-between">
@@ -3847,13 +3851,35 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
           </CardContent>
         </Card>
 
-        {/* Use All Monitors - right below disable screen recording */}
         {!settings.disableVision && (
           <Card className="border-border bg-card">
             <CardContent className="px-3 py-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2.5">
-                    <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <div>
+                    <h3 className="text-sm font-medium text-foreground">{t("settings.recording.screenshotImages.title")}</h3>
+                    <p className="text-xs text-muted-foreground">{t("settings.recording.screenshotImages.description")}</p>
+                  </div>
+                </div>
+                <ManagedSwitch
+                  settingKey="disableScreenshots"
+                  id="disableScreenshots"
+                  checked={!(settings.disableScreenshots ?? false)}
+                  onCheckedChange={(checked) => handleSettingsChange({ disableScreenshots: !checked }, true)}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Use All Monitors - right below screen capture toggles */}
+        {screenshotImagesEnabled && (
+          <Card className="border-border bg-card">
+            <CardContent className="px-3 py-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-2.5">
+                  <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
                     <h3 className="text-sm font-medium text-foreground">{t("settings.recording.monitors.useAllTitle")}</h3>
                     <p className="text-xs text-muted-foreground">{t("settings.recording.monitors.useAllDescription")}</p>
@@ -3868,7 +3894,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
         {/* Monitor Selection — paired directly under "Use all monitors" so
             the picker it reveals sits next to the toggle that controls it,
             not buried below the quality/frequency/HD cards. */}
-        {!settings.disableVision && !settings.useAllMonitors && (
+        {screenshotImagesEnabled && !settings.useAllMonitors && (
           <Card className="border-border bg-card overflow-hidden">
             <CardContent className="px-3 py-2.5">
               <div className="flex items-center space-x-2.5 mb-3">
@@ -3938,7 +3964,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
         )}
 
         {/* Recording quality — single knob for crispness + disk cost */}
-        {!settings.disableVision && (
+        {screenshotImagesEnabled && (
           <Card className="border-border bg-card">
             <CardContent className="px-3 py-2.5">
               <div className="flex items-center justify-between gap-3">
@@ -3978,7 +4004,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
             feel capture is too sparse. Backed by `idleCaptureIntervalMs`
             (null = follow the power profile). Needs a recording restart to
             take effect, hence handleSettingsChange(..., true). */}
-        {!settings.disableVision && (() => {
+        {screenshotImagesEnabled && (() => {
           const idleMs = settings.idleCaptureIntervalMs ?? null;
           const seconds = idleMs == null ? 0 : Math.round(idleMs / 1000);
           return (

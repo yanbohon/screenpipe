@@ -324,7 +324,8 @@ describe("RecordingSettings i18n", () => {
     expect(screen.getByText("会议高清录制")).toBeInTheDocument();
     expect(screen.getByLabelText("打开后台转写积压")).toBeInTheDocument();
     expect(screen.getByText("屏幕")).toBeInTheDocument();
-    expect(screen.getByText("屏幕录制")).toBeInTheDocument();
+    expect(screen.getByText("屏幕上下文捕获")).toBeInTheDocument();
+    expect(screen.getByText("截图图片")).toBeInTheDocument();
     expect(screen.getByText("使用所有显示器")).toBeInTheDocument();
     expect(screen.getByText("录制质量")).toBeInTheDocument();
     expect(screen.getByText("捕获频率")).toBeInTheDocument();
@@ -334,7 +335,8 @@ describe("RecordingSettings i18n", () => {
     expect(screen.queryByText("Audio Recording")).not.toBeInTheDocument();
     expect(screen.queryByText("Your name")).not.toBeInTheDocument();
     expect(screen.queryByText("Custom Vocabulary")).not.toBeInTheDocument();
-    expect(screen.queryByText("Screen recording")).not.toBeInTheDocument();
+    expect(screen.queryByText("Screen context capture")).not.toBeInTheDocument();
+    expect(screen.queryByText("Screenshot images")).not.toBeInTheDocument();
   });
 
   it("renders CoreAudio exclusion controls in Chinese when available", async () => {

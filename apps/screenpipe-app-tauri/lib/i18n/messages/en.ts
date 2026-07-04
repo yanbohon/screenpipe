@@ -2783,12 +2783,15 @@ export const enMessages = {
     "Uses Apple's microphone AEC on the default macOS input",
   "settings.recording.aec.description.windows":
     "Uses Windows microphone AEC when the input endpoint supports it",
-  "settings.recording.screenRecording.title": "Screen recording",
+  "settings.recording.screenRecording.title": "Screen context capture",
   "settings.recording.screenRecording.description":
-    "Capture screenshots from your monitors",
+    "Capture app/window context, accessibility text, screenshot images, and OCR fallback",
+  "settings.recording.screenshotImages.title": "Screenshot images",
+  "settings.recording.screenshotImages.description":
+    "Capture screen pixels and store JPEG screenshots for visual evidence and OCR fallback",
   "settings.recording.monitors.useAllTitle": "Use all monitors",
   "settings.recording.monitors.useAllDescription":
-    "Take screenshot from all available monitors",
+    "Capture screenshot images from all available monitors",
   "settings.recording.monitors.title": "Monitors",
   "settings.recording.monitors.default": "Default",
   "settings.recording.monitors.monitorName": "Monitor {id}",
@@ -5379,11 +5382,11 @@ export const enMessages = {
   "settings.display.fontSize.option.medium": "Medium",
   "settings.display.fontSize.option.large": "Large",
   "settings.display.fontSize.option.xLarge": "X-Large",
-  "settings.display.disableTimeline.title": "Disable Timeline",
+  "settings.display.disableTimeline.title": "Timeline / rewind",
   "settings.display.disableTimeline.description":
-    "Hide rewind and skip its background work",
+    "Show rewind and keep its background cache work on",
   "settings.display.disableTimeline.help":
-    "Turn off the timeline / rewind feature. Skips the in-memory hot frame cache and disables the native macOS Live Text overlay. Restarts screenpipe to apply.",
+    "Turn off the timeline / rewind feature. Skips the in-memory hot frame cache (warm-up + per-frame/audio buffering) that only the timeline uses, and disables the native macOS Live Text overlay that can otherwise leak a selection layer over other windows (e.g. the chat input) and block typing. Restarts screenpipe to apply.",
   "settings.display.disableTimeline.toast.disabled": "timeline disabled",
   "settings.display.disableTimeline.toast.enabled": "timeline enabled",
   "settings.display.disableTimeline.toast.description":

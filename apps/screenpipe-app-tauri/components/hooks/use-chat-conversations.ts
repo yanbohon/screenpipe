@@ -86,6 +86,7 @@ interface UseChatConversationsOpts {
   pendingDocsRef?: MutableRefObject<any[]>;
   settings: any;
   selectedPreset?: AIPreset | null;
+  selectedPresetRef?: MutableRefObject<AIPreset | undefined | null>;
   inlineHistoryEnabled?: boolean;
 }
 
@@ -137,6 +138,10 @@ export function useChatConversations(opts: UseChatConversationsOpts) {
     selectedPreset,
     inlineHistoryEnabled = true,
   } = opts;
+  const getSelectedPreset = () =>
+    opts.selectedPresetRef && opts.selectedPresetRef.current !== undefined
+      ? (opts.selectedPresetRef.current ?? null)
+      : opts.selectedPreset;
   const componentUnmountedRef = useRef(false);
   const { t } = useI18n();
 
@@ -503,10 +508,11 @@ export function useChatConversations(opts: UseChatConversationsOpts) {
     const existingTitle = existing?.title?.trim() || null;
     const computedLastUserMessageAt = newestUserMessageTimestamp(msgs);
 
+    const currentPreset = getSelectedPreset();
     const hasValidPreset =
-      selectedPreset &&
-      selectedPreset.provider &&
-      selectedPreset.model?.trim();
+      currentPreset &&
+      currentPreset.provider &&
+      currentPreset.model?.trim();
 
     const existingSource = existing?.titleSource;
     const existingLooksFallback = isFallbackLikeTitle(
@@ -562,7 +568,7 @@ export function useChatConversations(opts: UseChatConversationsOpts) {
         try {
           const aiTitle = await titleCreatedByAI(
             rawContent,
-            selectedPreset,
+            currentPreset,
             settings?.user?.token ?? null,
             async (partial) => {
               try {
@@ -748,7 +754,7 @@ export function useChatConversations(opts: UseChatConversationsOpts) {
       })()),
       // Persist the preset ID so the model selection survives app restart
       // and is restored when switching between chats.
-      ...(selectedPreset?.id ? { presetId: selectedPreset.id } : existing?.presetId ? { presetId: existing.presetId } : {}),
+      ...(currentPreset?.id ? { presetId: currentPreset.id } : existing?.presetId ? { presetId: existing.presetId } : {}),
     };
 
     // Mirror the final messages into the in-memory chat-store BEFORE

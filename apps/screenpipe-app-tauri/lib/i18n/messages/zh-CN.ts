@@ -2619,10 +2619,15 @@ export const zhCNMessages = {
     "在默认 macOS 输入上使用 Apple 麦克风 AEC",
   "settings.recording.aec.description.windows":
     "输入端点支持时使用 Windows 麦克风 AEC",
-  "settings.recording.screenRecording.title": "屏幕录制",
-  "settings.recording.screenRecording.description": "从显示器捕获截图",
+  "settings.recording.screenRecording.title": "屏幕上下文捕获",
+  "settings.recording.screenRecording.description":
+    "捕获应用/窗口上下文、无障碍文本、截图图片，以及 OCR 兜底内容",
+  "settings.recording.screenshotImages.title": "截图图片",
+  "settings.recording.screenshotImages.description":
+    "捕获屏幕像素并存储 JPEG 截图，用于视觉证据和 OCR 兜底",
   "settings.recording.monitors.useAllTitle": "使用所有显示器",
-  "settings.recording.monitors.useAllDescription": "从所有可用显示器截图",
+  "settings.recording.monitors.useAllDescription":
+    "从所有可用显示器捕获截图图片",
   "settings.recording.monitors.title": "显示器",
   "settings.recording.monitors.default": "默认",
   "settings.recording.monitors.monitorName": "显示器 {id}",
@@ -5049,10 +5054,11 @@ export const zhCNMessages = {
   "settings.display.fontSize.option.medium": "中",
   "settings.display.fontSize.option.large": "大",
   "settings.display.fontSize.option.xLarge": "超大",
-  "settings.display.disableTimeline.title": "禁用时间线",
-  "settings.display.disableTimeline.description": "隐藏回放并跳过后台工作",
+  "settings.display.disableTimeline.title": "时间线 / 回放",
+  "settings.display.disableTimeline.description":
+    "显示回放，并保持后台缓存工作开启",
   "settings.display.disableTimeline.help":
-    "关闭时间线 / 回放功能。会跳过内存热帧缓存，并禁用 macOS 原生 Live Text 覆盖层。需要重启 screenpipe 生效。",
+    "关闭时间线 / 回放功能。会跳过仅时间线使用的内存热帧缓存（预热 + 每帧/音频缓冲），并禁用 macOS 原生 Live Text 覆盖层；该覆盖层有时会泄露到其他窗口（例如聊天输入框）并阻止输入。需要重启 screenpipe 生效。",
   "settings.display.disableTimeline.toast.disabled": "时间线已禁用",
   "settings.display.disableTimeline.toast.enabled": "时间线已启用",
   "settings.display.disableTimeline.toast.description":

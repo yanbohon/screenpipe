@@ -846,6 +846,60 @@ export function cleanPipeStdout(raw: string, t?: PipeErrorTranslator): string {
   return text;
 }
 
+type PipeExecutionStatusFields = {
+  status: string;
+  stdout?: string | null;
+  stderr?: string | null;
+};
+
+function stdoutHasCompactionRetryAfterAgentEnd(raw: string): boolean {
+  let sawAgentEnd = false;
+  for (const line of raw.split("\n")) {
+    const trimmed = line.trim();
+    if (!trimmed.startsWith("{") || !trimmed.endsWith("}")) continue;
+
+    try {
+      const evt = JSON.parse(trimmed);
+      if (evt.type === "agent_end") {
+        sawAgentEnd = agentEndHasSuccessfulAssistantText(evt);
+      } else if (evt.type === "compaction_end" && sawAgentEnd && evt.willRetry === true) {
+        return true;
+      }
+    } catch {
+      continue;
+    }
+  }
+  return false;
+}
+
+function agentEndHasSuccessfulAssistantText(evt: any): boolean {
+  if (!Array.isArray(evt.messages)) return false;
+  for (let i = evt.messages.length - 1; i >= 0; i--) {
+    const msg = evt.messages[i];
+    if (msg?.role !== "assistant") continue;
+    if (msg.stopReason === "error") return false;
+    return Array.isArray(msg.content) && msg.content.some((block: any) => (
+      block?.type === "text" && typeof block.text === "string" && block.text.trim().length > 0
+    ));
+  }
+  return false;
+}
+
+export function pipeExecutionCompletedBeforeContinueError(exec: PipeExecutionStatusFields): boolean {
+  const stderr = exec.stderr || "";
+  const stdout = exec.stdout || "";
+  return (
+    exec.status === "failed" &&
+    stderr.toLowerCase().includes("cannot continue from message role: assistant") &&
+    stdoutHasCompactionRetryAfterAgentEnd(stdout) &&
+    cleanPipeStdout(stdout).trim().length > 0
+  );
+}
+
+function pipeExecutionDisplayStatus(exec: PipeExecutionStatusFields): string {
+  return pipeExecutionCompletedBeforeContinueError(exec) ? "completed" : exec.status;
+}
+
 function ElapsedTimer({ startedAt }: { startedAt: string }) {
   const [elapsed, setElapsed] = useState("");
   useEffect(() => {
@@ -3272,12 +3326,12 @@ export function PipesSection() {
                                       : t("settings.pipes.runs.queued")}
                                   </span>
                                   <Badge
-                                    variant={statusBadgeVariant(exec.status)}
+                                    variant={statusBadgeVariant(pipeExecutionDisplayStatus(exec))}
                                     className="text-[10px] h-5"
                                   >
-                                    {exec.status}
+                                    {pipeExecutionDisplayStatus(exec)}
                                   </Badge>
-                                  {errorTypeBadge(exec.error_type)}
+                                  {!pipeExecutionCompletedBeforeContinueError(exec) && errorTypeBadge(exec.error_type)}
                                   {exec.duration_ms != null && (
                                     <span className="text-muted-foreground">
                                       {(exec.duration_ms / 1000).toFixed(1)}s
@@ -3291,7 +3345,7 @@ export function PipesSection() {
                                       {exec.model}
                                     </span>
                                   )}
-                                  {exec.status === "completed" &&
+                                  {pipeExecutionDisplayStatus(exec) === "completed" &&
                                     exec.stdout &&
                                     cleanPipeStdout(exec.stdout, t) && (
                                       <div className="ml-auto flex items-center gap-1">
@@ -3368,12 +3422,12 @@ export function PipesSection() {
                                       </div>
                                     )}
                                 </div>
-                                {exec.error_message && (
+                                {exec.error_message && !pipeExecutionCompletedBeforeContinueError(exec) && (
                                   <p className="text-xs text-muted-foreground">
                                     {exec.error_message}
                                   </p>
                                 )}
-                                {exec.status === "completed" &&
+                                {pipeExecutionDisplayStatus(exec) === "completed" &&
                                   exec.stdout &&
                                   cleanPipeStdout(exec.stdout, t) && (
                                     <div>
@@ -3384,7 +3438,7 @@ export function PipesSection() {
                                       </div>
                                     </div>
                                   )}
-                                {exec.status === "failed" &&
+                                {pipeExecutionDisplayStatus(exec) === "failed" &&
                                   exec.stderr &&
                                   !exec.error_message && (
                                     <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words max-h-96 overflow-y-auto scrollbar-hide">
@@ -3700,12 +3754,12 @@ export function PipesSection() {
                                     : t("settings.pipes.runs.queued")}
                                 </span>
                                 <Badge
-                                  variant={statusBadgeVariant(exec.status)}
+                                  variant={statusBadgeVariant(pipeExecutionDisplayStatus(exec))}
                                   className="text-[10px] h-5"
                                 >
-                                  {exec.status}
+                                  {pipeExecutionDisplayStatus(exec)}
                                 </Badge>
-                                {errorTypeBadge(exec.error_type)}
+                                {!pipeExecutionCompletedBeforeContinueError(exec) && errorTypeBadge(exec.error_type)}
                                 {exec.duration_ms != null && (
                                   <span className="text-muted-foreground">
                                     {formatDuration(exec.duration_ms)}
@@ -3754,7 +3808,7 @@ export function PipesSection() {
                                   </button>
                                 )}
                               </div>
-                              {exec.error_message && (
+                              {exec.error_message && !pipeExecutionCompletedBeforeContinueError(exec) && (
                                 <p className="text-xs text-muted-foreground">
                                   {exec.error_message}
                                 </p>
@@ -3776,14 +3830,14 @@ export function PipesSection() {
                                     </pre>
                                   );
                                 })()}
-                              {exec.status === "completed" &&
+                              {pipeExecutionDisplayStatus(exec) === "completed" &&
                                 exec.stdout &&
                                 cleanPipeStdout(exec.stdout, t) && (
                                   <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words max-h-96 overflow-y-auto">
                                     {cleanPipeStdout(exec.stdout, t)}
                                   </pre>
                                 )}
-                              {exec.status === "failed" &&
+                              {pipeExecutionDisplayStatus(exec) === "failed" &&
                                 exec.stderr &&
                                 !exec.error_message && (
                                   <pre className="text-xs text-muted-foreground whitespace-pre-wrap break-words max-h-96 overflow-y-auto">
