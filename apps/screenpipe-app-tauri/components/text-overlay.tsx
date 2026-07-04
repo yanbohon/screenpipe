@@ -7,6 +7,7 @@ import { useCallback, useMemo, memo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { open as shellOpen } from "@tauri-apps/plugin-shell";
 import { commands } from "@/lib/utils/tauri";
+import { useI18n } from "@/lib/i18n/provider";
 import type { TextPosition } from "@/lib/hooks/use-frame-text-data";
 
 /**
@@ -196,6 +197,7 @@ export const TextOverlay = memo(function TextOverlay({
 	highlightTerms,
 	highlightFading = false,
 }: TextOverlayProps) {
+	const { t } = useI18n();
 	const [hoveredLinkIndex, setHoveredLinkIndex] = useState<number | null>(null);
 
 	// URL links
@@ -417,7 +419,7 @@ export const TextOverlay = memo(function TextOverlay({
 									}
 								: {}),
 						}}
-						title={`Open ${link.normalizedUrl}`}
+						title={t("textOverlay.openLinkTitle", { url: link.normalizedUrl })}
 						target="_blank"
 						rel="noopener noreferrer"
 					>

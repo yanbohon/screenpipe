@@ -4,6 +4,8 @@
 
 import { describe, expect, it } from "vitest";
 import { formatMessage, formatMessageFromMessages } from "@/lib/i18n/format";
+import { enMessages } from "@/lib/i18n/messages/en";
+import { zhCNMessages } from "@/lib/i18n/messages/zh-CN";
 import { normalizeLocale } from "@/lib/i18n/types";
 
 describe("formatMessage", () => {
@@ -51,5 +53,30 @@ describe("formatMessage", () => {
   it("normalizes invalid locales to English", () => {
     expect(normalizeLocale("fr")).toBe("en");
     expect(formatMessage("fr", "home.nav.pipes")).toBe("Pipes");
+  });
+
+  it("keeps the Simplified Chinese dictionary complete", () => {
+    const enKeys = Object.keys(enMessages);
+    const zhKeys = Object.keys(zhCNMessages);
+    const missing = enKeys.filter((key) => !zhKeys.includes(key));
+    const extra = zhKeys.filter((key) => !enKeys.includes(key));
+    const intentionallySharedValues = new Set([
+      "settings.display.language.english",
+      "settings.display.language.chinese",
+      "settings.usage.range.day",
+      "settings.usage.range.week",
+      "settings.usage.range.month",
+      "settings.customMcp.manualAuth.bearerToken",
+      "settings.agentCard.tab.mcp",
+    ]);
+    const untranslated = enKeys.filter(
+      (key) =>
+        !intentionallySharedValues.has(key) &&
+        zhCNMessages[key as keyof typeof zhCNMessages] === enMessages[key as keyof typeof enMessages],
+    );
+
+    expect(missing).toEqual([]);
+    expect(extra).toEqual([]);
+    expect(untranslated).toEqual([]);
   });
 });

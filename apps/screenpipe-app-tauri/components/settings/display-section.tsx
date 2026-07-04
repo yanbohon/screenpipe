@@ -34,6 +34,13 @@ export const searchIndex: SettingsField[] = [
   { label: "Sidebar translucency", i18nKey: "settings.display.translucentSidebar.title", anchor: "display-translucent-sidebar", keywords: ["vibrancy", "translucent"], conditional: true },
 ];
 
+const FONT_SIZE_LABEL_KEYS: Record<string, string> = {
+  "14px": "settings.display.fontSize.option.small",
+  "16px": "settings.display.fontSize.option.medium",
+  "18px": "settings.display.fontSize.option.large",
+  "20px": "settings.display.fontSize.option.xLarge",
+};
+
 export function DisplaySection() {
   const { settings, updateSettings } = useSettings();
   const { theme, setTheme } = useTheme();
@@ -167,7 +174,9 @@ export function DisplaySection() {
                           : "border-border hover:border-muted-foreground/30"
                       }`}
                     >
-                      <div className="font-medium text-xs text-foreground">{option.label}</div>
+                      <div className="font-medium text-xs text-foreground">
+                        {t(FONT_SIZE_LABEL_KEYS[option.value] ?? option.label)}
+                      </div>
                       <div className="text-muted-foreground mt-0.5" style={{ fontSize: option.value }}>Aa</div>
                     </button>
                   );

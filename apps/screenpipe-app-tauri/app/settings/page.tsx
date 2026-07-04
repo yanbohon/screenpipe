@@ -45,8 +45,16 @@ import { SettingsSearchInput, SettingsSearchPopover, searchSettingsNav, scrollTo
 // this file. Lives here because the section itself lives here; same co-location
 // principle as the standalone sections.
 const referralSearchIndex: SettingsField[] = [
-  { label: "Invite link", keywords: ["invite", "refer", "promo"] },
-  { label: "Free month", keywords: ["discount", "earn"] },
+  {
+    label: "Invite link",
+    i18nKey: "settings.referral.yourInviteLink",
+    keywords: ["invite", "refer", "promo"],
+  },
+  {
+    label: "Free month",
+    i18nKey: "settings.referral.reward",
+    keywords: ["discount", "earn"],
+  },
 ];
 
 /**
@@ -105,6 +113,7 @@ const ALL_SETTINGS_SECTIONS: SettingsSection[] = [
 
 function ReferralSection() {
   const { settings } = useSettings();
+  const { t } = useI18n();
   const [copied, setCopied] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
   const [sending, setSending] = useState(false);
@@ -132,12 +141,15 @@ function ReferralSection() {
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || "failed to send invite");
+        throw new Error(data.error || t("settings.referral.toast.inviteFailed"));
       }
       setInviteEmail("");
-      toast({ title: "invite sent!" });
+      toast({ title: t("settings.referral.toast.inviteSent") });
     } catch (e: any) {
-      toast({ title: e.message || "failed to send invite", variant: "destructive" });
+      toast({
+        title: e.message || t("settings.referral.toast.inviteFailed"),
+        variant: "destructive",
+      });
     } finally {
       setSending(false);
     }
@@ -146,34 +158,65 @@ function ReferralSection() {
   return (
     <div className="space-y-6">
       <p className="text-sm text-muted-foreground mb-4">
-        give <span className="font-semibold text-foreground">10% off</span> screenpipe and get{" "}
-        <span className="font-semibold text-foreground">1 free month</span> for each person you refer.
+        {t("settings.referral.inlineIntroPrefix")}{" "}
+        <span className="font-semibold text-foreground">
+          {t("settings.referral.discount")}
+        </span>{" "}
+        {t("settings.referral.inlineIntroMiddle")}{" "}
+        <span className="font-semibold text-foreground">
+          {t("settings.referral.reward")}
+        </span>{" "}
+        {t("settings.referral.inlineIntroSuffix")}
       </p>
       <div className="space-y-4">
         <div>
-          <h3 className="text-sm font-medium text-foreground mb-2">how it works</h3>
+          <h3 className="text-sm font-medium text-foreground mb-2">
+            {t("settings.referral.howItWorks")}
+          </h3>
           <div className="space-y-1.5 text-sm text-muted-foreground">
-            <p>1. share your invite link</p>
-            <p>2. they sign up and get <span className="font-semibold text-foreground">10% off</span> screenpipe</p>
-            <p>3. you get a <span className="font-semibold text-foreground">free month</span> when they start using it</p>
+            <p>1. {t("settings.referral.step1")}</p>
+            <p>
+              2. {t("settings.referral.step2Prefix")}{" "}
+              <span className="font-semibold text-foreground">
+                {t("settings.referral.discount")}
+              </span>{" "}
+              screenpipe
+            </p>
+            <p>
+              3. {t("settings.referral.step3Prefix")}{" "}
+              <span className="font-semibold text-foreground">
+                {t("settings.referral.reward")}
+              </span>
+              {t("settings.referral.inlineStep3Suffix").trim() && (
+                <> {t("settings.referral.inlineStep3Suffix")}</>
+              )}
+            </p>
           </div>
         </div>
         {settings.user?.token ? (
           <div>
-            <h3 className="text-sm font-medium text-foreground mb-2">your invite link</h3>
+            <h3 className="text-sm font-medium text-foreground mb-2">
+              {t("settings.referral.yourInviteLink")}
+            </h3>
             <div className="flex gap-2">
               <input readOnly value={referralLink} className="flex-1 px-3 py-2 text-xs font-mono border border-border bg-card text-foreground" />
               <button onClick={handleCopy} className="px-4 py-2 text-xs font-medium border border-border bg-background hover:bg-foreground hover:text-background transition-colors duration-150">
-                {copied ? "COPIED" : "COPY"}
+                {copied
+                  ? t("settings.referral.copied")
+                  : t("settings.referral.copy")}
               </button>
             </div>
-            <p className="text-xs text-muted-foreground mt-2">rewards auto-applied to your next subscription payment.</p>
+            <p className="text-xs text-muted-foreground mt-2">
+              {t("settings.referral.rewardsAutoApplied")}
+            </p>
             <div className="mt-4 pt-4 border-t border-border">
-              <h3 className="text-sm font-medium text-foreground mb-2">invite by email</h3>
+              <h3 className="text-sm font-medium text-foreground mb-2">
+                {t("settings.referral.inviteByEmail")}
+              </h3>
               <div className="flex gap-2">
                 <input
                   type="email"
-                  placeholder="friend@email.com"
+                  placeholder={t("settings.referral.emailPlaceholder")}
                   value={inviteEmail}
                   onChange={(e) => setInviteEmail(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleInvite()}
@@ -184,19 +227,23 @@ function ReferralSection() {
                   disabled={!inviteEmail || sending}
                   className="px-4 py-2 text-xs font-medium border border-border bg-background hover:bg-foreground hover:text-background transition-colors duration-150 disabled:opacity-50 disabled:pointer-events-none"
                 >
-                  {sending ? "SENDING..." : "INVITE"}
+                  {sending
+                    ? t("settings.referral.sending")
+                    : t("settings.referral.invite")}
                 </button>
               </div>
             </div>
           </div>
         ) : (
           <div className="border border-border p-4 bg-card">
-            <p className="text-sm text-muted-foreground mb-3">sign in to get your referral link</p>
+            <p className="text-sm text-muted-foreground mb-3">
+              {t("settings.referral.signInToGetLink")}
+            </p>
             <button
               onClick={() => commands.openLoginWindow(null)}
               className="px-4 py-2 text-xs font-medium border border-border bg-background hover:bg-foreground hover:text-background transition-colors duration-150"
             >
-              SIGN IN
+              {t("settings.referral.signIn")}
             </button>
           </div>
         )}
@@ -266,7 +313,7 @@ function SettingsContent() {
           ? []
           : [{ id: "team" as const, label: t("settings.nav.team"), searchLabel: "Team", icon: <Users className="h-4 w-4" /> }]),
         { id: "account" as const, label: t("settings.nav.account"), searchLabel: "Account", icon: <User className="h-4 w-4" /> },
-        { id: "referral" as const, label: t("settings.nav.referral"), searchLabel: "Get free month", icon: <Gift className="h-4 w-4" /> },
+        { id: "referral" as const, label: t("settings.nav.referral"), searchLabel: t("settings.nav.referral"), icon: <Gift className="h-4 w-4" /> },
       ].filter((s) => !isSectionHidden(s.id)),
     },
   ];

@@ -1202,7 +1202,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 				} catch (e) {
 					console.warn("failed to clear cloud token in sidecar:", e);
 				}
-			}
+			},
+			() => settingsRef.current.uiLanguage
 		);
 	}, []); // eslint-disable-line react-hooks/exhaustive-deps
 
