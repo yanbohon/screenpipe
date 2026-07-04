@@ -8,10 +8,13 @@ import { useState, useEffect, useCallback } from "react";
 import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { commands } from "@/lib/utils/tauri";
-import { openPermissionSettingsWithFlow, requestPermissionWithFlow } from "@/lib/utils/permission-flow";
+import {
+  openPermissionSettingsWithFlow,
+  requestPermissionWithFlow,
+} from "@/lib/utils/permission-flow";
 import { usePlatform } from "@/lib/hooks/use-platform";
-import { listen } from "@tauri-apps/api/event";
 import { useI18n } from "@/lib/i18n/provider";
+import { useTauriEvent } from "@/lib/hooks/use-tauri-event";
 
 interface PermissionState {
   screenOk: boolean;
@@ -33,11 +36,15 @@ export function PermissionBanner() {
     if (!isMac) return;
     try {
       const perms = await commands.doPermissionsCheck(false);
-      const screenOk = perms.screenRecording === "granted" || perms.screenRecording === "notNeeded";
-      const micOk = perms.microphone === "granted" || perms.microphone === "notNeeded";
-      const accessibilityOk = perms.accessibility === "granted" || perms.accessibility === "notNeeded";
+      const screenOk =
+        perms.screenRecording === "granted" ||
+        perms.screenRecording === "notNeeded";
+      const micOk =
+        perms.microphone === "granted" || perms.microphone === "notNeeded";
+      const accessibilityOk =
+        perms.accessibility === "granted" ||
+        perms.accessibility === "notNeeded";
       setPermissions({ screenOk, micOk, accessibilityOk });
-
     } catch {
       // ignore errors
     }
@@ -51,20 +58,16 @@ export function PermissionBanner() {
   }, [checkPermissions]);
 
   // Also listen for permission-lost events for instant response
-  useEffect(() => {
-    const unlisten = listen("permission-lost", () => {
-      checkPermissions();
-    });
-    return () => { unlisten.then(fn => fn()); };
-  }, [checkPermissions]);
+  useTauriEvent("permission-lost", () => {
+    checkPermissions();
+  });
 
   // Don't render on non-Mac or while loading
   if (!isMac || !permissions) return null;
 
   // Don't render if all permissions are granted
-  if (permissions.screenOk && permissions.micOk && permissions.accessibilityOk) return null;
-
-
+  if (permissions.screenOk && permissions.micOk && permissions.accessibilityOk)
+    return null;
 
   const missingPerms: string[] = [];
   if (!permissions.screenOk) {
@@ -106,20 +109,25 @@ export function PermissionBanner() {
             // (e.g. mic prompt, accessibility prompt). If the permission was already
             // denied, it falls back to opening System Settings internally.
             try {
-              if (!permissions.screenOk) await requestPermissionWithFlow("screenRecording");
-              else if (!permissions.micOk) await commands.requestPermission("microphone");
-              else if (!permissions.accessibilityOk) await requestPermissionWithFlow("accessibility");
+              if (!permissions.screenOk)
+                await requestPermissionWithFlow("screenRecording");
+              else if (!permissions.micOk)
+                await commands.requestPermission("microphone");
+              else if (!permissions.accessibilityOk)
+                await requestPermissionWithFlow("accessibility");
             } catch {
               // fallback to opening settings directly
-              if (!permissions.screenOk) await openPermissionSettingsWithFlow("screenRecording");
-              else if (!permissions.micOk) await commands.openPermissionSettings("microphone");
-              else if (!permissions.accessibilityOk) await openPermissionSettingsWithFlow("accessibility");
+              if (!permissions.screenOk)
+                await openPermissionSettingsWithFlow("screenRecording");
+              else if (!permissions.micOk)
+                await commands.openPermissionSettings("microphone");
+              else if (!permissions.accessibilityOk)
+                await openPermissionSettingsWithFlow("accessibility");
             }
           }}
         >
           {t("status.permissionBanner.fixPermissions")}
         </Button>
-
       </div>
     </div>
   );

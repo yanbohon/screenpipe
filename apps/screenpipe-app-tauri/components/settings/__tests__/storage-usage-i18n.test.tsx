@@ -53,14 +53,6 @@ vi.mock("@/components/enterprise-locked-setting", () => ({
   LockedSetting: ({ children }: { children: ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("@/components/settings/archive-settings", () => ({
-  ArchiveSettings: () => <div>归档设置</div>,
-}));
-
-vi.mock("@/components/settings/sync-settings", () => ({
-  SyncSettings: () => <div>同步设置</div>,
-}));
-
 vi.mock("@/components/settings/apply-restart-bar", () => ({
   ApplyRestartBar: () => null,
 }));
@@ -72,7 +64,9 @@ vi.mock("@/components/settings/retention-settings", () => ({
 vi.mock("@/lib/hooks/use-disk-usage", () => ({
   useDiskUsage: () => ({
     diskUsage: {
-      recording_since: new Date(Date.now() - 1000 * 60 * 60 * 24 * 45).toISOString(),
+      recording_since: new Date(
+        Date.now() - 1000 * 60 * 60 * 24 * 45,
+      ).toISOString(),
       total_data_bytes: 3 * 1024 ** 3,
       available_space_bytes: 9 * 1024 ** 3,
       total_data_size: "3 GB",
@@ -135,15 +129,15 @@ describe("Storage and Usage settings i18n", () => {
   it("renders Storage controls in Chinese", () => {
     renderWithChinese(<StorageSection />);
 
-    expect(screen.getByText("本地磁盘、云归档和同步")).toBeInTheDocument();
+    expect(screen.getByText("本地磁盘用量和存储控制")).toBeInTheDocument();
     expect(screen.getByText("数据目录")).toBeInTheDocument();
     expect(screen.getByText("更改目录会开始新的录制")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "更改" })).toBeInTheDocument();
     expect(screen.getByText("清理缓存")).toBeInTheDocument();
-    expect(screen.getByText("移除 AI agent 缓存、旧日志和恢复文件")).toBeInTheDocument();
+    expect(
+      screen.getByText("移除 AI agent 缓存、旧日志和恢复文件"),
+    ).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "清理" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "本地" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "归档" })).toBeInTheDocument();
   });
 
   it("renders disk usage labels in Chinese", () => {
@@ -173,6 +167,8 @@ describe("Storage and Usage settings i18n", () => {
     expect(screen.getByText("聊天回复")).toBeInTheDocument();
     expect(screen.getByText("管道运行")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "全部" })).toBeInTheDocument();
-    expect(screen.getByText("暂无模型数据，下次对话后开始统计")).toBeInTheDocument();
+    expect(
+      screen.getByText("暂无模型数据，下次对话后开始统计"),
+    ).toBeInTheDocument();
   });
 });

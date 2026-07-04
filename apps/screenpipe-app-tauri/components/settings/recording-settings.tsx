@@ -7,37 +7,134 @@
 const DEFAULT_OPENAI_COMPATIBLE_ENDPOINT = "http://127.0.0.1:8080";
 
 import React, { useEffect, useState, useMemo, useCallback } from "react";
-import { useSettingsIndexDriftCheck, type SettingsField } from "./settings-search";
-import { CaptureFrequencyPreview, AudioCaptureModePreview } from "./setting-previews";
+import {
+  useSettingsIndexDriftCheck,
+  type SettingsField,
+} from "./settings-search";
+import {
+  CaptureFrequencyPreview,
+  AudioCaptureModePreview,
+} from "./setting-previews";
 
 /** Settings search index for this section. Co-located with the component so adding a field here means updating one file. See `SettingsField` in `./settings-search` for the schema. */
 export const searchIndex: SettingsField[] = [
   // Mirrors the labels actually rendered by RecordingSettings. Keep in sync.
-  { label: "Audio Recording", i18nKey: "settings.recording.audioRecording.title", keywords: ["mic", "microphone", "audio"] },
-  { label: "Transcription engine", i18nKey: "settings.recording.transcriptionEngine.title", keywords: ["whisper", "cloud", "stt"] },
+  {
+    label: "Audio Recording",
+    i18nKey: "settings.recording.audioRecording.title",
+    keywords: ["mic", "microphone", "audio"],
+  },
+  {
+    label: "Transcription engine",
+    i18nKey: "settings.recording.transcriptionEngine.title",
+    keywords: ["whisper", "cloud", "stt"],
+  },
   // conditional: rendered only when audio is enabled / engine selected.
-  { label: "Live meeting notes", i18nKey: "settings.recording.liveMeetingNotes.title", keywords: ["captions", "meeting", "live"], conditional: true },
-  { label: "Append typed text to note", i18nKey: "settings.recording.appendTypedText.title", keywords: ["note", "append"], conditional: true },
-  { label: "Batch Transcription", i18nKey: "settings.recording.batchTranscription.title", keywords: ["batch", "chunks", "quality"], conditional: true },
-  { label: "Filter Music", i18nKey: "settings.recording.filterMusic.title", keywords: ["music", "background music", "filter"], conditional: true },
-  { label: "Auto-select audio devices", i18nKey: "settings.recording.audioDevices.autoSelectTitle", keywords: ["devices", "bluetooth"], conditional: true },
-  { label: "Languages", i18nKey: "settings.recording.languages.title", keywords: ["transcript language", "language"], conditional: true },
-  { label: "Custom Vocabulary", i18nKey: "settings.recording.vocabulary.title", keywords: ["vocabulary", "names", "jargon", "replacement"], conditional: true },
+  {
+    label: "Live meeting notes",
+    i18nKey: "settings.recording.liveMeetingNotes.title",
+    keywords: ["captions", "meeting", "live"],
+    conditional: true,
+  },
+  {
+    label: "Append typed text to note",
+    i18nKey: "settings.recording.appendTypedText.title",
+    keywords: ["note", "append"],
+    conditional: true,
+  },
+  {
+    label: "Batch Transcription",
+    i18nKey: "settings.recording.batchTranscription.title",
+    keywords: ["batch", "chunks", "quality"],
+    conditional: true,
+  },
+  {
+    label: "Filter Music",
+    i18nKey: "settings.recording.filterMusic.title",
+    keywords: ["music", "background music", "filter"],
+    conditional: true,
+  },
+  {
+    label: "Auto-select audio devices",
+    i18nKey: "settings.recording.audioDevices.autoSelectTitle",
+    keywords: ["devices", "bluetooth"],
+    conditional: true,
+  },
+  {
+    label: "Languages",
+    i18nKey: "settings.recording.languages.title",
+    keywords: ["transcript language", "language"],
+    conditional: true,
+  },
+  {
+    label: "Custom Vocabulary",
+    i18nKey: "settings.recording.vocabulary.title",
+    keywords: ["vocabulary", "names", "jargon", "replacement"],
+    conditional: true,
+  },
   // conditional: platform/OS-gated (Windows-only / macOS CoreAudio tap).
-  { label: "Echo cancellation mode", i18nKey: "settings.recording.aec.title", keywords: ["echo", "aec", "voiceprocessingio", "wasapi"], conditional: true },
-  { label: "CoreAudio system audio capture", i18nKey: "settings.recording.coreaudio.title", keywords: ["coreaudio", "system audio"], conditional: true },
-  { label: "Screen context capture", i18nKey: "settings.recording.screenRecording.title", keywords: ["screen", "video", "accessibility"] },
-  { label: "Screenshot images", i18nKey: "settings.recording.screenshotImages.title", keywords: ["screenshot", "pixels", "ocr", "jpeg"] },
-  { label: "Use all monitors", i18nKey: "settings.recording.monitors.useAllTitle", keywords: ["monitor", "display"], conditional: true },
+  {
+    label: "Echo cancellation mode",
+    i18nKey: "settings.recording.aec.title",
+    keywords: ["echo", "aec", "voiceprocessingio", "wasapi"],
+    conditional: true,
+  },
+  {
+    label: "CoreAudio system audio capture",
+    i18nKey: "settings.recording.coreaudio.title",
+    keywords: ["coreaudio", "system audio"],
+    conditional: true,
+  },
+  {
+    label: "Screen context capture",
+    i18nKey: "settings.recording.screenRecording.title",
+    keywords: ["screen", "video", "accessibility"],
+  },
+  {
+    label: "Screenshot images",
+    i18nKey: "settings.recording.screenshotImages.title",
+    keywords: ["screenshot", "pixels", "ocr", "jpeg"],
+  },
+  {
+    label: "Use all monitors",
+    i18nKey: "settings.recording.monitors.useAllTitle",
+    keywords: ["monitor", "display"],
+    conditional: true,
+  },
   // conditional: monitor picker only renders when "Use all monitors" is off — paired right under that toggle.
-  { label: "Monitors", i18nKey: "settings.recording.monitors.title", conditional: true },
-  { label: "Recording quality", i18nKey: "settings.recording.videoQuality.title", keywords: ["fps", "quality"], conditional: true },
+  {
+    label: "Monitors",
+    i18nKey: "settings.recording.monitors.title",
+    conditional: true,
+  },
+  {
+    label: "Recording quality",
+    i18nKey: "settings.recording.videoQuality.title",
+    keywords: ["fps", "quality"],
+    conditional: true,
+  },
   // conditional: hidden when screen recording is off (same gate as Recording quality).
-  { label: "Capture frequency", i18nKey: "settings.recording.captureFrequency.title", keywords: ["screenshot", "interval", "idle", "cadence", "every", "minimum"], conditional: true },
-  { label: "HD recording for meetings", i18nKey: "settings.recording.hd.title", keywords: ["hd", "meeting"] },
-  { label: "Chinese mirror", i18nKey: "settings.recording.system.chineseMirror.title", keywords: ["china", "mirror"] },
+  {
+    label: "Capture frequency",
+    i18nKey: "settings.recording.captureFrequency.title",
+    keywords: ["screenshot", "interval", "idle", "cadence", "every", "minimum"],
+    conditional: true,
+  },
+  {
+    label: "HD recording for meetings",
+    i18nKey: "settings.recording.hd.title",
+    keywords: ["hd", "meeting"],
+  },
+  {
+    label: "Chinese mirror",
+    i18nKey: "settings.recording.system.chineseMirror.title",
+    keywords: ["china", "mirror"],
+  },
 ];
-import { LockedSetting, ManagedSwitch } from "@/components/enterprise-locked-setting";
+import {
+  LockedSetting,
+  ManagedSwitch,
+} from "@/components/enterprise-locked-setting";
 import {
   Select,
   SelectContent,
@@ -102,12 +199,15 @@ import {
   CommandGroup,
   CommandItem,
 } from "@/components/ui/command";
-import { commands, SettingsStore, MonitorDevice, AudioDeviceInfo, HardwareCapability } from "@/lib/utils/tauri";
-
 import {
-  useSettings,
-  Settings,
-} from "@/lib/hooks/use-settings";
+  commands,
+  SettingsStore,
+  MonitorDevice,
+  AudioDeviceInfo,
+  HardwareCapability,
+} from "@/lib/utils/tauri";
+
+import { useSettings, Settings } from "@/lib/hooks/use-settings";
 import { hasAppEntitlement } from "@/lib/app-entitlement";
 import { useToast } from "@/components/ui/use-toast";
 import { useHealthCheck } from "@/lib/hooks/use-health-check";
@@ -134,12 +234,22 @@ import {
 import { open } from "@tauri-apps/plugin-dialog";
 import { ToastAction } from "@/components/ui/toast";
 import { open as openUrl } from "@tauri-apps/plugin-shell";
-import { listen } from "@tauri-apps/api/event";
+import { useTauriEvent } from "@/lib/hooks/use-tauri-event";
 import { getMediaFile } from "@/lib/actions/video-actions";
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent } from "@/components/ui/card";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { MeetingAppsPicker } from "./meeting-apps-picker";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useSqlAutocomplete } from "@/lib/hooks/use-sql-autocomplete";
@@ -155,7 +265,7 @@ import {
   sanitizeValue,
   debounce,
   validateUrl,
-  FieldValidationResult
+  FieldValidationResult,
 } from "@/lib/utils/validation";
 import { AudioEqualizer } from "@/app/shortcut-reminder/audio-equalizer";
 
@@ -221,7 +331,7 @@ const getTranscriptionEngineLabel = (engine: string) =>
 const getAecMode = (
   settings: Pick<Settings, "aecMode">,
   isMacOS: boolean,
-  isWindows: boolean
+  isWindows: boolean,
 ): AecMode => {
   if (settings.aecMode === "screenpipe") return "screenpipe";
   if (settings.aecMode === "macos" && isMacOS) return "macos";
@@ -236,7 +346,10 @@ const getAecModeSettings = (mode: AecMode) => ({
   windowsInputAecEnabled: mode === "windows",
 });
 
-const AEC_MODE_DETAIL_KEYS: Record<AecMode, { labelKey: string; descriptionKey: string }> = {
+const AEC_MODE_DETAIL_KEYS: Record<
+  AecMode,
+  { labelKey: string; descriptionKey: string }
+> = {
   off: {
     labelKey: "settings.recording.aec.option.off",
     descriptionKey: "settings.recording.aec.description.off",
@@ -257,7 +370,7 @@ const AEC_MODE_DETAIL_KEYS: Record<AecMode, { labelKey: string; descriptionKey: 
 
 const getAecModeDetails = (
   mode: AecMode,
-  t: ReturnType<typeof useI18n>["t"]
+  t: ReturnType<typeof useI18n>["t"],
 ) => {
   const details = AEC_MODE_DETAIL_KEYS[mode];
   return {
@@ -267,13 +380,13 @@ const getAecModeDetails = (
 };
 
 const getAudioEngineResolution = (
-  settings: AudioEngineResolutionSettings
+  settings: AudioEngineResolutionSettings,
 ): AudioEngineResolution => {
   const requested = settings.audioTranscriptionEngine;
   const fallback = FALLBACK_TRANSCRIPTION_ENGINE;
   const hasCloudAuth = Boolean(settings.user?.token || settings.user?.id);
   const hasDeepgramKey = Boolean(
-    settings.deepgramApiKey && settings.deepgramApiKey !== "default"
+    settings.deepgramApiKey && settings.deepgramApiKey !== "default",
   );
 
   if (requested === "screenpipe-cloud" && !hasCloudAuth) {
@@ -284,7 +397,10 @@ const getAudioEngineResolution = (
     };
   }
 
-  if (requested === "screenpipe-cloud" && !hasAppEntitlement(settings.user as any)) {
+  if (
+    requested === "screenpipe-cloud" &&
+    !hasAppEntitlement(settings.user as any)
+  ) {
     return {
       requested,
       active: fallback,
@@ -309,7 +425,7 @@ const getAudioEngineResolution = (
 
 const getAudioFallbackMessage = (
   reason: AudioEngineFallbackReason,
-  t: ReturnType<typeof useI18n>["t"]
+  t: ReturnType<typeof useI18n>["t"],
 ) => {
   switch (reason) {
     case "notLoggedIn":
@@ -317,7 +433,9 @@ const getAudioFallbackMessage = (
     case "notSubscribed":
       return t("settings.recording.transcriptionEngine.fallback.notSubscribed");
     case "missingDeepgramKey":
-      return t("settings.recording.transcriptionEngine.fallback.missingDeepgramKey");
+      return t(
+        "settings.recording.transcriptionEngine.fallback.missingDeepgramKey",
+      );
   }
 };
 
@@ -418,7 +536,7 @@ const createAudioPreviewUrl = async (filePath: string) => {
     bytes[i] = binaryData.charCodeAt(i);
   }
   return URL.createObjectURL(
-    new Blob([bytes], { type: getAudioPreviewMimeType(filePath) })
+    new Blob([bytes], { type: getAudioPreviewMimeType(filePath) }),
   );
 };
 
@@ -466,7 +584,8 @@ function BackgroundTranscriptionDialog({
   const [items, setItems] = useState<AudioReconciliationBacklogItem[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [showQuietChunks, setShowQuietChunks] = useState(false);
-  const [previewItem, setPreviewItem] = useState<AudioReconciliationBacklogItem | null>(null);
+  const [previewItem, setPreviewItem] =
+    useState<AudioReconciliationBacklogItem | null>(null);
   const [previewSrc, setPreviewSrc] = useState<string | null>(null);
   const [previewLoadingId, setPreviewLoadingId] = useState<number | null>(null);
   const [previewPlaying, setPreviewPlaying] = useState(false);
@@ -493,10 +612,10 @@ function BackgroundTranscriptionDialog({
     workerState === "paused"
       ? t("settings.recording.backlog.worker.paused")
       : workerState === "running"
-      ? t("settings.recording.backlog.worker.running")
-      : workerState === "waiting"
-      ? t("settings.recording.backlog.worker.waiting")
-      : workerState;
+        ? t("settings.recording.backlog.worker.running")
+        : workerState === "waiting"
+          ? t("settings.recording.backlog.worker.waiting")
+          : workerState;
 
   const clearPreviewSrc = useCallback(() => {
     if (previewSrcRef.current) {
@@ -506,33 +625,35 @@ function BackgroundTranscriptionDialog({
     setPreviewSrc(null);
   }, []);
 
-  const refreshItems = useCallback(async (
-    options: { showLoading?: boolean } = {}
-  ) => {
-    const showLoading = options.showLoading !== false;
-    if (showLoading) {
-      setLoading(true);
-    }
-    try {
-      const response = await localFetch("/audio/reconciliation/backlog");
-      if (!response.ok) {
-        throw new Error(await getFetchErrorMessage(response));
-      }
-      const data = (await response.json()) as AudioReconciliationBacklogResponse;
-      setItems(data.items ?? []);
-      setPendingTotal(data.pending ?? data.items?.length ?? 0);
-    } catch (error) {
-      toast({
-        title: t("settings.recording.backlog.toast.loadFailed"),
-        description: error instanceof Error ? error.message : String(error),
-        variant: "destructive",
-      });
-    } finally {
+  const refreshItems = useCallback(
+    async (options: { showLoading?: boolean } = {}) => {
+      const showLoading = options.showLoading !== false;
       if (showLoading) {
-        setLoading(false);
+        setLoading(true);
       }
-    }
-  }, [t, toast]);
+      try {
+        const response = await localFetch("/audio/reconciliation/backlog");
+        if (!response.ok) {
+          throw new Error(await getFetchErrorMessage(response));
+        }
+        const data =
+          (await response.json()) as AudioReconciliationBacklogResponse;
+        setItems(data.items ?? []);
+        setPendingTotal(data.pending ?? data.items?.length ?? 0);
+      } catch (error) {
+        toast({
+          title: t("settings.recording.backlog.toast.loadFailed"),
+          description: error instanceof Error ? error.message : String(error),
+          variant: "destructive",
+        });
+      } finally {
+        if (showLoading) {
+          setLoading(false);
+        }
+      }
+    },
+    [t, toast],
+  );
 
   useEffect(() => {
     if (open) {
@@ -593,19 +714,25 @@ function BackgroundTranscriptionDialog({
     return () => {
       canceled = true;
     };
-  }, [clearPreviewSrc, previewItem?.audio_chunk_id, previewItem?.file_path, t, toast]);
+  }, [
+    clearPreviewSrc,
+    previewItem?.audio_chunk_id,
+    previewItem?.file_path,
+    t,
+    toast,
+  ]);
 
   const quietItems = useMemo(
     () => items.filter((item) => item.likely_empty),
-    [items]
+    [items],
   );
   const readyItems = useMemo(
     () => items.filter((item) => !item.likely_empty),
-    [items]
+    [items],
   );
   const activeItems = useMemo(
-    () => showQuietChunks ? items : readyItems,
-    [items, readyItems, showQuietChunks]
+    () => (showQuietChunks ? items : readyItems),
+    [items, readyItems, showQuietChunks],
   );
   const filteredItems = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
@@ -621,7 +748,9 @@ function BackgroundTranscriptionDialog({
         formatBacklogCapturedAt(item.captured_at),
         formatBacklogSeconds(item.age_seconds),
         formatBacklogFileSize(item.file_size_bytes),
-      ].join(" ").toLowerCase();
+      ]
+        .join(" ")
+        .toLowerCase();
       return haystack.includes(query);
     });
   }, [activeItems, searchQuery]);
@@ -641,21 +770,25 @@ function BackgroundTranscriptionDialog({
     }
   }, [activeItems, clearPreviewSrc, previewItemId]);
 
-  const handlePreviewAudio = useCallback((item: AudioReconciliationBacklogItem) => {
-    const isCurrentPreview = previewItem?.audio_chunk_id === item.audio_chunk_id;
-    if (isCurrentPreview) {
-      audioRef.current?.pause();
-      setPreviewItem(null);
-      setPreviewLoadingId(null);
-      clearPreviewSrc();
-      setPreviewPlaying(false);
-      setPreviewCurrentTime(0);
-      setPreviewDuration(0);
-      return;
-    }
+  const handlePreviewAudio = useCallback(
+    (item: AudioReconciliationBacklogItem) => {
+      const isCurrentPreview =
+        previewItem?.audio_chunk_id === item.audio_chunk_id;
+      if (isCurrentPreview) {
+        audioRef.current?.pause();
+        setPreviewItem(null);
+        setPreviewLoadingId(null);
+        clearPreviewSrc();
+        setPreviewPlaying(false);
+        setPreviewCurrentTime(0);
+        setPreviewDuration(0);
+        return;
+      }
 
-    setPreviewItem(item);
-  }, [clearPreviewSrc, previewItem?.audio_chunk_id]);
+      setPreviewItem(item);
+    },
+    [clearPreviewSrc, previewItem?.audio_chunk_id],
+  );
 
   const handlePreviewPlayback = useCallback(() => {
     const audio = audioRef.current;
@@ -669,99 +802,125 @@ function BackgroundTranscriptionDialog({
     void audio.play().catch(() => {
       toast({
         title: t("settings.recording.backlog.toast.audioPreviewFailedTitle"),
-        description: t("settings.recording.backlog.toast.audioPreviewFailedDescription"),
+        description: t(
+          "settings.recording.backlog.toast.audioPreviewFailedDescription",
+        ),
         variant: "destructive",
       });
     });
   }, [previewSrc, t, toast]);
 
-  const seekPreview = useCallback((seconds: number) => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const seekPreview = useCallback(
+    (seconds: number) => {
+      const audio = audioRef.current;
+      if (!audio) return;
 
-    const duration = Number.isFinite(audio.duration) ? audio.duration : previewDuration;
-    const max = duration > 0 ? duration : seconds;
-    const nextTime = Math.min(Math.max(seconds, 0), Math.max(max, 0));
-    audio.currentTime = nextTime;
-    setPreviewCurrentTime(nextTime);
-  }, [previewDuration]);
+      const duration = Number.isFinite(audio.duration)
+        ? audio.duration
+        : previewDuration;
+      const max = duration > 0 ? duration : seconds;
+      const nextTime = Math.min(Math.max(seconds, 0), Math.max(max, 0));
+      audio.currentTime = nextTime;
+      setPreviewCurrentTime(nextTime);
+    },
+    [previewDuration],
+  );
 
-  const stepPreview = useCallback((seconds: number) => {
-    const audio = audioRef.current;
-    const currentTime = audio?.currentTime ?? previewCurrentTime;
-    seekPreview(currentTime + seconds);
-  }, [previewCurrentTime, seekPreview]);
+  const stepPreview = useCallback(
+    (seconds: number) => {
+      const audio = audioRef.current;
+      const currentTime = audio?.currentTime ?? previewCurrentTime;
+      seekPreview(currentTime + seconds);
+    },
+    [previewCurrentTime, seekPreview],
+  );
 
-  const handleForceRun = useCallback(async (audioChunkId: number) => {
-    setRunningId(audioChunkId);
-    try {
-      const response = await localFetch("/audio/retranscribe", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ audio_chunk_ids: [audioChunkId] }),
-      });
-      if (!response.ok) {
-        throw new Error(await getFetchErrorMessage(response));
+  const handleForceRun = useCallback(
+    async (audioChunkId: number) => {
+      setRunningId(audioChunkId);
+      try {
+        const response = await localFetch("/audio/retranscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ audio_chunk_ids: [audioChunkId] }),
+        });
+        if (!response.ok) {
+          throw new Error(await getFetchErrorMessage(response));
+        }
+        const result = await response.json();
+        toast({
+          title:
+            result.chunks_processed > 0
+              ? t("settings.recording.backlog.toast.chunkTranscribed")
+              : t("settings.recording.backlog.toast.nothingProcessed"),
+          description:
+            result.chunks_processed > 0
+              ? t("settings.recording.backlog.toast.chunkProcessed", {
+                  id: audioChunkId,
+                })
+              : t("settings.recording.backlog.toast.chunkNoTranscript", {
+                  id: audioChunkId,
+                }),
+        });
+        await refreshItems({ showLoading: false });
+      } catch (error) {
+        toast({
+          title: t("settings.recording.backlog.toast.runFailed"),
+          description: error instanceof Error ? error.message : String(error),
+          variant: "destructive",
+        });
+      } finally {
+        setRunningId(null);
       }
-      const result = await response.json();
-      toast({
-        title: result.chunks_processed > 0
-          ? t("settings.recording.backlog.toast.chunkTranscribed")
-          : t("settings.recording.backlog.toast.nothingProcessed"),
-        description:
-          result.chunks_processed > 0
-            ? t("settings.recording.backlog.toast.chunkProcessed", { id: audioChunkId })
-            : t("settings.recording.backlog.toast.chunkNoTranscript", { id: audioChunkId }),
-      });
-      await refreshItems({ showLoading: false });
-    } catch (error) {
-      toast({
-        title: t("settings.recording.backlog.toast.runFailed"),
-        description: error instanceof Error ? error.message : String(error),
-        variant: "destructive",
-      });
-    } finally {
-      setRunningId(null);
-    }
-  }, [refreshItems, t, toast]);
+    },
+    [refreshItems, t, toast],
+  );
 
-  const handleDrop = useCallback(async (item: AudioReconciliationBacklogItem) => {
-    const ok = window.confirm(
-      t("settings.recording.backlog.confirmDrop", { id: item.audio_chunk_id })
-    );
-    if (!ok) return;
-
-    setDroppingId(item.audio_chunk_id);
-    try {
-      const response = await localFetch(
-        `/audio/reconciliation/backlog/${item.audio_chunk_id}`,
-        { method: "DELETE" }
+  const handleDrop = useCallback(
+    async (item: AudioReconciliationBacklogItem) => {
+      const ok = window.confirm(
+        t("settings.recording.backlog.confirmDrop", {
+          id: item.audio_chunk_id,
+        }),
       );
-      if (!response.ok) {
-        throw new Error(await getFetchErrorMessage(response));
+      if (!ok) return;
+
+      setDroppingId(item.audio_chunk_id);
+      try {
+        const response = await localFetch(
+          `/audio/reconciliation/backlog/${item.audio_chunk_id}`,
+          { method: "DELETE" },
+        );
+        if (!response.ok) {
+          throw new Error(await getFetchErrorMessage(response));
+        }
+        setItems((current) =>
+          current.filter((row) => row.audio_chunk_id !== item.audio_chunk_id),
+        );
+        setPendingTotal((current) =>
+          Math.max(0, (current ?? visiblePending) - 1),
+        );
+        toast({
+          title: t("settings.recording.backlog.toast.chunkDropped"),
+          description: getAudioFileName(item.file_path),
+        });
+      } catch (error) {
+        toast({
+          title: t("settings.recording.backlog.toast.dropFailed"),
+          description: error instanceof Error ? error.message : String(error),
+          variant: "destructive",
+        });
+      } finally {
+        setDroppingId(null);
       }
-      setItems((current) =>
-        current.filter((row) => row.audio_chunk_id !== item.audio_chunk_id)
-      );
-      setPendingTotal((current) => Math.max(0, (current ?? visiblePending) - 1));
-      toast({
-        title: t("settings.recording.backlog.toast.chunkDropped"),
-        description: getAudioFileName(item.file_path),
-      });
-    } catch (error) {
-      toast({
-        title: t("settings.recording.backlog.toast.dropFailed"),
-        description: error instanceof Error ? error.message : String(error),
-        variant: "destructive",
-      });
-    } finally {
-      setDroppingId(null);
-    }
-  }, [t, toast, visiblePending]);
+    },
+    [t, toast, visiblePending],
+  );
 
-  const oldestPending = pending > 0
-    ? formatBacklogAge(audioPipeline?.oldest_pending_transcription_at)
-    : t("settings.recording.backlog.none");
+  const oldestPending =
+    pending > 0
+      ? formatBacklogAge(audioPipeline?.oldest_pending_transcription_at)
+      : t("settings.recording.backlog.none");
   const showingLimitedRows = visiblePending > items.length;
   const showInitialSkeleton = loading && items.length === 0;
   const skeletonRows = Array.from({ length: 10 });
@@ -808,26 +967,45 @@ function BackgroundTranscriptionDialog({
                 {t("settings.recording.backlog.description")}
               </DialogDescription>
             </div>
-            <Badge variant="outline" className="mt-0.5 shrink-0 rounded-none font-mono text-[10px]">
-              {t("settings.recording.backlog.workerLabel", { state: workerStateLabel })}
+            <Badge
+              variant="outline"
+              className="mt-0.5 shrink-0 rounded-none font-mono text-[10px]"
+            >
+              {t("settings.recording.backlog.workerLabel", {
+                state: workerStateLabel,
+              })}
             </Badge>
           </div>
 
           <div className="grid shrink-0 grid-cols-2 gap-2 text-xs sm:grid-cols-4">
             <div className="border border-border px-2 py-1.5">
-              <div className="text-muted-foreground">{t("settings.recording.backlog.stat.readyLoaded")}</div>
-              <div className="font-mono text-sm">{readyItems.length.toLocaleString()}</div>
+              <div className="text-muted-foreground">
+                {t("settings.recording.backlog.stat.readyLoaded")}
+              </div>
+              <div className="font-mono text-sm">
+                {readyItems.length.toLocaleString()}
+              </div>
             </div>
             <div className="border border-border px-2 py-1.5">
-              <div className="text-muted-foreground">{t("settings.recording.backlog.stat.quietLoaded")}</div>
-              <div className="font-mono text-sm">{quietItems.length.toLocaleString()}</div>
+              <div className="text-muted-foreground">
+                {t("settings.recording.backlog.stat.quietLoaded")}
+              </div>
+              <div className="font-mono text-sm">
+                {quietItems.length.toLocaleString()}
+              </div>
             </div>
             <div className="border border-border px-2 py-1.5">
-              <div className="text-muted-foreground">{t("settings.recording.backlog.stat.totalCandidates")}</div>
-              <div className="font-mono text-sm">{visiblePending.toLocaleString()}</div>
+              <div className="text-muted-foreground">
+                {t("settings.recording.backlog.stat.totalCandidates")}
+              </div>
+              <div className="font-mono text-sm">
+                {visiblePending.toLocaleString()}
+              </div>
             </div>
             <div className="border border-border px-2 py-1.5">
-              <div className="text-muted-foreground">{t("settings.recording.backlog.stat.oldestCandidate")}</div>
+              <div className="text-muted-foreground">
+                {t("settings.recording.backlog.stat.oldestCandidate")}
+              </div>
               <div className="font-mono text-sm">{oldestPending}</div>
             </div>
           </div>
@@ -849,7 +1027,7 @@ function BackgroundTranscriptionDialog({
               size="sm"
               className={cn(
                 "h-8 shrink-0 gap-1 border border-border bg-background px-2 text-xs text-foreground hover:bg-muted hover:text-foreground active:bg-muted",
-                showQuietChunks && "bg-muted"
+                showQuietChunks && "bg-muted",
               )}
               onClick={() => setShowQuietChunks((value) => !value)}
             >
@@ -865,8 +1043,13 @@ function BackgroundTranscriptionDialog({
                 {quietItems.length.toLocaleString()}
               </span>
             </Button>
-            <Badge variant="secondary" className="h-8 shrink-0 rounded-none px-2 font-mono text-[10px]">
-              {t("settings.recording.backlog.shown", { count: filteredItems.length.toLocaleString() })}
+            <Badge
+              variant="secondary"
+              className="h-8 shrink-0 rounded-none px-2 font-mono text-[10px]"
+            >
+              {t("settings.recording.backlog.shown", {
+                count: filteredItems.length.toLocaleString(),
+              })}
             </Badge>
             <Button
               type="button"
@@ -881,51 +1064,73 @@ function BackgroundTranscriptionDialog({
             </Button>
           </div>
 
-          <div className="relative min-h-0 flex-1 overflow-auto border border-border/60" aria-busy={loading}>
+          <div
+            className="relative min-h-0 flex-1 overflow-auto border border-border/60"
+            aria-busy={loading}
+          >
             <table className="w-full min-w-[720px] table-fixed text-xs">
               <thead className="sticky top-0 z-10 bg-background">
                 <tr className="border-b border-border/60 bg-muted/30 text-left text-muted-foreground">
-                  <th className="w-[72px] px-2 py-1.5 font-medium">{t("settings.recording.backlog.column.chunk")}</th>
-                  <th className="w-[64px] px-2 py-1.5 font-medium">{t("settings.recording.backlog.column.age")}</th>
-                  <th className="w-[92px] px-2 py-1.5 font-medium">{t("settings.recording.backlog.column.captured")}</th>
-                  <th className="px-2 py-1.5 font-medium">{t("settings.recording.backlog.column.file")}</th>
-                  <th className="w-[92px] px-2 py-1.5 font-medium">{t("settings.recording.backlog.column.status")}</th>
-                  <th className="w-[120px] px-2 py-1.5 text-right font-medium">{t("settings.recording.backlog.column.actions")}</th>
+                  <th className="w-[72px] px-2 py-1.5 font-medium">
+                    {t("settings.recording.backlog.column.chunk")}
+                  </th>
+                  <th className="w-[64px] px-2 py-1.5 font-medium">
+                    {t("settings.recording.backlog.column.age")}
+                  </th>
+                  <th className="w-[92px] px-2 py-1.5 font-medium">
+                    {t("settings.recording.backlog.column.captured")}
+                  </th>
+                  <th className="px-2 py-1.5 font-medium">
+                    {t("settings.recording.backlog.column.file")}
+                  </th>
+                  <th className="w-[92px] px-2 py-1.5 font-medium">
+                    {t("settings.recording.backlog.column.status")}
+                  </th>
+                  <th className="w-[120px] px-2 py-1.5 text-right font-medium">
+                    {t("settings.recording.backlog.column.actions")}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                {showInitialSkeleton && skeletonRows.map((_, index) => (
-                  <tr key={`backlog-skeleton-${index}`} className="border-b border-border/60">
-                    <td className="px-2 py-2">
-                      <Skeleton className="h-3 w-12" />
-                    </td>
-                    <td className="px-2 py-2">
-                      <Skeleton className="h-3 w-10" />
-                    </td>
-                    <td className="px-2 py-2">
-                      <Skeleton className="h-3 w-14" />
-                    </td>
-                    <td className="px-2 py-2">
-                      <div className="flex min-w-0 items-center gap-2">
-                        <Skeleton className="h-3 flex-1" />
-                        <Skeleton className="h-3 w-12 shrink-0" />
-                      </div>
-                    </td>
-                    <td className="px-2 py-2">
-                      <Skeleton className="h-5 w-16" />
-                    </td>
-                    <td className="px-2 py-2">
-                      <div className="flex justify-end gap-1">
-                        <Skeleton className="h-7 w-7" />
-                        <Skeleton className="h-7 w-7" />
-                        <Skeleton className="h-7 w-7" />
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {showInitialSkeleton &&
+                  skeletonRows.map((_, index) => (
+                    <tr
+                      key={`backlog-skeleton-${index}`}
+                      className="border-b border-border/60"
+                    >
+                      <td className="px-2 py-2">
+                        <Skeleton className="h-3 w-12" />
+                      </td>
+                      <td className="px-2 py-2">
+                        <Skeleton className="h-3 w-10" />
+                      </td>
+                      <td className="px-2 py-2">
+                        <Skeleton className="h-3 w-14" />
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <Skeleton className="h-3 flex-1" />
+                          <Skeleton className="h-3 w-12 shrink-0" />
+                        </div>
+                      </td>
+                      <td className="px-2 py-2">
+                        <Skeleton className="h-5 w-16" />
+                      </td>
+                      <td className="px-2 py-2">
+                        <div className="flex justify-end gap-1">
+                          <Skeleton className="h-7 w-7" />
+                          <Skeleton className="h-7 w-7" />
+                          <Skeleton className="h-7 w-7" />
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
                 {!showInitialSkeleton && filteredItems.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-2 py-6 text-center text-muted-foreground">
+                    <td
+                      colSpan={6}
+                      className="px-2 py-6 text-center text-muted-foreground"
+                    >
                       {items.length === 0
                         ? t("settings.recording.backlog.empty.noWaiting")
                         : activeItems.length === 0 && !showQuietChunks
@@ -934,143 +1139,179 @@ function BackgroundTranscriptionDialog({
                     </td>
                   </tr>
                 )}
-                {!showInitialSkeleton && filteredItems.map((item) => {
-                  const isPreviewing = previewItem?.audio_chunk_id === item.audio_chunk_id;
-                  const statusLabel = item.likely_empty
-                    ? t("settings.recording.backlog.status.quiet")
-                    : item.status;
+                {!showInitialSkeleton &&
+                  filteredItems.map((item) => {
+                    const isPreviewing =
+                      previewItem?.audio_chunk_id === item.audio_chunk_id;
+                    const statusLabel = item.likely_empty
+                      ? t("settings.recording.backlog.status.quiet")
+                      : item.status;
 
-                  return (
-                    <React.Fragment key={item.audio_chunk_id}>
-                      <tr
-                        className={cn(
-                          "cursor-pointer border-b border-border/60",
-                          item.likely_empty && "bg-muted/20",
-                          isPreviewing && "bg-muted/40"
-                        )}
-                        onClick={() => handlePreviewAudio(item)}
-                      >
-                        <td className="px-2 py-1.5 font-mono text-foreground">
-                          {item.audio_chunk_id}
-                        </td>
-                        <td className="px-2 py-1.5 font-mono text-foreground whitespace-nowrap">
-                          {formatBacklogSeconds(item.age_seconds)}
-                        </td>
-                        <td
-                          className="px-2 py-1.5 font-mono text-muted-foreground whitespace-nowrap"
-                          title={new Date(item.captured_at).toLocaleString()}
+                    return (
+                      <React.Fragment key={item.audio_chunk_id}>
+                        <tr
+                          className={cn(
+                            "cursor-pointer border-b border-border/60",
+                            item.likely_empty && "bg-muted/20",
+                            isPreviewing && "bg-muted/40",
+                          )}
+                          onClick={() => handlePreviewAudio(item)}
                         >
-                          {formatBacklogCapturedAt(item.captured_at)}
-                        </td>
-                        <td
-                          className="px-2 py-1.5 font-mono text-muted-foreground"
-                          title={item.file_path}
-                        >
-                          <div className="flex min-w-0 items-center gap-2">
-                            <span className="truncate">
-                              {getAudioFileName(item.file_path)}
-                            </span>
-                            {item.file_size_bytes != null && (
-                              <span className="shrink-0 text-[10px] text-muted-foreground/80">
-                                {formatBacklogFileSize(item.file_size_bytes)}
-                              </span>
-                            )}
-                          </div>
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <Badge
-                            variant={item.likely_empty ? "secondary" : "outline"}
-                            className="font-mono text-[10px]"
+                          <td className="px-2 py-1.5 font-mono text-foreground">
+                            {item.audio_chunk_id}
+                          </td>
+                          <td className="px-2 py-1.5 font-mono text-foreground whitespace-nowrap">
+                            {formatBacklogSeconds(item.age_seconds)}
+                          </td>
+                          <td
+                            className="px-2 py-1.5 font-mono text-muted-foreground whitespace-nowrap"
+                            title={new Date(item.captured_at).toLocaleString()}
                           >
-                            {statusLabel}
-                          </Badge>
-                        </td>
-                        <td className="px-2 py-1.5">
-                          <TooltipProvider delayDuration={150}>
-                            <div className="flex justify-end gap-1">
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className={cn(
-                                      "h-7 w-7 border border-border bg-background text-foreground hover:bg-muted hover:text-foreground active:bg-muted",
-                                      isPreviewing && "bg-muted"
-                                    )}
-                                    aria-label={t("settings.recording.backlog.previewChunk", { id: item.audio_chunk_id })}
-                                    disabled={droppingId === item.audio_chunk_id}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      handlePreviewAudio(item);
-                                    }}
-                                  >
-                                    {previewLoadingId === item.audio_chunk_id ? (
-                                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                    ) : (
-                                      <FileAudio className="h-3.5 w-3.5" />
-                                    )}
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">
-                                  {isPreviewing
-                                    ? t("settings.recording.backlog.closeAudioControls")
-                                    : t("settings.recording.backlog.openAudioControls")}
-                                </TooltipContent>
-                              </Tooltip>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7 border border-border bg-background text-foreground hover:bg-muted hover:text-foreground active:bg-muted"
-                                    aria-label={t("settings.recording.backlog.transcribeChunk", { id: item.audio_chunk_id })}
-                                    disabled={runningId === item.audio_chunk_id || droppingId === item.audio_chunk_id}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      void handleForceRun(item.audio_chunk_id);
-                                    }}
-                                  >
-                                    {runningId === item.audio_chunk_id ? (
-                                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                    ) : (
-                                      <FileText className="h-3.5 w-3.5" />
-                                    )}
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">{t("settings.recording.backlog.transcribeNow")}</TooltipContent>
-                              </Tooltip>
-                              <Tooltip>
-                                <TooltipTrigger asChild>
-                                  <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="icon"
-                                    className="h-7 w-7 border border-border bg-background text-muted-foreground hover:bg-muted hover:text-destructive active:bg-muted"
-                                    aria-label={t("settings.recording.backlog.dropChunk", { id: item.audio_chunk_id })}
-                                    disabled={droppingId === item.audio_chunk_id || runningId === item.audio_chunk_id}
-                                    onClick={(event) => {
-                                      event.stopPropagation();
-                                      void handleDrop(item);
-                                    }}
-                                  >
-                                    {droppingId === item.audio_chunk_id ? (
-                                      <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                                    ) : (
-                                      <Trash2 className="h-3.5 w-3.5" />
-                                    )}
-                                  </Button>
-                                </TooltipTrigger>
-                                <TooltipContent side="top">{t("settings.recording.backlog.dropWaitingChunk")}</TooltipContent>
-                              </Tooltip>
+                            {formatBacklogCapturedAt(item.captured_at)}
+                          </td>
+                          <td
+                            className="px-2 py-1.5 font-mono text-muted-foreground"
+                            title={item.file_path}
+                          >
+                            <div className="flex min-w-0 items-center gap-2">
+                              <span className="truncate">
+                                {getAudioFileName(item.file_path)}
+                              </span>
+                              {item.file_size_bytes != null && (
+                                <span className="shrink-0 text-[10px] text-muted-foreground/80">
+                                  {formatBacklogFileSize(item.file_size_bytes)}
+                                </span>
+                              )}
                             </div>
-                          </TooltipProvider>
-                        </td>
-                      </tr>
-                    </React.Fragment>
-                  );
-                })}
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <Badge
+                              variant={
+                                item.likely_empty ? "secondary" : "outline"
+                              }
+                              className="font-mono text-[10px]"
+                            >
+                              {statusLabel}
+                            </Badge>
+                          </td>
+                          <td className="px-2 py-1.5">
+                            <TooltipProvider delayDuration={150}>
+                              <div className="flex justify-end gap-1">
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      className={cn(
+                                        "h-7 w-7 border border-border bg-background text-foreground hover:bg-muted hover:text-foreground active:bg-muted",
+                                        isPreviewing && "bg-muted",
+                                      )}
+                                      aria-label={t(
+                                        "settings.recording.backlog.previewChunk",
+                                        { id: item.audio_chunk_id },
+                                      )}
+                                      disabled={
+                                        droppingId === item.audio_chunk_id
+                                      }
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        handlePreviewAudio(item);
+                                      }}
+                                    >
+                                      {previewLoadingId ===
+                                      item.audio_chunk_id ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <FileAudio className="h-3.5 w-3.5" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">
+                                    {isPreviewing
+                                      ? t(
+                                          "settings.recording.backlog.closeAudioControls",
+                                        )
+                                      : t(
+                                          "settings.recording.backlog.openAudioControls",
+                                        )}
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-7 w-7 border border-border bg-background text-foreground hover:bg-muted hover:text-foreground active:bg-muted"
+                                      aria-label={t(
+                                        "settings.recording.backlog.transcribeChunk",
+                                        { id: item.audio_chunk_id },
+                                      )}
+                                      disabled={
+                                        runningId === item.audio_chunk_id ||
+                                        droppingId === item.audio_chunk_id
+                                      }
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        void handleForceRun(
+                                          item.audio_chunk_id,
+                                        );
+                                      }}
+                                    >
+                                      {runningId === item.audio_chunk_id ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <FileText className="h-3.5 w-3.5" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">
+                                    {t(
+                                      "settings.recording.backlog.transcribeNow",
+                                    )}
+                                  </TooltipContent>
+                                </Tooltip>
+                                <Tooltip>
+                                  <TooltipTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      variant="ghost"
+                                      size="icon"
+                                      className="h-7 w-7 border border-border bg-background text-muted-foreground hover:bg-muted hover:text-destructive active:bg-muted"
+                                      aria-label={t(
+                                        "settings.recording.backlog.dropChunk",
+                                        { id: item.audio_chunk_id },
+                                      )}
+                                      disabled={
+                                        droppingId === item.audio_chunk_id ||
+                                        runningId === item.audio_chunk_id
+                                      }
+                                      onClick={(event) => {
+                                        event.stopPropagation();
+                                        void handleDrop(item);
+                                      }}
+                                    >
+                                      {droppingId === item.audio_chunk_id ? (
+                                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="h-3.5 w-3.5" />
+                                      )}
+                                    </Button>
+                                  </TooltipTrigger>
+                                  <TooltipContent side="top">
+                                    {t(
+                                      "settings.recording.backlog.dropWaitingChunk",
+                                    )}
+                                  </TooltipContent>
+                                </Tooltip>
+                              </div>
+                            </TooltipProvider>
+                          </td>
+                        </tr>
+                      </React.Fragment>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -1081,15 +1322,19 @@ function BackgroundTranscriptionDialog({
                 <FileAudio className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <div className="min-w-0 flex-1">
                   <div className="truncate font-mono text-xs text-foreground">
-                    {previewItem.audio_chunk_id} - {getAudioFileName(previewItem.file_path)}
+                    {previewItem.audio_chunk_id} -{" "}
+                    {getAudioFileName(previewItem.file_path)}
                   </div>
                   <div className="font-mono text-[10px] text-muted-foreground">
                     {formatBacklogFileSize(previewItem.file_size_bytes)}
-                    {previewItem.likely_empty ? ` - ${t("settings.recording.backlog.status.quiet")}` : ""}
+                    {previewItem.likely_empty
+                      ? ` - ${t("settings.recording.backlog.status.quiet")}`
+                      : ""}
                   </div>
                 </div>
               </div>
-              {previewLoadingId === previewItem.audio_chunk_id && !previewSrc ? (
+              {previewLoadingId === previewItem.audio_chunk_id &&
+              !previewSrc ? (
                 <div className="flex h-9 items-center gap-2 bg-muted/60 px-3 text-[11px] text-muted-foreground">
                   <Loader2 className="h-3 w-3 animate-spin" />
                   {t("settings.recording.backlog.loadingAudio")}
@@ -1104,7 +1349,9 @@ function BackgroundTranscriptionDialog({
                     src={previewSrc}
                     onLoadedMetadata={(event) => {
                       const duration = event.currentTarget.duration;
-                      setPreviewDuration(Number.isFinite(duration) ? duration : 0);
+                      setPreviewDuration(
+                        Number.isFinite(duration) ? duration : 0,
+                      );
                     }}
                     onTimeUpdate={(event) => {
                       setPreviewCurrentTime(event.currentTarget.currentTime);
@@ -1124,9 +1371,11 @@ function BackgroundTranscriptionDialog({
                     size="icon"
                     className="h-7 w-7 shrink-0 border border-border bg-background text-foreground hover:bg-muted hover:text-foreground active:bg-muted"
                     onClick={handlePreviewPlayback}
-                    aria-label={previewPlaying
-                      ? t("settings.recording.backlog.pausePreview")
-                      : t("settings.recording.backlog.playPreview")}
+                    aria-label={
+                      previewPlaying
+                        ? t("settings.recording.backlog.pausePreview")
+                        : t("settings.recording.backlog.playPreview")
+                    }
                   >
                     {previewPlaying ? (
                       <Pause className="h-3.5 w-3.5" />
@@ -1151,13 +1400,16 @@ function BackgroundTranscriptionDialog({
                     max={Math.max(previewDuration, 0)}
                     step={0.1}
                     value={Math.min(previewCurrentTime, previewDuration || 0)}
-                    onChange={(event) => seekPreview(Number(event.target.value))}
+                    onChange={(event) =>
+                      seekPreview(Number(event.target.value))
+                    }
                     disabled={previewDuration <= 0}
                     className="h-1 min-w-[180px] flex-1 accent-foreground"
                     aria-label={t("settings.recording.backlog.previewPosition")}
                   />
                   <span className="w-[76px] shrink-0 text-right font-mono text-[10px] text-muted-foreground">
-                    {formatAudioPreviewTime(previewCurrentTime)} / {formatAudioPreviewTime(previewDuration)}
+                    {formatAudioPreviewTime(previewCurrentTime)} /{" "}
+                    {formatAudioPreviewTime(previewDuration)}
                   </span>
                   <Button
                     type="button"
@@ -1183,16 +1435,23 @@ function BackgroundTranscriptionDialog({
             <span className="min-w-0 truncate">
               {t("settings.recording.backlog.footer.showing", {
                 shown: filteredItems.length.toLocaleString(),
-                total: (showQuietChunks ? items.length : readyItems.length).toLocaleString(),
+                total: (showQuietChunks
+                  ? items.length
+                  : readyItems.length
+                ).toLocaleString(),
                 kind: showQuietChunks
                   ? t("settings.recording.backlog.footer.loadedChunks")
                   : t("settings.recording.backlog.footer.readyLoadedChunks"),
               })}
               {!showQuietChunks && quietItems.length > 0
-                ? t("settings.recording.backlog.footer.quietHidden", { count: quietItems.length.toLocaleString() })
+                ? t("settings.recording.backlog.footer.quietHidden", {
+                    count: quietItems.length.toLocaleString(),
+                  })
                 : ""}
               {showingLimitedRows
-                ? t("settings.recording.backlog.footer.totalCandidates", { count: visiblePending.toLocaleString() })
+                ? t("settings.recording.backlog.footer.totalCandidates", {
+                    count: visiblePending.toLocaleString(),
+                  })
                 : ""}
             </span>
           </div>
@@ -1204,7 +1463,7 @@ function BackgroundTranscriptionDialog({
 
 const createWindowOptions = (
   windowItems: { name: string; count: number; app_name?: string }[],
-  existingPatterns: string[]
+  existingPatterns: string[],
 ) => {
   // Sort by usage frequency (most used first)
   const windowOptions = [...windowItems]
@@ -1217,7 +1476,9 @@ const createWindowOptions = (
       description: [
         item.app_name && item.app_name !== item.name ? item.app_name : null,
         `${formatCount(item.count)} captures`,
-      ].filter(Boolean).join(" · "),
+      ]
+        .filter(Boolean)
+        .join(" · "),
     }));
 
   // Custom patterns try the app-icon endpoint; OptionIcon falls back to Lucide if it returns a placeholder
@@ -1239,7 +1500,7 @@ const getFaviconUrl = (domain: string): string => {
 
 const createUrlOptions = (
   urlItems: { name: string; count: number }[],
-  existingUrls: string[]
+  existingUrls: string[],
 ) => {
   // Sort by usage frequency (most used first)
   const urlOptions = [...urlItems]
@@ -1276,7 +1537,11 @@ const getAudioDeviceDisplayName = (name: string): string => {
 
 const getAudioDeviceIcon = (name: string) => {
   const lower = name.toLowerCase();
-  if (lower.includes("bluetooth") || lower.includes("airpods") || lower.includes("headphone")) {
+  if (
+    lower.includes("bluetooth") ||
+    lower.includes("airpods") ||
+    lower.includes("headphone")
+  ) {
     return Headphones;
   }
   if (getAudioDeviceType(name) === "input") return Mic;
@@ -1333,7 +1598,9 @@ function TranscriptionDictionary({
     if (!filter) return vocabularyWords;
     const q = filter.toLowerCase();
     return vocabularyWords.filter(
-      (e) => e.word.toLowerCase().includes(q) || e.replacement?.toLowerCase().includes(q)
+      (e) =>
+        e.word.toLowerCase().includes(q) ||
+        e.replacement?.toLowerCase().includes(q),
     );
   }, [vocabularyWords, filter]);
 
@@ -1353,13 +1620,16 @@ function TranscriptionDictionary({
     const updated = [...vocabularyWords, ...toAdd.map((w) => ({ word: w }))];
     onChange(updated);
     toast({
-      title: t("settings.recording.vocabulary.toast.addedTerms", { count: toAdd.length }),
-      description: newTerms.length > toAdd.length
-        ? t("settings.recording.vocabulary.toast.skippedLimit", {
-          count: newTerms.length - toAdd.length,
-          limit: VOCAB_LIMIT,
-        })
-        : undefined,
+      title: t("settings.recording.vocabulary.toast.addedTerms", {
+        count: toAdd.length,
+      }),
+      description:
+        newTerms.length > toAdd.length
+          ? t("settings.recording.vocabulary.toast.skippedLimit", {
+              count: newTerms.length - toAdd.length,
+              limit: VOCAB_LIMIT,
+            })
+          : undefined,
     });
     setBulkText("");
     setShowBulk(false);
@@ -1401,7 +1671,13 @@ function TranscriptionDictionary({
                 variant="outline"
                 className="h-7 text-xs px-2 text-muted-foreground hover:text-destructive"
                 onClick={() => {
-                  if (confirm(t("settings.recording.vocabulary.confirmRemoveAll", { count: vocabularyWords.length }))) {
+                  if (
+                    confirm(
+                      t("settings.recording.vocabulary.confirmRemoveAll", {
+                        count: vocabularyWords.length,
+                      }),
+                    )
+                  ) {
                     onChange([]);
                   }
                 }}
@@ -1417,7 +1693,13 @@ function TranscriptionDictionary({
           <div className="text-[10px] text-muted-foreground/60 font-mono mb-2 px-1 flex gap-3">
             <span>
               {t("settings.recording.vocabulary.offlineChars", {
-                count: Math.min(vocabularyWords.reduce((n, e) => n + (e.replacement || e.word).length + 2, 0), WHISPER_CHAR_LIMIT),
+                count: Math.min(
+                  vocabularyWords.reduce(
+                    (n, e) => n + (e.replacement || e.word).length + 2,
+                    0,
+                  ),
+                  WHISPER_CHAR_LIMIT,
+                ),
                 limit: WHISPER_CHAR_LIMIT,
               })}
             </span>
@@ -1445,7 +1727,9 @@ function TranscriptionDictionary({
               <span className="text-xs text-muted-foreground">
                 {parsed.length > 0 ? (
                   <>
-                    {t("settings.recording.vocabulary.termsDetected", { count: parsed.length })}
+                    {t("settings.recording.vocabulary.termsDetected", {
+                      count: parsed.length,
+                    })}
                     {overLimit && (
                       <span className="text-destructive ml-1">
                         {t("settings.recording.vocabulary.exceedsLimitBy", {
@@ -1463,7 +1747,10 @@ function TranscriptionDictionary({
                   size="sm"
                   variant="outline"
                   className="h-7 text-xs px-2"
-                  onClick={() => { setBulkText(""); setShowBulk(false); }}
+                  onClick={() => {
+                    setBulkText("");
+                    setShowBulk(false);
+                  }}
                 >
                   {t("settings.recording.vocabulary.cancel")}
                 </Button>
@@ -1474,7 +1761,10 @@ function TranscriptionDictionary({
                   onClick={handleBulkImport}
                 >
                   {t("settings.recording.vocabulary.addTerms", {
-                    count: Math.min(parsed.length, VOCAB_LIMIT - vocabularyWords.length),
+                    count: Math.min(
+                      parsed.length,
+                      VOCAB_LIMIT - vocabularyWords.length,
+                    ),
                   })}
                 </Button>
               </div>
@@ -1502,12 +1792,21 @@ function TranscriptionDictionary({
             {filtered.map((entry, idx) => {
               const realIdx = vocabularyWords.indexOf(entry);
               return (
-                <div key={realIdx} className="flex items-center gap-2 text-sm bg-muted/50 px-2 py-0.5 group">
-                  <span className="font-mono text-xs truncate">{entry.word}</span>
+                <div
+                  key={realIdx}
+                  className="flex items-center gap-2 text-sm bg-muted/50 px-2 py-0.5 group"
+                >
+                  <span className="font-mono text-xs truncate">
+                    {entry.word}
+                  </span>
                   {entry.replacement && (
                     <>
-                      <span className="text-muted-foreground text-xs shrink-0">→</span>
-                      <span className="font-mono text-xs truncate">{entry.replacement}</span>
+                      <span className="text-muted-foreground text-xs shrink-0">
+                        →
+                      </span>
+                      <span className="font-mono text-xs truncate">
+                        {entry.replacement}
+                      </span>
                     </>
                   )}
                   <button
@@ -1540,14 +1839,20 @@ function TranscriptionDictionary({
           onSubmit={(e) => {
             e.preventDefault();
             const form = e.currentTarget;
-            const wordInput = form.elements.namedItem("vocab-word") as HTMLInputElement;
-            const replacementInput = form.elements.namedItem("vocab-replacement") as HTMLInputElement;
+            const wordInput = form.elements.namedItem(
+              "vocab-word",
+            ) as HTMLInputElement;
+            const replacementInput = form.elements.namedItem(
+              "vocab-replacement",
+            ) as HTMLInputElement;
             const word = wordInput.value.trim();
             if (!word) return;
             if (vocabularyWords.length >= VOCAB_LIMIT) {
               toast({
                 title: t("settings.recording.vocabulary.toast.limitReached"),
-                description: t("settings.recording.vocabulary.toast.maxTerms", { limit: VOCAB_LIMIT }),
+                description: t("settings.recording.vocabulary.toast.maxTerms", {
+                  limit: VOCAB_LIMIT,
+                }),
               });
               return;
             }
@@ -1556,14 +1861,23 @@ function TranscriptionDictionary({
             // Detect bulk paste in single input
             const terms = parseTerms(word);
             if (terms.length > 1) {
-              const existing = new Set(vocabularyWords.map((e) => e.word.toLowerCase()));
-              const newTerms = terms.filter((t) => !existing.has(t.toLowerCase()));
+              const existing = new Set(
+                vocabularyWords.map((e) => e.word.toLowerCase()),
+              );
+              const newTerms = terms.filter(
+                (t) => !existing.has(t.toLowerCase()),
+              );
               const available = VOCAB_LIMIT - vocabularyWords.length;
               const toAdd = newTerms.slice(0, available);
               if (toAdd.length > 0) {
-                onChange([...vocabularyWords, ...toAdd.map((w) => ({ word: w }))]);
+                onChange([
+                  ...vocabularyWords,
+                  ...toAdd.map((w) => ({ word: w })),
+                ]);
                 toast({
-                  title: t("settings.recording.vocabulary.toast.addedTerms", { count: toAdd.length }),
+                  title: t("settings.recording.vocabulary.toast.addedTerms", {
+                    count: toAdd.length,
+                  }),
                 });
               }
               wordInput.value = "";
@@ -1576,9 +1890,30 @@ function TranscriptionDictionary({
             replacementInput.value = "";
           }}
         >
-          <Input name="vocab-word" placeholder={t("settings.recording.vocabulary.wordPlaceholder")} className="h-7 text-xs flex-1" spellCheck={false} autoCorrect="off" autoCapitalize="off" />
-          <Input name="vocab-replacement" placeholder={t("settings.recording.vocabulary.replacementPlaceholder")} className="h-7 text-xs flex-1" spellCheck={false} autoCorrect="off" autoCapitalize="off" />
-          <Button type="submit" size="sm" variant="outline" className="h-7 text-xs px-2">
+          <Input
+            name="vocab-word"
+            placeholder={t("settings.recording.vocabulary.wordPlaceholder")}
+            className="h-7 text-xs flex-1"
+            spellCheck={false}
+            autoCorrect="off"
+            autoCapitalize="off"
+          />
+          <Input
+            name="vocab-replacement"
+            placeholder={t(
+              "settings.recording.vocabulary.replacementPlaceholder",
+            )}
+            className="h-7 text-xs flex-1"
+            spellCheck={false}
+            autoCorrect="off"
+            autoCapitalize="off"
+          />
+          <Button
+            type="submit"
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs px-2"
+          >
             {t("settings.recording.vocabulary.add")}
           </Button>
         </form>
@@ -1645,7 +1980,9 @@ function HighFpsCard({
   }, [fetchState]);
 
   const pushSettings = React.useCallback(
-    async (patch: Partial<{ defaultMode: HdDefaultMode; intervalMs: number }>): Promise<PushOutcome> => {
+    async (
+      patch: Partial<{ defaultMode: HdDefaultMode; intervalMs: number }>,
+    ): Promise<PushOutcome> => {
       setBusy(true);
       try {
         const res = await localFetch("/capture/hd/settings", {
@@ -1666,7 +2003,7 @@ function HighFpsCard({
         setBusy(false);
       }
     },
-    []
+    [],
   );
 
   const stopSession = React.useCallback(async () => {
@@ -1693,9 +2030,7 @@ function HighFpsCard({
       onSettingsChange(patch);
       const outcome = await pushSettings(runtimePatch);
       if (outcome.kind === "engine-down") {
-        setLastError(
-          t("settings.recording.hd.error.engineDown", { label }),
-        );
+        setLastError(t("settings.recording.hd.error.engineDown", { label }));
       } else if (outcome.kind === "engine-rejected") {
         setLastError(
           t("settings.recording.hd.error.rejected", {
@@ -1737,9 +2072,13 @@ function HighFpsCard({
           <div className="flex items-center space-x-2.5 min-w-0">
             <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
             <div className="min-w-0">
-              <h3 className="text-sm font-medium text-foreground">{t("settings.recording.hd.title")}</h3>
+              <h3 className="text-sm font-medium text-foreground">
+                {t("settings.recording.hd.title")}
+              </h3>
               <p className="text-xs text-muted-foreground">
-                {t("settings.recording.hd.description", { status: statusBadge })}
+                {t("settings.recording.hd.description", {
+                  status: statusBadge,
+                })}
               </p>
               <p className="text-[11px] text-muted-foreground mt-1">
                 {t("settings.recording.hd.startHintPrefix")}{" "}
@@ -1774,12 +2113,31 @@ function HighFpsCard({
             <div className="flex flex-col gap-1">
               {(
                 [
-                  { v: "ask" as const, label: t("settings.recording.hd.mode.ask"), hint: t("settings.recording.hd.mode.askHint") },
-                  { v: "always" as const, label: t("settings.recording.hd.mode.always"), hint: t("settings.recording.hd.mode.alwaysHint") },
-                  { v: "never" as const, label: t("settings.recording.hd.mode.never"), hint: t("settings.recording.hd.mode.neverHint") },
-                ] satisfies Array<{ v: HdDefaultMode; label: string; hint: string }>
+                  {
+                    v: "ask" as const,
+                    label: t("settings.recording.hd.mode.ask"),
+                    hint: t("settings.recording.hd.mode.askHint"),
+                  },
+                  {
+                    v: "always" as const,
+                    label: t("settings.recording.hd.mode.always"),
+                    hint: t("settings.recording.hd.mode.alwaysHint"),
+                  },
+                  {
+                    v: "never" as const,
+                    label: t("settings.recording.hd.mode.never"),
+                    hint: t("settings.recording.hd.mode.neverHint"),
+                  },
+                ] satisfies Array<{
+                  v: HdDefaultMode;
+                  label: string;
+                  hint: string;
+                }>
               ).map(({ v, label, hint }) => (
-                <label key={v} className="flex items-start gap-2 cursor-pointer">
+                <label
+                  key={v}
+                  className="flex items-start gap-2 cursor-pointer"
+                >
                   <input
                     type="radio"
                     name="hdDefault"
@@ -1795,7 +2153,9 @@ function HighFpsCard({
                   />
                   <span>
                     <span className="text-xs text-foreground">{label}</span>
-                    <span className="block text-[11px] text-muted-foreground">{hint}</span>
+                    <span className="block text-[11px] text-muted-foreground">
+                      {hint}
+                    </span>
                   </span>
                 </label>
               ))}
@@ -1804,7 +2164,9 @@ function HighFpsCard({
 
           <div className="flex items-center justify-between gap-3 pt-2 border-t border-border">
             <div className="min-w-0">
-              <h4 className="text-xs font-medium text-foreground">{t("settings.recording.hd.quality")}</h4>
+              <h4 className="text-xs font-medium text-foreground">
+                {t("settings.recording.hd.quality")}
+              </h4>
               <p className="text-[11px] text-muted-foreground">
                 {t("settings.recording.hd.qualityDescription")}
               </p>
@@ -1824,10 +2186,16 @@ function HighFpsCard({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="200">200 ms — 5 fps ({t("settings.recording.hd.option.light")})</SelectItem>
-                <SelectItem value="100">100 ms — 10 fps ({t("settings.recording.hd.option.default")})</SelectItem>
+                <SelectItem value="200">
+                  200 ms — 5 fps ({t("settings.recording.hd.option.light")})
+                </SelectItem>
+                <SelectItem value="100">
+                  100 ms — 10 fps ({t("settings.recording.hd.option.default")})
+                </SelectItem>
                 <SelectItem value="67">67 ms — 15 fps</SelectItem>
-                <SelectItem value="33">33 ms — 30 fps ({t("settings.recording.hd.option.max")})</SelectItem>
+                <SelectItem value="33">
+                  33 ms — 30 fps ({t("settings.recording.hd.option.max")})
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -1848,8 +2216,12 @@ export function RecordingSettings() {
   useSettingsIndexDriftCheck("Recording", searchIndex, sectionRootRef);
 
   // Add validation state
-  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-  const [pendingChanges, setPendingChanges] = useState<Partial<SettingsStore>>({});
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string>
+  >({});
+  const [pendingChanges, setPendingChanges] = useState<Partial<SettingsStore>>(
+    {},
+  );
   const [meetingAppsPickerOpen, setMeetingAppsPickerOpen] = useState(false);
 
   const { items: windowItems, isLoading: isWindowItemsLoading } =
@@ -1859,7 +2231,7 @@ export function RecordingSettings() {
     useSqlAutocomplete("url");
 
   const [availableMonitors, setAvailableMonitors] = useState<MonitorDevice[]>(
-    []
+    [],
   );
   const [availableAudioDevices, setAvailableAudioDevices] = useState<
     AudioDeviceInfo[]
@@ -1869,9 +2241,12 @@ export function RecordingSettings() {
   // the switch on macOS 14.4+ where the API exists. Probed once via a
   // Tauri command that proxies to
   // `screenpipe_audio::core::process_tap::is_process_tap_available()`.
-  const [coreaudioTapAvailable, setCoreaudioTapAvailable] = useState<boolean | null>(null);
+  const [coreaudioTapAvailable, setCoreaudioTapAvailable] = useState<
+    boolean | null
+  >(null);
   useEffect(() => {
-    commands.checkCoreaudioProcessTapAvailable()
+    commands
+      .checkCoreaudioProcessTapAvailable()
       .then(setCoreaudioTapAvailable)
       .catch(() => setCoreaudioTapAvailable(false));
   }, []);
@@ -1888,7 +2263,9 @@ export function RecordingSettings() {
   // on the existing 500ms tap-rebuild loop, so a write here propagates in
   // ~1 tick subject to the 60s REBUILD_COOLDOWN.
   const [audioExclusions, setAudioExclusions] = useState<ExcludedApp[]>([]);
-  const [pendingAudioExclusions, setPendingAudioExclusions] = useState<ExcludedApp[] | null>(null);
+  const [pendingAudioExclusions, setPendingAudioExclusions] = useState<
+    ExcludedApp[] | null
+  >(null);
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
   const effectiveAudioExclusions = pendingAudioExclusions ?? audioExclusions;
 
@@ -1918,11 +2295,12 @@ export function RecordingSettings() {
   const addAudioExclusion = useCallback(
     (app: ExcludedApp) => {
       const current = pendingAudioExclusions ?? audioExclusions;
-      if (!app.bundleId || current.some((a) => a.bundleId === app.bundleId)) return;
+      if (!app.bundleId || current.some((a) => a.bundleId === app.bundleId))
+        return;
       setPendingAudioExclusions([...current, app]);
       setHasUnsavedChanges(true);
     },
-    [pendingAudioExclusions, audioExclusions]
+    [pendingAudioExclusions, audioExclusions],
   );
 
   const removeAudioExclusion = useCallback(
@@ -1932,7 +2310,7 @@ export function RecordingSettings() {
       setSelectedBundleId((curr) => (curr === bundleId ? null : curr));
       setHasUnsavedChanges(true);
     },
-    [pendingAudioExclusions, audioExclusions]
+    [pendingAudioExclusions, audioExclusions],
   );
 
   const pickAppToExclude = useCallback(async () => {
@@ -1981,10 +2359,13 @@ export function RecordingSettings() {
   const [platformReady, setPlatformReady] = useState(false);
   const [showApiKey, setShowApiKey] = useState(false);
   const [showOpenAIApiKey, setShowOpenAIApiKey] = useState(false);
-  const [isRefreshingSubscription, setIsRefreshingSubscription] = useState(false);
+  const [isRefreshingSubscription, setIsRefreshingSubscription] =
+    useState(false);
   const { checkLogin } = useLoginDialog();
   const overlayData = useOverlayData();
-  const [hwCapability, setHwCapability] = useState<HardwareCapability | null>(null);
+  const [hwCapability, setHwCapability] = useState<HardwareCapability | null>(
+    null,
+  );
 
   // OpenAI Compatible model fetching
   const {
@@ -2010,7 +2391,10 @@ export function RecordingSettings() {
   } = useTranscriptionDiagnostics({ settings });
 
   useEffect(() => {
-    commands.getHardwareCapability().then(setHwCapability).catch(() => {});
+    commands
+      .getHardwareCapability()
+      .then(setHwCapability)
+      .catch(() => {});
   }, []);
 
   const audioEngineResolution = useMemo(
@@ -2023,15 +2407,16 @@ export function RecordingSettings() {
       settings.user?.entitlement,
       settings.user?.id,
       settings.user?.token,
-    ]
+    ],
   );
   const hasCloudTranscriptionAccess = hasAppEntitlement(settings.user as any);
   const languageSupportEngine = audioEngineResolution.active;
-  const languageSupportKey =
-    getTranscriptionEngineLanguageSupportKey(languageSupportEngine);
-  const languageSelectionsBySupportKeyRef = React.useRef<Record<string, string[]>>(
-    {}
+  const languageSupportKey = getTranscriptionEngineLanguageSupportKey(
+    languageSupportEngine,
   );
+  const languageSelectionsBySupportKeyRef = React.useRef<
+    Record<string, string[]>
+  >({});
   const languageSelectionSnapshotRef = React.useRef<{
     supportKey: string;
     languages: string[];
@@ -2041,12 +2426,17 @@ export function RecordingSettings() {
   });
   const supportedLanguageOptions = useMemo(
     () => getLanguageOptionsForTranscriptionEngine(languageSupportEngine),
-    [languageSupportEngine]
+    [languageSupportEngine],
   );
-  const languageSupportIsLimited = hasLimitedLanguageSupport(languageSupportEngine);
-  const languageSupportLabel = getTranscriptionEngineLabel(languageSupportEngine);
-  const languageSelectionUsesHints =
-    transcriptionEngineUsesLanguageHints(languageSupportEngine);
+  const languageSupportIsLimited = hasLimitedLanguageSupport(
+    languageSupportEngine,
+  );
+  const languageSupportLabel = getTranscriptionEngineLabel(
+    languageSupportEngine,
+  );
+  const languageSelectionUsesHints = transcriptionEngineUsesLanguageHints(
+    languageSupportEngine,
+  );
   const languageSupportDescription =
     settings.languages.length === 0
       ? languageSupportIsLimited
@@ -2066,7 +2456,11 @@ export function RecordingSettings() {
             })
           : t("settings.recording.languages.restrictsSelected");
   const selectedLanguageNames = settings.languages
-    .map((code) => supportedLanguageOptions.find((language) => language.code === code)?.name ?? code)
+    .map(
+      (code) =>
+        supportedLanguageOptions.find((language) => language.code === code)
+          ?.name ?? code,
+    )
     .join(", ");
   const languageTriggerLabel =
     settings.languages.length === 0
@@ -2082,68 +2476,84 @@ export function RecordingSettings() {
 
   // Optimized debounced validation
   const debouncedValidateSettings = useMemo(
-    () => debounce((newSettings: Partial<SettingsStore>) => {
-      const errors: Record<string, string> = {};
-      
-      // Validate numeric fields
-      if (newSettings.port !== undefined) {
-        const portValidation = validateField("port", newSettings.port);
-        if (!portValidation.isValid && portValidation.error) {
-          errors.port = portValidation.error;
+    () =>
+      debounce((newSettings: Partial<SettingsStore>) => {
+        const errors: Record<string, string> = {};
+
+        // Validate numeric fields
+        if (newSettings.port !== undefined) {
+          const portValidation = validateField("port", newSettings.port);
+          if (!portValidation.isValid && portValidation.error) {
+            errors.port = portValidation.error;
+          }
         }
-      }
-      
-      if (newSettings.dataDir !== undefined) {
-        const dataDirValidation = validateField("dataDir", newSettings.dataDir);
-        if (!dataDirValidation.isValid && dataDirValidation.error) {
-          errors.dataDir = dataDirValidation.error;
+
+        if (newSettings.dataDir !== undefined) {
+          const dataDirValidation = validateField(
+            "dataDir",
+            newSettings.dataDir,
+          );
+          if (!dataDirValidation.isValid && dataDirValidation.error) {
+            errors.dataDir = dataDirValidation.error;
+          }
         }
-      }
-      
-      if (newSettings.deepgramApiKey !== undefined && newSettings.deepgramApiKey.trim()) {
-        if (newSettings.deepgramApiKey.length < 10) {
-          errors.deepgramApiKey = t("settings.recording.validation.apiKeyTooShort");
+
+        if (
+          newSettings.deepgramApiKey !== undefined &&
+          newSettings.deepgramApiKey.trim()
+        ) {
+          if (newSettings.deepgramApiKey.length < 10) {
+            errors.deepgramApiKey = t(
+              "settings.recording.validation.apiKeyTooShort",
+            );
+          }
         }
-      }
-      
-      setValidationErrors(errors);
-    }, 300),
-    [t]
+
+        setValidationErrors(errors);
+      }, 300),
+    [t],
   );
 
   // Enhanced settings change handler with validation
-  const handleSettingsChange = useCallback((
-    newSettings: Partial<Settings>,
-    restart: boolean = true
-  ) => {
-    // Sanitize values
-    const sanitizedSettings: Partial<Settings> = {};
-    for (const [key, value] of Object.entries(newSettings)) {
-      sanitizedSettings[key as keyof Settings] = sanitizeValue(key as keyof SettingsStore, value);
-    }
-    
-    // Update pending changes
-    setPendingChanges(prev => ({ ...prev, ...sanitizedSettings }));
-    
-    // Validate new settings
-    debouncedValidateSettings({ ...settings, ...sanitizedSettings });
-    
-    // Update settings
-    updateSettings(sanitizedSettings);
-    
-    if (restart) {
-      setHasUnsavedChanges(true);
-    }
-  }, [settings, updateSettings, debouncedValidateSettings]);
+  const handleSettingsChange = useCallback(
+    (newSettings: Partial<Settings>, restart: boolean = true) => {
+      // Sanitize values
+      const sanitizedSettings: Partial<Settings> = {};
+      for (const [key, value] of Object.entries(newSettings)) {
+        sanitizedSettings[key as keyof Settings] = sanitizeValue(
+          key as keyof SettingsStore,
+          value,
+        );
+      }
+
+      // Update pending changes
+      setPendingChanges((prev) => ({ ...prev, ...sanitizedSettings }));
+
+      // Validate new settings
+      debouncedValidateSettings({ ...settings, ...sanitizedSettings });
+
+      // Update settings
+      updateSettings(sanitizedSettings);
+
+      if (restart) {
+        setHasUnsavedChanges(true);
+      }
+    },
+    [settings, updateSettings, debouncedValidateSettings],
+  );
 
   const aecMode = getAecMode(settings, isMacOS, isWindows);
   const aecDetails = getAecModeDetails(aecMode, t);
   const screenContextEnabled = !settings.disableVision;
-  const screenshotImagesEnabled = screenContextEnabled && !(settings.disableScreenshots ?? false);
+  const screenshotImagesEnabled =
+    screenContextEnabled && !(settings.disableScreenshots ?? false);
 
-  const handleAecModeChange = useCallback((mode: AecMode) => {
-    handleSettingsChange(getAecModeSettings(mode), true);
-  }, [handleSettingsChange]);
+  const handleAecModeChange = useCallback(
+    (mode: AecMode) => {
+      handleSettingsChange(getAecModeSettings(mode), true);
+    },
+    [handleSettingsChange],
+  );
 
   useEffect(() => {
     if (!platformReady) return;
@@ -2151,9 +2561,12 @@ export function RecordingSettings() {
     const expectedSettings = getAecModeSettings(aecMode);
     const needsAecSync =
       settings.aecMode !== expectedSettings.aecMode ||
-      Boolean(settings.screenpipeAecEnabled) !== expectedSettings.screenpipeAecEnabled ||
-      Boolean(settings.macosInputVpioEnabled) !== expectedSettings.macosInputVpioEnabled ||
-      Boolean(settings.windowsInputAecEnabled) !== expectedSettings.windowsInputAecEnabled;
+      Boolean(settings.screenpipeAecEnabled) !==
+        expectedSettings.screenpipeAecEnabled ||
+      Boolean(settings.macosInputVpioEnabled) !==
+        expectedSettings.macosInputVpioEnabled ||
+      Boolean(settings.windowsInputAecEnabled) !==
+        expectedSettings.windowsInputAecEnabled;
 
     if (!needsAecSync) return;
 
@@ -2175,8 +2588,14 @@ export function RecordingSettings() {
       setIsWindows(currentPlatform === "windows");
       setPlatformReady(true);
       // Auto-migrate macOS users off qwen3-asr (CPU-only, no Metal support)
-      if (currentPlatform === "macos" && settings.audioTranscriptionEngine === "qwen3-asr") {
-        handleSettingsChange({ audioTranscriptionEngine: "whisper-large-v3-turbo-quantized" }, true);
+      if (
+        currentPlatform === "macos" &&
+        settings.audioTranscriptionEngine === "qwen3-asr"
+      ) {
+        handleSettingsChange(
+          { audioTranscriptionEngine: "whisper-large-v3-turbo-quantized" },
+          true,
+        );
       }
     };
     checkPlatform();
@@ -2184,7 +2603,8 @@ export function RecordingSettings() {
 
   useEffect(() => {
     const previousSnapshot = languageSelectionSnapshotRef.current;
-    const supportKeyChanged = previousSnapshot.supportKey !== languageSupportKey;
+    const supportKeyChanged =
+      previousSnapshot.supportKey !== languageSupportKey;
     if (supportKeyChanged) {
       languageSelectionsBySupportKeyRef.current[previousSnapshot.supportKey] = [
         ...previousSnapshot.languages,
@@ -2197,7 +2617,7 @@ export function RecordingSettings() {
     const resolvedLanguages = resolveLanguageSelectionForTranscriptionEngine(
       settings.languages,
       languageSupportEngine,
-      preferredLanguages
+      preferredLanguages,
     );
 
     if (!areLanguageSelectionsEqual(settings.languages, resolvedLanguages)) {
@@ -2211,7 +2631,7 @@ export function RecordingSettings() {
 
     const supportedLanguages = filterLanguagesForTranscriptionEngine(
       settings.languages,
-      languageSupportEngine
+      languageSupportEngine,
     );
     if (areLanguageSelectionsEqual(settings.languages, supportedLanguages)) {
       languageSelectionsBySupportKeyRef.current[languageSupportKey] = [
@@ -2231,19 +2651,14 @@ export function RecordingSettings() {
   ]);
 
   // Listen for data-dir-fallback event (custom dir unavailable, fell back to default)
-  useEffect(() => {
-    const unlisten = listen("data-dir-fallback", () => {
-      toast({
-        title: t("settings.storage.dataDirectory.fallbackTitle"),
-        description: t("settings.storage.dataDirectory.fallbackDescription"),
-        variant: "destructive",
-        duration: 10000,
-      });
+  useTauriEvent("data-dir-fallback", () => {
+    toast({
+      title: t("settings.storage.dataDirectory.fallbackTitle"),
+      description: t("settings.storage.dataDirectory.fallbackDescription"),
+      variant: "destructive",
+      duration: 10000,
     });
-    return () => {
-      unlisten.then((fn) => fn());
-    };
-  }, [t, toast]);
+  });
 
   useEffect(() => {
     const loadDevices = async () => {
@@ -2260,7 +2675,9 @@ export function RecordingSettings() {
         // Fetch audio devices using Tauri command
         const audioResult = await commands.getAudioDevices();
         if (audioResult.status === "error") {
-          throw new Error(`Failed to fetch audio devices: ${audioResult.error}`);
+          throw new Error(
+            `Failed to fetch audio devices: ${audioResult.error}`,
+          );
         }
         const audioDevices = audioResult.data;
         setAvailableAudioDevices(audioDevices);
@@ -2286,14 +2703,16 @@ export function RecordingSettings() {
           // 3. Fuzzy: name+resolution match (position may have changed across reboot)
           const prefix = stableIdPrefix(id);
           if (prefix !== id) {
-            const byPrefix = monitors.find((m) => stableIdPrefix(m.stableId) === prefix);
+            const byPrefix = monitors.find(
+              (m) => stableIdPrefix(m.stableId) === prefix,
+            );
             if (byPrefix) return byPrefix;
           }
           return null;
         };
 
-        let updatedMonitorIds = settings.monitorIds.filter((id) =>
-          id === "default" || findMonitorForStoredId(id) !== null
+        let updatedMonitorIds = settings.monitorIds.filter(
+          (id) => id === "default" || findMonitorForStoredId(id) !== null,
         );
 
         // Migrate all matched IDs to current stable IDs
@@ -2305,15 +2724,17 @@ export function RecordingSettings() {
 
         if (updatedMonitorIds.length === 0) {
           const defaultMonitor = monitors.find((monitor) => monitor.isDefault);
-          updatedMonitorIds = [defaultMonitor ? defaultMonitor.stableId : monitors[0].stableId];
+          updatedMonitorIds = [
+            defaultMonitor ? defaultMonitor.stableId : monitors[0].stableId,
+          ];
         }
 
         // Update audio devices
         const availableAudioDeviceNames = audioDevices.map(
-          (device) => device.name
+          (device) => device.name,
         );
         let updatedAudioDevices = settings.audioDevices.filter((device) =>
-          availableAudioDeviceNames.includes(device)
+          availableAudioDeviceNames.includes(device),
         );
 
         if (
@@ -2332,10 +2753,11 @@ export function RecordingSettings() {
             monitorIds: updatedMonitorIds,
             audioDevices: updatedAudioDevices,
           },
-          false
+          false,
         );
       } catch (error) {
-        const msg = (error as Error)?.stack ?? (error as Error)?.message ?? String(error);
+        const msg =
+          (error as Error)?.stack ?? (error as Error)?.message ?? String(error);
         console.error("Failed to load devices:", msg);
       }
     };
@@ -2345,26 +2767,32 @@ export function RecordingSettings() {
   }, []);
 
   // Enhanced validation for specific fields
-  const validateDeepgramApiKey = useCallback((apiKey: string): FieldValidationResult => {
-    if (!apiKey.trim()) {
-      return {
-        isValid: false,
-        error: t("settings.recording.validation.apiKeyRequired"),
-      };
-    }
-    if (apiKey.length < 10) {
-      return {
-        isValid: false,
-        error: t("settings.recording.validation.apiKeyTooShort"),
-      };
-    }
-    return { isValid: true };
-  }, [t]);
+  const validateDeepgramApiKey = useCallback(
+    (apiKey: string): FieldValidationResult => {
+      if (!apiKey.trim()) {
+        return {
+          isValid: false,
+          error: t("settings.recording.validation.apiKeyRequired"),
+        };
+      }
+      if (apiKey.length < 10) {
+        return {
+          isValid: false,
+          error: t("settings.recording.validation.apiKeyTooShort"),
+        };
+      }
+      return { isValid: true };
+    },
+    [t],
+  );
 
   // Enhanced Deepgram API key handler
-  const handleDeepgramApiKeyChange = useCallback((value: string, isValid: boolean) => {
-    handleSettingsChange({ deepgramApiKey: value }, true);
-  }, [handleSettingsChange]);
+  const handleDeepgramApiKeyChange = useCallback(
+    (value: string, isValid: boolean) => {
+      handleSettingsChange({ deepgramApiKey: value }, true);
+    },
+    [handleSettingsChange],
+  );
 
   // Optimized update function with better error handling
   const handleUpdate = async () => {
@@ -2380,7 +2808,7 @@ export function RecordingSettings() {
 
     setIsUpdating(true);
     setHasUnsavedChanges(false);
-    
+
     toast({
       title: t("settings.recording.toast.updating.title"),
       description: t("settings.recording.toast.updating.description"),
@@ -2410,8 +2838,11 @@ export function RecordingSettings() {
 
       if (pendingAudioExclusions !== null) {
         try {
-          const resWriteExcl = await commands.writeAudioExclusions(pendingAudioExclusions);
-    if (resWriteExcl.status === "error") throw new Error(resWriteExcl.error);
+          const resWriteExcl = await commands.writeAudioExclusions(
+            pendingAudioExclusions,
+          );
+          if (resWriteExcl.status === "error")
+            throw new Error(resWriteExcl.error);
           setAudioExclusions(pendingAudioExclusions);
           setPendingAudioExclusions(null);
         } catch (e) {
@@ -2420,12 +2851,16 @@ export function RecordingSettings() {
       }
 
       const needsServerRestart = Object.keys(pendingChanges).some((key) =>
-        SERVER_RESTART_SETTINGS.has(key as keyof SettingsStore)
+        SERVER_RESTART_SETTINGS.has(key as keyof SettingsStore),
       );
 
-      await (needsServerRestart ? commands.stopScreenpipe() : commands.stopCapture());
+      await (needsServerRestart
+        ? commands.stopScreenpipe()
+        : commands.stopCapture());
       await new Promise((resolve) => setTimeout(resolve, 500));
-      await (needsServerRestart ? commands.spawnScreenpipe(null) : commands.startCapture());
+      await (needsServerRestart
+        ? commands.spawnScreenpipe(null)
+        : commands.startCapture());
       await new Promise((resolve) => setTimeout(resolve, 1000));
       setPendingChanges({});
 
@@ -2458,7 +2893,7 @@ export function RecordingSettings() {
           errorCount === 1
             ? "settings.recording.validation.status.errorOne"
             : "settings.recording.validation.status.errorMany",
-          { count: errorCount }
+          { count: errorCount },
         ),
       };
     }
@@ -2476,7 +2911,7 @@ export function RecordingSettings() {
 
   const handleAudioTranscriptionModelChange = async (
     value: string,
-    realtime = false
+    realtime = false,
   ) => {
     const isLoggedIn = checkLogin(settings.user);
     // If trying to use cloud but not logged in
@@ -2487,19 +2922,22 @@ export function RecordingSettings() {
     // If trying to use cloud but not subscribed
     if (value === "screenpipe-cloud" && !hasCloudTranscriptionAccess) {
       try {
-        const response = await fetch("https://screenpipe.com/api/cloud-sync/checkout", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${settings.user?.token}`,
+        const response = await fetch(
+          "https://screenpipe.com/api/cloud-sync/checkout",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${settings.user?.token}`,
+            },
+            body: JSON.stringify({
+              tier: "pro",
+              billingPeriod: "monthly",
+              userId: settings.user?.id,
+              email: settings.user?.email,
+            }),
           },
-          body: JSON.stringify({
-            tier: "pro",
-            billingPeriod: "monthly",
-            userId: settings.user?.id,
-            email: settings.user?.email,
-          }),
-        });
+        );
         const data = await response.json();
         openUrl(data.url || "https://screenpipe.com/billing");
       } catch {
@@ -2526,8 +2964,9 @@ export function RecordingSettings() {
         audioTranscriptionEngine: value,
       });
       const nextLanguageSupportEngine = nextAudioEngineResolution.active;
-      const nextLanguageSupportKey =
-        getTranscriptionEngineLanguageSupportKey(nextLanguageSupportEngine);
+      const nextLanguageSupportKey = getTranscriptionEngineLanguageSupportKey(
+        nextLanguageSupportEngine,
+      );
       const preferredLanguages =
         languageSelectionsBySupportKeyRef.current[nextLanguageSupportKey];
 
@@ -2536,14 +2975,13 @@ export function RecordingSettings() {
         languages: resolveLanguageSelectionForTranscriptionEngine(
           settings.languages,
           nextLanguageSupportEngine,
-          preferredLanguages
+          preferredLanguages,
         ),
       };
     }
 
     handleSettingsChange(newSettings, true);
   };
-
 
   const handleLanguageChange = (currentValue: Language | null) => {
     if (!currentValue) {
@@ -2609,16 +3047,16 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
     // Convert all values to lowercase for comparison
     const lowerCaseValues = values.map((v) => v.toLowerCase());
     const currentLowerCase = settings.ignoredWindows.map((v) =>
-      v.toLowerCase()
+      v.toLowerCase(),
     );
 
     // Find added values (in values but not in current)
     const addedValues = values.filter(
-      (v) => !currentLowerCase.includes(v.toLowerCase())
+      (v) => !currentLowerCase.includes(v.toLowerCase()),
     );
     // Find removed values (in current but not in values)
     const removedValues = settings.ignoredWindows.filter(
-      (v) => !lowerCaseValues.includes(v.toLowerCase())
+      (v) => !lowerCaseValues.includes(v.toLowerCase()),
     );
 
     if (addedValues.length > 0) {
@@ -2629,10 +3067,10 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
           ignoredWindows: [...settings.ignoredWindows, newValue],
           // Remove from included windows if present
           includedWindows: settings.includedWindows.filter(
-            (w) => w.toLowerCase() !== newValue.toLowerCase()
+            (w) => w.toLowerCase() !== newValue.toLowerCase(),
           ),
         },
-        true
+        true,
       );
     } else if (removedValues.length > 0) {
       // Handle removing value
@@ -2640,10 +3078,10 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
       handleSettingsChange(
         {
           ignoredWindows: settings.ignoredWindows.filter(
-            (w) => w !== removedValue
+            (w) => w !== removedValue,
           ),
         },
-        true
+        true,
       );
     }
   };
@@ -2652,16 +3090,16 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
     // Convert all values to lowercase for comparison
     const lowerCaseValues = values.map((v) => v.toLowerCase());
     const currentLowerCase = settings.includedWindows.map((v) =>
-      v.toLowerCase()
+      v.toLowerCase(),
     );
 
     // Find added values (in values but not in current)
     const addedValues = values.filter(
-      (v) => !currentLowerCase.includes(v.toLowerCase())
+      (v) => !currentLowerCase.includes(v.toLowerCase()),
     );
     // Find removed values (in current but not in values)
     const removedValues = settings.includedWindows.filter(
-      (v) => !lowerCaseValues.includes(v.toLowerCase())
+      (v) => !lowerCaseValues.includes(v.toLowerCase()),
     );
 
     if (addedValues.length > 0) {
@@ -2672,10 +3110,10 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
           includedWindows: [...settings.includedWindows, newValue],
           // Remove from ignored windows if present
           ignoredWindows: settings.ignoredWindows.filter(
-            (w) => w.toLowerCase() !== newValue.toLowerCase()
+            (w) => w.toLowerCase() !== newValue.toLowerCase(),
           ),
         },
-        true
+        true,
       );
     } else if (removedValues.length > 0) {
       // Handle removing value
@@ -2683,10 +3121,10 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
       handleSettingsChange(
         {
           includedWindows: settings.includedWindows.filter(
-            (w) => w !== removedValue
+            (w) => w !== removedValue,
           ),
         },
-        true
+        true,
       );
     }
   };
@@ -2698,11 +3136,11 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
 
     // Find added values
     const addedValues = values.filter(
-      (v) => !currentLowerCase.includes(v.toLowerCase())
+      (v) => !currentLowerCase.includes(v.toLowerCase()),
     );
     // Find removed values
     const removedValues = currentUrls.filter(
-      (v) => !lowerCaseValues.includes(v.toLowerCase())
+      (v) => !lowerCaseValues.includes(v.toLowerCase()),
     );
 
     if (addedValues.length > 0) {
@@ -2711,7 +3149,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
         {
           ignoredUrls: [...currentUrls, newValue],
         },
-        true
+        true,
       );
     } else if (removedValues.length > 0) {
       const removedValue = removedValues[0];
@@ -2719,7 +3157,7 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
         {
           ignoredUrls: currentUrls.filter((u) => u !== removedValue),
         },
-        true
+        true,
       );
     }
   };
@@ -2740,27 +3178,31 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
   };
 
   return (
-    <div className="space-y-5" data-testid="section-settings-recording" ref={sectionRootRef}>
+    <div
+      className="space-y-5"
+      data-testid="section-settings-recording"
+      ref={sectionRootRef}
+    >
       <p className="text-muted-foreground text-sm mb-4">
         {t("settings.recording.description")}
       </p>
 
       <div className="flex items-center justify-end">
-          {hasUnsavedChanges && (
-            <Button
-              onClick={handleUpdate}
-              disabled={isUpdating || Object.keys(validationErrors).length > 0}
-              size="sm"
-              className="flex items-center gap-1.5 h-7 text-xs bg-foreground text-background hover:bg-background hover:text-foreground transition-colors duration-150"
-            >
-              {isUpdating ? (
-                <Loader2 className="h-3 w-3 animate-spin" />
-              ) : (
-                <RefreshCw className="h-3 w-3" />
-              )}
-              {t("settings.recording.applyRestart")}
-            </Button>
-          )}
+        {hasUnsavedChanges && (
+          <Button
+            onClick={handleUpdate}
+            disabled={isUpdating || Object.keys(validationErrors).length > 0}
+            size="sm"
+            className="flex items-center gap-1.5 h-7 text-xs bg-foreground text-background hover:bg-background hover:text-foreground transition-colors duration-150"
+          >
+            {isUpdating ? (
+              <Loader2 className="h-3 w-3 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3 w-3" />
+            )}
+            {t("settings.recording.applyRestart")}
+          </Button>
+        )}
       </div>
 
       {/* Battery Saver / Power Mode */}
@@ -2772,1231 +3214,1919 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
 
       {/* Audio */}
       <LockedSetting settingKey="audio_recording">
-      <div className="space-y-2 pt-2">
-        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">{t("settings.recording.section.audio")}</h2>
+        <div className="space-y-2 pt-2">
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+            {t("settings.recording.section.audio")}
+          </h2>
 
-        {/* Audio Recording Toggle */}
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <h3 className="text-sm font-medium text-foreground">{t("settings.recording.audioRecording.title")}</h3>
-                  <p className="text-xs text-muted-foreground">{t("settings.recording.audioRecording.description")}</p>
-                </div>
-              </div>
-              <ManagedSwitch settingKey="disableAudio" id="disableAudio" checked={!settings.disableAudio} onCheckedChange={(checked) => handleDisableAudioChange(!checked)} />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Audio capture mode — continuous vs meetings-only */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  {t("settings.recording.audioCapture.title")}
-                  <HelpTooltip text={t("settings.recording.audioCapture.help")} />
-                </h3>
-              </div>
-              <Select
-                value={settings.audioCaptureMode ?? "always"}
-                onValueChange={(value) => handleSettingsChange({ audioCaptureMode: value as "always" | "meetings-only" | "disabled" }, true)}
-              >
-                <SelectTrigger className="w-[200px] h-7 text-xs">
-                  <SelectValue placeholder={t("settings.recording.audioCapture.selectMode")} />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="always">{t("settings.recording.audioCapture.option.always")}</SelectItem>
-                  <SelectItem value="meetings-only">{t("settings.recording.audioCapture.option.meetingsOnly")}</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <AudioCaptureModePreview mode={settings.audioCaptureMode ?? "always"} />
-          </CardContent>
-        </Card>
-        )}
-
-        {!settings.disableAudio && (
-          <div className="flex items-center gap-2 px-1 pt-1.5">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">{t("settings.recording.section.transcription")}</span>
-            <div className="h-px flex-1 bg-border/60" />
-          </div>
-        )}
-
-        {/* Transcription Engine */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  {t("settings.recording.transcriptionEngine.title")}
-                  <HelpTooltip text={t("settings.recording.transcriptionEngine.help")} />
-                </h3>
-              </div>
-              <div className="flex items-center gap-2">
-                {settings.audioTranscriptionEngine !== "disabled" && (
-                  <BackgroundTranscriptionDialog audioPipeline={audioPipeline} />
-                )}
-                <Select
-                  value={settings.audioTranscriptionEngine}
-                  onValueChange={(value) => handleAudioTranscriptionModelChange(value)}
-                >
-                  <SelectTrigger className="w-[200px] h-7 text-xs">
-                    <SelectValue placeholder={t("settings.recording.transcriptionEngine.selectEngine")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      <SelectLabel className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">{t("settings.recording.transcriptionEngine.group.cloud")}</SelectLabel>
-                      <SelectItem value="screenpipe-cloud" disabled={!hasCloudTranscriptionAccess}>
-                        Screenpipe Cloud {!hasCloudTranscriptionAccess && t("settings.recording.transcriptionEngine.proSuffix")}{hwCapability?.recommendedEngine === "screenpipe-cloud" && " ★"}
-                      </SelectItem>
-                      <SelectItem value="deepgram">Deepgram</SelectItem>
-                    </SelectGroup>
-                    <SelectGroup>
-                      <SelectLabel className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">{t("settings.recording.transcriptionEngine.group.offline")}</SelectLabel>
-                      <SelectItem value="whisper-large-v3-turbo">{t("settings.recording.transcriptionEngine.option.whisperTurbo")}</SelectItem>
-                      <SelectItem value="whisper-large-v3-turbo-quantized">{t("settings.recording.transcriptionEngine.option.whisperTurboFast")}</SelectItem>
-                      <SelectItem value="whisper-tiny">{t("settings.recording.transcriptionEngine.option.whisperTiny")}</SelectItem>
-                      <SelectItem value="whisper-tiny-quantized">{t("settings.recording.transcriptionEngine.option.whisperTinyFast")}</SelectItem>
-                      {!isMacOS && <SelectItem value="qwen3-asr">Qwen3-ASR</SelectItem>}
-                      <SelectItem value="parakeet">Parakeet{isMacOS ? t("settings.recording.transcriptionEngine.experimentalSuffix") : ""}</SelectItem>
-                    </SelectGroup>
-                    <SelectGroup>
-                      <SelectLabel className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">{t("settings.recording.transcriptionEngine.group.other")}</SelectLabel>
-                      <SelectItem value="openai-compatible">{t("settings.recording.transcriptionEngine.option.openaiCompatible")}</SelectItem>
-                      <SelectItem value="disabled">{t("settings.recording.transcriptionEngine.option.disabled")}</SelectItem>
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-            {audioEngineResolution.fallbackReason && (
-              <Alert
-                data-testid="audio-engine-fallback-alert"
-                className="mt-2 ml-[26px] border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
-              >
-                <AlertCircle className="h-4 w-4" />
-                <AlertTitle className="text-xs font-semibold">
-                  {t("settings.recording.transcriptionEngine.fallback.title", {
-                    engine: getTranscriptionEngineLabel(audioEngineResolution.requested),
-                  })}
-                </AlertTitle>
-                <AlertDescription className="space-y-2 text-xs">
-                  <p>{getAudioFallbackMessage(audioEngineResolution.fallbackReason, t)}</p>
-                  <div className="grid gap-1">
-                    <div>
-                      {t("settings.recording.transcriptionEngine.savedChoice")}{" "}
-                      <span className="font-medium">
-                        {getTranscriptionEngineLabel(audioEngineResolution.requested)}
-                      </span>
-                    </div>
-                    <div>
-                      {t("settings.recording.transcriptionEngine.activeNow")}{" "}
-                      <span className="font-medium">
-                        {getTranscriptionEngineLabel(audioEngineResolution.active)}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex flex-wrap gap-2 pt-1">
-                    {audioEngineResolution.fallbackReason === "notLoggedIn" && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-7 px-2 text-xs"
-                        data-testid="audio-engine-fallback-login"
-                        onClick={() => checkLogin(settings.user)}
-                      >
-                        {t("settings.recording.transcriptionEngine.login")}
-                      </Button>
-                    )}
-                    {audioEngineResolution.fallbackReason === "notSubscribed" && (
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        className="h-7 px-2 text-xs"
-                        data-testid="audio-engine-fallback-upgrade"
-                        onClick={() => openUrl("https://screenpipe.com/billing")}
-                      >
-                        {t("settings.recording.transcriptionEngine.upgrade")}
-                      </Button>
-                    )}
-                    <Button
-                      type="button"
-                      variant="outline"
-                      size="sm"
-                      className="h-7 px-2 text-xs"
-                      data-testid="audio-engine-fallback-use-whisper"
-                      onClick={() =>
-                        handleSettingsChange(
-                          { audioTranscriptionEngine: FALLBACK_TRANSCRIPTION_ENGINE },
-                          true
-                        )
-                      }
-                    >
-                      {t("settings.recording.transcriptionEngine.useWhisper")}
-                    </Button>
-                  </div>
-                </AlertDescription>
-              </Alert>
-            )}
-            {settings.audioTranscriptionEngine === "deepgram" && (
-              <div className="mt-2 ml-[26px] relative">
-                <ValidatedInput
-                  id="deepgramApiKey"
-                  label=""
-                  type={showApiKey ? "text" : "password"}
-                  value={settings.deepgramApiKey || ""}
-                  onChange={handleDeepgramApiKeyChange}
-                  validation={validateDeepgramApiKey}
-                  placeholder={t("settings.recording.transcriptionEngine.deepgramApiKeyPlaceholder")}
-                  required={true}
-                  className="pr-8 h-7 text-xs"
-                />
-                <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-7 w-7" onClick={() => setShowApiKey(!showApiKey)}>
-                  {showApiKey ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                </Button>
-              </div>
-            )}
-            {settings.audioTranscriptionEngine === "openai-compatible" && (
-              <div className="mt-2 ml-[26px] space-y-2">
-                {/* API Endpoint Input */}
-                <ValidatedInput
-                  id="openaiCompatibleEndpoint"
-                  label=""
-                  value={settings.openaiCompatibleEndpoint || DEFAULT_OPENAI_COMPATIBLE_ENDPOINT}
-                  onChange={(value: string) => handleSettingsChange({ openaiCompatibleEndpoint: value }, true)}
-                  onBlur={() => fetchOpenAIModels(settings.openaiCompatibleEndpoint || DEFAULT_OPENAI_COMPATIBLE_ENDPOINT, settings.openaiCompatibleApiKey)}
-                  onKeyDown={(e: React.KeyboardEvent) => {
-                    if (e.key === 'Enter') {
-                      fetchOpenAIModels(settings.openaiCompatibleEndpoint || DEFAULT_OPENAI_COMPATIBLE_ENDPOINT, settings.openaiCompatibleApiKey);
-                    }
-                  }}
-                  placeholder={t("settings.recording.transcriptionEngine.endpointPlaceholder")}
-                  className="h-7 text-xs"
-                />
-                
-                {/* API Key Input */}
-                <div className="relative">
-                  <ValidatedInput
-                    id="openaiCompatibleApiKey"
-                    label=""
-                    type={showOpenAIApiKey ? "text" : "password"}
-                    value={settings.openaiCompatibleApiKey || ""}
-                    onChange={(value: string) => handleSettingsChange({ openaiCompatibleApiKey: value }, true)}
-                    placeholder={t("settings.recording.transcriptionEngine.apiKeyPlaceholder")}
-                    className="pr-8 h-7 text-xs"
-                  />
-                  <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-0 h-7 w-7" onClick={() => setShowOpenAIApiKey(!showOpenAIApiKey)}>
-                    {showOpenAIApiKey ? <EyeOff className="h-3 w-3" /> : <Eye className="h-3 w-3" />}
-                  </Button>
-                </div>
-                
-                {/* Model Input — editable with dropdown suggestions */}
-                <div className="space-y-1.5">
-                  <div className="relative">
-                    <Input
-                      value={settings.openaiCompatibleModel || ""}
-                      onChange={(e) => handleSettingsChange({ openaiCompatibleModel: e.target.value }, true)}
-                      placeholder={isLoadingModels
-                        ? t("settings.recording.transcriptionEngine.loadingModels")
-                        : t("settings.recording.transcriptionEngine.modelPlaceholder")}
-                      className="h-7 text-xs pr-8"
-                    />
-                    {isLoadingModels && (
-                      <Loader2 className="h-3 w-3 animate-spin absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
-                    )}
-                  </div>
-                  {openAIModels.length > 0 && !openAIModels.includes('!API_Error') && (
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs text-muted-foreground">
-                          {t("settings.recording.transcriptionEngine.availableModels", {
-                            count: openAIModels.length,
-                          })}
-                        </span>
-                        {allOpenAIModels.length > 0 && (
-                          <button
-                            type="button"
-                            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-                            onClick={() => setFilterTranscriptionModels(!filterTranscriptionModels)}
-                          >
-                            {filterTranscriptionModels
-                              ? t("settings.recording.transcriptionEngine.showAll")
-                              : t("settings.recording.transcriptionEngine.filterSttOnly")}
-                          </button>
-                        )}
-                      </div>
-                      <div className="flex flex-wrap gap-1">
-                        {openAIModels.map((model) => (
-                          <button
-                            key={model}
-                            type="button"
-                            className={cn(
-                              "px-2 py-0.5 rounded text-xs border transition-colors",
-                              settings.openaiCompatibleModel === model
-                                ? "bg-foreground text-background border-foreground"
-                                : "hover:bg-accent border-border"
-                            )}
-                            onClick={() => handleSettingsChange({ openaiCompatibleModel: model }, true)}
-                          >
-                            {model}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {openAIModels.includes('!API_Error') && (
-                    <p className="text-xs text-muted-foreground">{t("settings.recording.transcriptionEngine.modelsApiError")}</p>
-                  )}
-                  {allOpenAIModels.length === 0 && !openAIModels.includes('!API_Error') && !isLoadingModels && (
-                    <p className="text-xs text-muted-foreground">{t("settings.recording.transcriptionEngine.noModels")}</p>
-                  )}
-                </div>
-
-                {/* Raw Audio Toggle */}
-                <label className="flex items-center gap-2 text-xs cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={settings.openaiCompatibleRawAudio || false}
-                    onChange={(e) => handleSettingsChange({ openaiCompatibleRawAudio: e.target.checked }, true)}
-                    className="rounded border-border"
-                  />
-                  <span>{t("settings.recording.transcriptionEngine.rawAudio")}</span>
-                </label>
-
-                {/* Custom Headers */}
-                <div className="space-y-1">
-                  <label className="text-xs text-muted-foreground">{t("settings.recording.transcriptionEngine.customHeaders")}</label>
-                  <Input
-                    defaultValue={settings.openaiCompatibleHeaders ? JSON.stringify(settings.openaiCompatibleHeaders) : ""}
-                    onBlur={(e) => {
-                      const val = e.target.value.trim();
-                      if (!val) {
-                        handleSettingsChange({ openaiCompatibleHeaders: undefined }, true);
-                        return;
-                      }
-                      try {
-                        const parsed = JSON.parse(val);
-                        if (typeof parsed === "object" && !Array.isArray(parsed)) {
-                          handleSettingsChange({ openaiCompatibleHeaders: parsed }, true);
-                        }
-                      } catch {
-                        // Invalid JSON — don't save
-                      }
-                    }}
-                    placeholder='{"X-Custom-Header": "value"}'
-                    className="h-7 text-xs font-mono"
-                  />
-                </div>
-
-                {/* Connection Test Panel */}
-                <div className="border rounded-lg">
-                  <button
-                    type="button"
-                    className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-left hover:bg-accent/50 transition-colors rounded-lg"
-                    onClick={() => setTxDiagnosticsOpen(!txDiagnosticsOpen)}
-                  >
-                    <div className="flex items-center gap-2">
-                      <Zap className="h-3.5 w-3.5" />
-                      <span>{t("settings.recording.transcriptionEngine.connectionTest")}</span>
-                      {txTestStatus === "done" && (
-                        <span className="text-xs text-muted-foreground">
-                          {txTestResults.transcribe.status === "pass"
-                            ? t("settings.recording.transcriptionEngine.diagnostics.allPassed")
-                            : txTestResults.endpoint.status === "fail"
-                            ? t("settings.recording.transcriptionEngine.diagnostics.connectionFailed")
-                            : txTestResults.auth.status === "fail"
-                            ? t("settings.recording.transcriptionEngine.diagnostics.authFailed")
-                            : txTestResults.models.status === "fail"
-                            ? t("settings.recording.transcriptionEngine.diagnostics.modelsFailed")
-                            : txTestResults.transcribe.status === "fail"
-                            ? t("settings.recording.transcriptionEngine.diagnostics.transcriptionFailed")
-                            : ""}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      {txTestStatus === "testing" && (
-                        <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
-                      )}
-                      {txDiagnosticsOpen ? (
-                        <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
-                      ) : (
-                        <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
-                      )}
-                    </div>
-                  </button>
-
-                  {txDiagnosticsOpen && (
-                    <div className="px-3 pb-3 space-y-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={runTranscriptionDiagnostics}
-                        disabled={txTestStatus === "testing"}
-                        className="flex items-center gap-2 h-7 text-xs"
-                      >
-                        {txTestStatus === "testing" ? (
-                          <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                          <Zap className="h-3 w-3" />
-                        )}
-                        {txTestStatus === "testing"
-                          ? t("settings.recording.transcriptionEngine.diagnostics.testing")
-                          : t("settings.recording.transcriptionEngine.diagnostics.run")}
-                      </Button>
-
-                      <div className="space-y-1.5 text-xs">
-                        {(
-                          [
-                            ["endpoint", "1", t("settings.recording.transcriptionEngine.diagnostics.endpointReachable")],
-                            ["auth", "2", t("settings.recording.transcriptionEngine.diagnostics.authValid")],
-                            ["models", "3", t("settings.recording.transcriptionEngine.diagnostics.modelsLoaded")],
-                            ["transcribe", "4", t("settings.recording.transcriptionEngine.diagnostics.testTranscription")],
-                          ] as const
-                        ).map(([key, num, label]) => {
-                          const result = txTestResults[key];
-                          return (
-                            <div key={key} className="flex items-start gap-2">
-                              <div className="flex items-center gap-1.5 min-w-[150px]">
-                                {result.status === "pass" ? (
-                                  <CheckCircle2 className="h-3.5 w-3.5 text-foreground shrink-0" />
-                                ) : result.status === "fail" ? (
-                                  <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
-                                ) : result.status === "running" ? (
-                                  <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground shrink-0" />
-                                ) : (
-                                  <Circle className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
-                                )}
-                                <span
-                                  className={cn(
-                                    result.status === "skip" || result.status === "pending"
-                                      ? "text-muted-foreground/40"
-                                      : result.status === "fail"
-                                      ? "text-destructive"
-                                      : ""
-                                  )}
-                                >
-                                  {num}. {label}
-                                </span>
-                              </div>
-                              {result.message && (
-                                <span
-                                  className={cn(
-                                    "text-xs",
-                                    result.status === "fail"
-                                      ? "text-destructive"
-                                      : "text-muted-foreground"
-                                  )}
-                                >
-                                  {result.message}
-                                </span>
-                              )}
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-        )}
-
-        {/* Languages */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                  <Languages className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                  <h3 className="text-sm font-medium text-foreground">{t("settings.recording.languages.title")}</h3>
-                  <p className="text-xs text-muted-foreground">{languageSupportDescription}</p>
-                </div>
-              </div>
-              <Popover open={openLanguages} onOpenChange={setOpenLanguages}>
-                <PopoverTrigger asChild>
-                  <Button variant="outline" size="sm" className="h-7 text-xs">
-                    {languageTriggerLabel}
-                    <ChevronsUpDown className="ml-1 h-3 w-3 opacity-50" />
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-[250px] p-0">
-                  <Command>
-                    <CommandInput placeholder={t("settings.recording.languages.searchPlaceholder")} />
-                    <CommandList>
-                      <CommandEmpty>{t("settings.recording.languages.empty")}</CommandEmpty>
-                      <CommandGroup>
-                        <CommandItem value="auto-detect" onSelect={() => handleLanguageChange(null)}>
-                          <Check className={cn("mr-2 h-3 w-3", settings.languages.length === 0 ? "opacity-100" : "opacity-0")} />
-                          <span className="text-xs">{t("settings.recording.languages.autoDetect")}</span>
-                        </CommandItem>
-                        {supportedLanguageOptions.map((language) => (
-                          <CommandItem key={language.code} value={language.code} onSelect={() => handleLanguageChange(language.code)}>
-                            <Check className={cn("mr-2 h-3 w-3", settings.languages.includes(language.code) ? "opacity-100" : "opacity-0")} />
-                            <span className="text-xs">{language.name}</span>
-                          </CommandItem>
-                        ))}
-                      </CommandGroup>
-                    </CommandList>
-                  </Command>
-                </PopoverContent>
-              </Popover>
-            </div>
-          </CardContent>
-        </Card>
-        )}
-
-        {/* Transcription Mode - hidden when transcription engine is disabled */}
-        {!settings.disableAudio && settings.audioTranscriptionEngine !== "disabled" && (
+          {/* Audio Recording Toggle */}
           <Card className="border-border bg-card">
             <CardContent className="px-3 py-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2.5">
-                  <Zap className="h-4 w-4 text-muted-foreground shrink-0" />
+                  <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
-                    <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                      {t("settings.recording.batchTranscription.title")}
-                      <HelpTooltip text={t("settings.recording.batchTranscription.help")} />
+                    <h3 className="text-sm font-medium text-foreground">
+                      {t("settings.recording.audioRecording.title")}
                     </h3>
-                    <p className="text-xs text-muted-foreground">{t("settings.recording.batchTranscription.description")}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("settings.recording.audioRecording.description")}
+                    </p>
                   </div>
                 </div>
-                <Switch
-                  id="transcriptionMode"
-                  checked={["smart", "batch"].includes(settings.transcriptionMode ?? "realtime")}
-                  onCheckedChange={(checked) =>
-                    handleSettingsChange({ transcriptionMode: checked ? "batch" : "realtime" }, true)
-                  }
-                />
-              </div>
-              {["smart", "batch"].includes(settings.transcriptionMode ?? "realtime") &&
-                settings.audioTranscriptionEngine === "openai-compatible" && (
-                <div className="mt-2.5 pt-2.5 border-t border-border/50">
-                  <div className="flex items-center justify-between mb-1.5">
-                    <span className="text-xs text-muted-foreground flex items-center gap-1.5">
-                      {t("settings.recording.batchTranscription.maxDuration")}
-                      <HelpTooltip text={t("settings.recording.batchTranscription.maxDurationHelp")} />
-                    </span>
-                    <span className="text-xs font-mono text-foreground">
-                      {(settings.batchMaxDurationSecs ?? 0) === 0
-                        ? t("settings.recording.auto")
-                        : `${Math.floor((settings.batchMaxDurationSecs ?? 0) / 60)}min`}
-                    </span>
-                  </div>
-                  <Slider
-                    value={[settings.batchMaxDurationSecs ?? 0]}
-                    onValueChange={([value]) =>
-                      handleSettingsChange({ batchMaxDurationSecs: value ?? 0 } as any, true)
-                    }
-                    min={0}
-                    max={5400}
-                    step={60}
-                    className="w-full"
-                  />
-                  <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
-                    <span>{t("settings.recording.auto")}</span>
-                    <span>90min</span>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Filter Music - hidden when transcription engine is disabled */}
-        {!settings.disableAudio && settings.audioTranscriptionEngine !== "disabled" && (
-          <Card className="border-border bg-card">
-            <CardContent className="px-3 py-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2.5">
-                  <Music className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                      {t("settings.recording.filterMusic.title")}
-                      <HelpTooltip text={t("settings.recording.filterMusic.help")} />
-                    </h3>
-                    <p className="text-xs text-muted-foreground">{t("settings.recording.filterMusic.description")}</p>
-                  </div>
-                </div>
-                <Switch
-                  id="filterMusic"
-                  checked={settings.filterMusic ?? false}
-                  onCheckedChange={(checked) =>
-                    handleSettingsChange({ filterMusic: checked }, true)
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {!settings.disableAudio && (
-          <div className="flex items-center gap-2 px-1 pt-1.5">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">{t("settings.recording.section.meetings")}</span>
-            <div className="h-px flex-1 bg-border/60" />
-          </div>
-        )}
-
-        {/* Meeting Live Notes */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between gap-3">
-              <div className="flex items-center space-x-2.5 min-w-0">
-                <Headphones className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div className="min-w-0">
-                  <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                    {t("settings.recording.liveMeetingNotes.title")}
-                    <HelpTooltip text={t("settings.recording.liveMeetingNotes.help")} />
-                  </h3>
-                  <p className="text-xs text-muted-foreground">{t("settings.recording.liveMeetingNotes.description")}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                {(settings.meetingLiveTranscriptionEnabled ?? true) && (
-                  <Select
-                    value={settings.meetingLiveTranscriptionProvider ?? "selected-engine"}
-                    onValueChange={(value) =>
-                      handleSettingsChange({
-                        meetingLiveTranscriptionProvider: value as Settings["meetingLiveTranscriptionProvider"],
-                      }, true)
-                    }
-                  >
-                    <SelectTrigger className="h-7 w-[190px] text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="selected-engine">{t("settings.recording.liveMeetingNotes.provider.selectedEngine")}</SelectItem>
-                      <SelectItem value="screenpipe-cloud">{t("settings.recording.liveMeetingNotes.provider.screenpipeCloudLive")}</SelectItem>
-                      <SelectItem value="deepgram-live">{t("settings.recording.liveMeetingNotes.provider.deepgramLive")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-                <Switch
-                  id="meetingLiveTranscriptionEnabled"
-                  checked={settings.meetingLiveTranscriptionEnabled ?? true}
-                  onCheckedChange={(checked) =>
-                    handleSettingsChange({
-                      meetingLiveTranscriptionEnabled: checked,
-                      meetingLiveTranscriptionProvider: checked
-                        ? ((settings.meetingLiveTranscriptionProvider && settings.meetingLiveTranscriptionProvider !== "disabled")
-                          ? settings.meetingLiveTranscriptionProvider
-                          : "selected-engine")
-                        : "disabled",
-                    }, true)
-                  }
-                />
-              </div>
-            </div>
-            {(settings.meetingLiveTranscriptionEnabled ?? true) &&
-              (settings.meetingLiveTranscriptionProvider ?? "selected-engine") === "screenpipe-cloud" &&
-              !settings.user?.token &&
-              !settings.user?.id && (
-              <p className="mt-2 ml-[26px] text-xs text-muted-foreground">
-                {t("settings.recording.liveMeetingNotes.loginRequired")}
-              </p>
-            )}
-            {(settings.meetingLiveTranscriptionEnabled ?? true) &&
-              (settings.meetingLiveTranscriptionProvider ?? "selected-engine") === "selected-engine" &&
-              settings.audioTranscriptionEngine === "disabled" && (
-              <p className="mt-2 ml-[26px] text-xs text-muted-foreground">
-                {t("settings.recording.liveMeetingNotes.pickEngine")}
-              </p>
-            )}
-            <div className="mt-2.5 pt-2.5 border-t border-border/50 flex items-center justify-between">
-              <div>
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  {t("settings.recording.appendTypedText.title")}
-                  <HelpTooltip text={t("settings.recording.appendTypedText.help")} />
-                </h3>
-                <p className="text-xs text-muted-foreground">{t("settings.recording.appendTypedText.description")}</p>
-              </div>
-              <Switch
-                id="appendTypedTextToMeetingNote"
-                checked={settings.appendTypedTextToMeetingNote ?? true}
-                onCheckedChange={(checked) =>
-                  handleSettingsChange({ appendTypedTextToMeetingNote: checked }, true)
-                }
-              />
-            </div>
-          </CardContent>
-        </Card>
-        )}
-
-        {/* Automatic meeting detection */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Users className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                    {t("settings.recording.meetingDetection.title")}
-                    <HelpTooltip text={t("settings.recording.meetingDetection.help")} />
-                  </h3>
-                  <p className="text-xs text-muted-foreground">{t("settings.recording.meetingDetection.description")}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                {!settings.disableMeetingDetector && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="h-7 text-[11px] gap-1.5"
-                    onClick={() => setMeetingAppsPickerOpen(true)}
-                    title={t("settings.recording.meetingDetection.ignoreAppsTitle")}
-                    data-testid="settings-ignore-meeting-apps-button"
-                  >
-                    <UserX className="h-3.5 w-3.5" />
-                    {t("settings.recording.meetingDetection.ignoreApps")}
-                    {(settings.ignoredMeetingApps?.length ?? 0) > 0 && (
-                      <span
-                        className="rounded bg-muted px-1.5 py-0.5 text-[10px] tabular-nums"
-                        data-testid="settings-ignore-meeting-apps-count"
-                      >
-                        {settings.ignoredMeetingApps!.length}
-                      </span>
-                    )}
-                  </Button>
-                )}
                 <ManagedSwitch
-                  settingKey="disableMeetingDetector"
-                  id="disableMeetingDetector"
-                  checked={!settings.disableMeetingDetector}
-                  onCheckedChange={(checked) => handleSettingsChange({ disableMeetingDetector: !checked }, true)}
+                  settingKey="disableAudio"
+                  id="disableAudio"
+                  checked={!settings.disableAudio}
+                  onCheckedChange={(checked) =>
+                    handleDisableAudioChange(!checked)
+                  }
                 />
               </div>
-            </div>
-          </CardContent>
-        </Card>
-        )}
+            </CardContent>
+          </Card>
 
-        <MeetingAppsPicker
-          open={meetingAppsPickerOpen}
-          onOpenChange={setMeetingAppsPickerOpen}
-          selected={settings.ignoredMeetingApps ?? []}
-          onToggle={handleToggleIgnoredMeetingApp}
-        />
-
-        {!settings.disableAudio && (
-          <div className="flex items-center gap-2 px-1 pt-1.5">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">{t("settings.recording.section.devicesCapture")}</span>
-            <div className="h-px flex-1 bg-border/60" />
-          </div>
-        )}
-
-        {/* System Default Audio */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <h3 className="text-sm font-medium text-foreground">{t("settings.recording.audioDevices.autoSelectTitle")}</h3>
-                  <p className="text-xs text-muted-foreground">{t("settings.recording.audioDevices.autoSelectDescription")}</p>
-                </div>
-              </div>
-              <Switch
-                id="useSystemDefaultAudio"
-                checked={settings.useSystemDefaultAudio ?? true}
-                onCheckedChange={(checked) => handleSettingsChange({ useSystemDefaultAudio: checked }, true)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-        )}
-
-        {/* Audio Devices — grouped by input (microphones) vs output (system audio) */}
-        {!settings.disableAudio && !settings.useSystemDefaultAudio && (() => {
-          const inputDevices = availableAudioDevices.filter((d) => getAudioDeviceType(d.name) === "input");
-          const outputDevices = availableAudioDevices.filter((d) => getAudioDeviceType(d.name) === "output");
-
-          const renderDevice = (device: typeof availableAudioDevices[number]) => {
-            const isSelected = settings.audioDevices.includes(device.name);
-            const DeviceIcon = getAudioDeviceIcon(device.name);
-            const displayName = getAudioDeviceDisplayName(device.name);
-            // Use per-device level if available, fall back to global speechRatio
-            const deviceLevel = overlayData.deviceLevels[device.name] ?? overlayData.speechRatio;
-            return (
-              <div
-                key={device.name}
-                className={cn(
-                  "relative rounded-lg border cursor-pointer transition-all overflow-hidden",
-                  isSelected
-                    ? "border-foreground bg-foreground/5"
-                    : "border-border opacity-70 hover:opacity-100 hover:bg-accent/50"
-                )}
-                onClick={() => handleAudioDeviceChange(device.name)}
-              >
-                <div className="px-2.5 py-2 flex items-start gap-2">
-                  <DeviceIcon className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
-                  <div className="min-w-0 flex-1 flex items-center gap-1.5">
-                    <p className="text-xs font-medium truncate">{displayName}</p>
-                    {device.isDefault && (
-                      <Badge variant="secondary" className="text-[9px] h-3.5 px-1 shrink-0">{t("settings.recording.audioDevices.default")}</Badge>
-                    )}
-                  </div>
-                  {isSelected && (
-                    <Check className="h-3 w-3 text-foreground shrink-0 mt-0.5" />
-                  )}
-                </div>
-
-                {/* Audio level meter — always rendered for consistent height, invisible when not selected */}
-                <div className={cn("px-2.5 pb-2", !isSelected && "invisible")}>
-                  <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-foreground/60 transition-all duration-75"
-                      style={{ width: `${Math.min(100, Math.pow(deviceLevel, 3) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              </div>
-            );
-          };
-
-          return (
+          {/* Audio capture mode — continuous vs meetings-only */}
+          {!settings.disableAudio && (
             <Card className="border-border bg-card">
               <CardContent className="px-3 py-2.5">
-                {inputDevices.length > 0 && (
-                  <div className="mb-2.5">
-                    <div className="flex items-center space-x-2 mb-1.5">
-                      <Mic className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                      <h3 className="text-xs font-medium text-muted-foreground">{t("settings.recording.audioDevices.microphones")}</h3>
-                    </div>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {inputDevices.map(renderDevice)}
-                    </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                      {t("settings.recording.audioCapture.title")}
+                      <HelpTooltip
+                        text={t("settings.recording.audioCapture.help")}
+                      />
+                    </h3>
+                  </div>
+                  <Select
+                    value={settings.audioCaptureMode ?? "always"}
+                    onValueChange={(value) =>
+                      handleSettingsChange(
+                        {
+                          audioCaptureMode: value as
+                            | "always"
+                            | "meetings-only"
+                            | "disabled",
+                        },
+                        true,
+                      )
+                    }
+                  >
+                    <SelectTrigger className="w-[200px] h-7 text-xs">
+                      <SelectValue
+                        placeholder={t(
+                          "settings.recording.audioCapture.selectMode",
+                        )}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="always">
+                        {t("settings.recording.audioCapture.option.always")}
+                      </SelectItem>
+                      <SelectItem value="meetings-only">
+                        {t(
+                          "settings.recording.audioCapture.option.meetingsOnly",
+                        )}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <AudioCaptureModePreview
+                  mode={settings.audioCaptureMode ?? "always"}
+                />
+              </CardContent>
+            </Card>
+          )}
+
+          {!settings.disableAudio && (
+            <div className="flex items-center gap-2 px-1 pt-1.5">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                {t("settings.recording.section.transcription")}
+              </span>
+              <div className="h-px flex-1 bg-border/60" />
+            </div>
+          )}
+
+          {/* Transcription Engine */}
+          {!settings.disableAudio && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                      {t("settings.recording.transcriptionEngine.title")}
+                      <HelpTooltip
+                        text={t("settings.recording.transcriptionEngine.help")}
+                      />
+                    </h3>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {settings.audioTranscriptionEngine !== "disabled" && (
+                      <BackgroundTranscriptionDialog
+                        audioPipeline={audioPipeline}
+                      />
+                    )}
+                    <Select
+                      value={settings.audioTranscriptionEngine}
+                      onValueChange={(value) =>
+                        handleAudioTranscriptionModelChange(value)
+                      }
+                    >
+                      <SelectTrigger className="w-[200px] h-7 text-xs">
+                        <SelectValue
+                          placeholder={t(
+                            "settings.recording.transcriptionEngine.selectEngine",
+                          )}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          <SelectLabel className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">
+                            {t(
+                              "settings.recording.transcriptionEngine.group.cloud",
+                            )}
+                          </SelectLabel>
+                          <SelectItem
+                            value="screenpipe-cloud"
+                            disabled={!hasCloudTranscriptionAccess}
+                          >
+                            Screenpipe Cloud{" "}
+                            {!hasCloudTranscriptionAccess &&
+                              t(
+                                "settings.recording.transcriptionEngine.proSuffix",
+                              )}
+                            {hwCapability?.recommendedEngine ===
+                              "screenpipe-cloud" && " ★"}
+                          </SelectItem>
+                          <SelectItem value="deepgram">Deepgram</SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">
+                            {t(
+                              "settings.recording.transcriptionEngine.group.offline",
+                            )}
+                          </SelectLabel>
+                          <SelectItem value="whisper-large-v3-turbo">
+                            {t(
+                              "settings.recording.transcriptionEngine.option.whisperTurbo",
+                            )}
+                          </SelectItem>
+                          <SelectItem value="whisper-large-v3-turbo-quantized">
+                            {t(
+                              "settings.recording.transcriptionEngine.option.whisperTurboFast",
+                            )}
+                          </SelectItem>
+                          <SelectItem value="whisper-tiny">
+                            {t(
+                              "settings.recording.transcriptionEngine.option.whisperTiny",
+                            )}
+                          </SelectItem>
+                          <SelectItem value="whisper-tiny-quantized">
+                            {t(
+                              "settings.recording.transcriptionEngine.option.whisperTinyFast",
+                            )}
+                          </SelectItem>
+                          {!isMacOS && (
+                            <SelectItem value="qwen3-asr">Qwen3-ASR</SelectItem>
+                          )}
+                          <SelectItem value="parakeet">
+                            Parakeet
+                            {isMacOS
+                              ? t(
+                                  "settings.recording.transcriptionEngine.experimentalSuffix",
+                                )
+                              : ""}
+                          </SelectItem>
+                        </SelectGroup>
+                        <SelectGroup>
+                          <SelectLabel className="text-[10px] text-muted-foreground/70 uppercase tracking-wider">
+                            {t(
+                              "settings.recording.transcriptionEngine.group.other",
+                            )}
+                          </SelectLabel>
+                          <SelectItem value="openai-compatible">
+                            {t(
+                              "settings.recording.transcriptionEngine.option.openaiCompatible",
+                            )}
+                          </SelectItem>
+                          <SelectItem value="disabled">
+                            {t(
+                              "settings.recording.transcriptionEngine.option.disabled",
+                            )}
+                          </SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                {audioEngineResolution.fallbackReason && (
+                  <Alert
+                    data-testid="audio-engine-fallback-alert"
+                    className="mt-2 ml-[26px] border-amber-300 bg-amber-50 text-amber-950 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-100"
+                  >
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertTitle className="text-xs font-semibold">
+                      {t(
+                        "settings.recording.transcriptionEngine.fallback.title",
+                        {
+                          engine: getTranscriptionEngineLabel(
+                            audioEngineResolution.requested,
+                          ),
+                        },
+                      )}
+                    </AlertTitle>
+                    <AlertDescription className="space-y-2 text-xs">
+                      <p>
+                        {getAudioFallbackMessage(
+                          audioEngineResolution.fallbackReason,
+                          t,
+                        )}
+                      </p>
+                      <div className="grid gap-1">
+                        <div>
+                          {t(
+                            "settings.recording.transcriptionEngine.savedChoice",
+                          )}{" "}
+                          <span className="font-medium">
+                            {getTranscriptionEngineLabel(
+                              audioEngineResolution.requested,
+                            )}
+                          </span>
+                        </div>
+                        <div>
+                          {t(
+                            "settings.recording.transcriptionEngine.activeNow",
+                          )}{" "}
+                          <span className="font-medium">
+                            {getTranscriptionEngineLabel(
+                              audioEngineResolution.active,
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {audioEngineResolution.fallbackReason ===
+                          "notLoggedIn" && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            data-testid="audio-engine-fallback-login"
+                            onClick={() => checkLogin(settings.user)}
+                          >
+                            {t("settings.recording.transcriptionEngine.login")}
+                          </Button>
+                        )}
+                        {audioEngineResolution.fallbackReason ===
+                          "notSubscribed" && (
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            data-testid="audio-engine-fallback-upgrade"
+                            onClick={() =>
+                              openUrl("https://screenpipe.com/billing")
+                            }
+                          >
+                            {t(
+                              "settings.recording.transcriptionEngine.upgrade",
+                            )}
+                          </Button>
+                        )}
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          className="h-7 px-2 text-xs"
+                          data-testid="audio-engine-fallback-use-whisper"
+                          onClick={() =>
+                            handleSettingsChange(
+                              {
+                                audioTranscriptionEngine:
+                                  FALLBACK_TRANSCRIPTION_ENGINE,
+                              },
+                              true,
+                            )
+                          }
+                        >
+                          {t(
+                            "settings.recording.transcriptionEngine.useWhisper",
+                          )}
+                        </Button>
+                      </div>
+                    </AlertDescription>
+                  </Alert>
+                )}
+                {settings.audioTranscriptionEngine === "deepgram" && (
+                  <div className="mt-2 ml-[26px] relative">
+                    <ValidatedInput
+                      id="deepgramApiKey"
+                      label=""
+                      type={showApiKey ? "text" : "password"}
+                      value={settings.deepgramApiKey || ""}
+                      onChange={handleDeepgramApiKeyChange}
+                      validation={validateDeepgramApiKey}
+                      placeholder={t(
+                        "settings.recording.transcriptionEngine.deepgramApiKeyPlaceholder",
+                      )}
+                      required={true}
+                      className="pr-8 h-7 text-xs"
+                    />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-7 w-7"
+                      onClick={() => setShowApiKey(!showApiKey)}
+                    >
+                      {showApiKey ? (
+                        <EyeOff className="h-3 w-3" />
+                      ) : (
+                        <Eye className="h-3 w-3" />
+                      )}
+                    </Button>
                   </div>
                 )}
-                {outputDevices.length > 0 && (
-                  <div>
-                    <div className="flex items-center space-x-2 mb-1.5">
-                      <Volume2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
-                      <h3 className="text-xs font-medium text-muted-foreground">{t("settings.recording.audioDevices.systemAudio")}</h3>
+                {settings.audioTranscriptionEngine === "openai-compatible" && (
+                  <div className="mt-2 ml-[26px] space-y-2">
+                    {/* API Endpoint Input */}
+                    <ValidatedInput
+                      id="openaiCompatibleEndpoint"
+                      label=""
+                      value={
+                        settings.openaiCompatibleEndpoint ||
+                        DEFAULT_OPENAI_COMPATIBLE_ENDPOINT
+                      }
+                      onChange={(value: string) =>
+                        handleSettingsChange(
+                          { openaiCompatibleEndpoint: value },
+                          true,
+                        )
+                      }
+                      onBlur={() =>
+                        fetchOpenAIModels(
+                          settings.openaiCompatibleEndpoint ||
+                            DEFAULT_OPENAI_COMPATIBLE_ENDPOINT,
+                          settings.openaiCompatibleApiKey,
+                        )
+                      }
+                      onKeyDown={(e: React.KeyboardEvent) => {
+                        if (e.key === "Enter") {
+                          fetchOpenAIModels(
+                            settings.openaiCompatibleEndpoint ||
+                              DEFAULT_OPENAI_COMPATIBLE_ENDPOINT,
+                            settings.openaiCompatibleApiKey,
+                          );
+                        }
+                      }}
+                      placeholder={t(
+                        "settings.recording.transcriptionEngine.endpointPlaceholder",
+                      )}
+                      className="h-7 text-xs"
+                    />
+
+                    {/* API Key Input */}
+                    <div className="relative">
+                      <ValidatedInput
+                        id="openaiCompatibleApiKey"
+                        label=""
+                        type={showOpenAIApiKey ? "text" : "password"}
+                        value={settings.openaiCompatibleApiKey || ""}
+                        onChange={(value: string) =>
+                          handleSettingsChange(
+                            { openaiCompatibleApiKey: value },
+                            true,
+                          )
+                        }
+                        placeholder={t(
+                          "settings.recording.transcriptionEngine.apiKeyPlaceholder",
+                        )}
+                        className="pr-8 h-7 text-xs"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-0 top-0 h-7 w-7"
+                        onClick={() => setShowOpenAIApiKey(!showOpenAIApiKey)}
+                      >
+                        {showOpenAIApiKey ? (
+                          <EyeOff className="h-3 w-3" />
+                        ) : (
+                          <Eye className="h-3 w-3" />
+                        )}
+                      </Button>
                     </div>
-                    <div className="grid grid-cols-2 gap-1.5">
-                      {outputDevices.map(renderDevice)}
+
+                    {/* Model Input — editable with dropdown suggestions */}
+                    <div className="space-y-1.5">
+                      <div className="relative">
+                        <Input
+                          value={settings.openaiCompatibleModel || ""}
+                          onChange={(e) =>
+                            handleSettingsChange(
+                              { openaiCompatibleModel: e.target.value },
+                              true,
+                            )
+                          }
+                          placeholder={
+                            isLoadingModels
+                              ? t(
+                                  "settings.recording.transcriptionEngine.loadingModels",
+                                )
+                              : t(
+                                  "settings.recording.transcriptionEngine.modelPlaceholder",
+                                )
+                          }
+                          className="h-7 text-xs pr-8"
+                        />
+                        {isLoadingModels && (
+                          <Loader2 className="h-3 w-3 animate-spin absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                        )}
+                      </div>
+                      {openAIModels.length > 0 &&
+                        !openAIModels.includes("!API_Error") && (
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-xs text-muted-foreground">
+                                {t(
+                                  "settings.recording.transcriptionEngine.availableModels",
+                                  {
+                                    count: openAIModels.length,
+                                  },
+                                )}
+                              </span>
+                              {allOpenAIModels.length > 0 && (
+                                <button
+                                  type="button"
+                                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                                  onClick={() =>
+                                    setFilterTranscriptionModels(
+                                      !filterTranscriptionModels,
+                                    )
+                                  }
+                                >
+                                  {filterTranscriptionModels
+                                    ? t(
+                                        "settings.recording.transcriptionEngine.showAll",
+                                      )
+                                    : t(
+                                        "settings.recording.transcriptionEngine.filterSttOnly",
+                                      )}
+                                </button>
+                              )}
+                            </div>
+                            <div className="flex flex-wrap gap-1">
+                              {openAIModels.map((model) => (
+                                <button
+                                  key={model}
+                                  type="button"
+                                  className={cn(
+                                    "px-2 py-0.5 rounded text-xs border transition-colors",
+                                    settings.openaiCompatibleModel === model
+                                      ? "bg-foreground text-background border-foreground"
+                                      : "hover:bg-accent border-border",
+                                  )}
+                                  onClick={() =>
+                                    handleSettingsChange(
+                                      { openaiCompatibleModel: model },
+                                      true,
+                                    )
+                                  }
+                                >
+                                  {model}
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      {openAIModels.includes("!API_Error") && (
+                        <p className="text-xs text-muted-foreground">
+                          {t(
+                            "settings.recording.transcriptionEngine.modelsApiError",
+                          )}
+                        </p>
+                      )}
+                      {allOpenAIModels.length === 0 &&
+                        !openAIModels.includes("!API_Error") &&
+                        !isLoadingModels && (
+                          <p className="text-xs text-muted-foreground">
+                            {t(
+                              "settings.recording.transcriptionEngine.noModels",
+                            )}
+                          </p>
+                        )}
+                    </div>
+
+                    {/* Raw Audio Toggle */}
+                    <label className="flex items-center gap-2 text-xs cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={settings.openaiCompatibleRawAudio || false}
+                        onChange={(e) =>
+                          handleSettingsChange(
+                            { openaiCompatibleRawAudio: e.target.checked },
+                            true,
+                          )
+                        }
+                        className="rounded border-border"
+                      />
+                      <span>
+                        {t("settings.recording.transcriptionEngine.rawAudio")}
+                      </span>
+                    </label>
+
+                    {/* Custom Headers */}
+                    <div className="space-y-1">
+                      <label className="text-xs text-muted-foreground">
+                        {t(
+                          "settings.recording.transcriptionEngine.customHeaders",
+                        )}
+                      </label>
+                      <Input
+                        defaultValue={
+                          settings.openaiCompatibleHeaders
+                            ? JSON.stringify(settings.openaiCompatibleHeaders)
+                            : ""
+                        }
+                        onBlur={(e) => {
+                          const val = e.target.value.trim();
+                          if (!val) {
+                            handleSettingsChange(
+                              { openaiCompatibleHeaders: undefined },
+                              true,
+                            );
+                            return;
+                          }
+                          try {
+                            const parsed = JSON.parse(val);
+                            if (
+                              typeof parsed === "object" &&
+                              !Array.isArray(parsed)
+                            ) {
+                              handleSettingsChange(
+                                { openaiCompatibleHeaders: parsed },
+                                true,
+                              );
+                            }
+                          } catch {
+                            // Invalid JSON — don't save
+                          }
+                        }}
+                        placeholder='{"X-Custom-Header": "value"}'
+                        className="h-7 text-xs font-mono"
+                      />
+                    </div>
+
+                    {/* Connection Test Panel */}
+                    <div className="border rounded-lg">
+                      <button
+                        type="button"
+                        className="flex items-center justify-between w-full px-3 py-2 text-xs font-medium text-left hover:bg-accent/50 transition-colors rounded-lg"
+                        onClick={() => setTxDiagnosticsOpen(!txDiagnosticsOpen)}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Zap className="h-3.5 w-3.5" />
+                          <span>
+                            {t(
+                              "settings.recording.transcriptionEngine.connectionTest",
+                            )}
+                          </span>
+                          {txTestStatus === "done" && (
+                            <span className="text-xs text-muted-foreground">
+                              {txTestResults.transcribe.status === "pass"
+                                ? t(
+                                    "settings.recording.transcriptionEngine.diagnostics.allPassed",
+                                  )
+                                : txTestResults.endpoint.status === "fail"
+                                  ? t(
+                                      "settings.recording.transcriptionEngine.diagnostics.connectionFailed",
+                                    )
+                                  : txTestResults.auth.status === "fail"
+                                    ? t(
+                                        "settings.recording.transcriptionEngine.diagnostics.authFailed",
+                                      )
+                                    : txTestResults.models.status === "fail"
+                                      ? t(
+                                          "settings.recording.transcriptionEngine.diagnostics.modelsFailed",
+                                        )
+                                      : txTestResults.transcribe.status ===
+                                          "fail"
+                                        ? t(
+                                            "settings.recording.transcriptionEngine.diagnostics.transcriptionFailed",
+                                          )
+                                        : ""}
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {txTestStatus === "testing" && (
+                            <Loader2 className="h-3 w-3 animate-spin text-muted-foreground" />
+                          )}
+                          {txDiagnosticsOpen ? (
+                            <ChevronUp className="h-3.5 w-3.5 text-muted-foreground" />
+                          ) : (
+                            <ChevronDown className="h-3.5 w-3.5 text-muted-foreground" />
+                          )}
+                        </div>
+                      </button>
+
+                      {txDiagnosticsOpen && (
+                        <div className="px-3 pb-3 space-y-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={runTranscriptionDiagnostics}
+                            disabled={txTestStatus === "testing"}
+                            className="flex items-center gap-2 h-7 text-xs"
+                          >
+                            {txTestStatus === "testing" ? (
+                              <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                              <Zap className="h-3 w-3" />
+                            )}
+                            {txTestStatus === "testing"
+                              ? t(
+                                  "settings.recording.transcriptionEngine.diagnostics.testing",
+                                )
+                              : t(
+                                  "settings.recording.transcriptionEngine.diagnostics.run",
+                                )}
+                          </Button>
+
+                          <div className="space-y-1.5 text-xs">
+                            {(
+                              [
+                                [
+                                  "endpoint",
+                                  "1",
+                                  t(
+                                    "settings.recording.transcriptionEngine.diagnostics.endpointReachable",
+                                  ),
+                                ],
+                                [
+                                  "auth",
+                                  "2",
+                                  t(
+                                    "settings.recording.transcriptionEngine.diagnostics.authValid",
+                                  ),
+                                ],
+                                [
+                                  "models",
+                                  "3",
+                                  t(
+                                    "settings.recording.transcriptionEngine.diagnostics.modelsLoaded",
+                                  ),
+                                ],
+                                [
+                                  "transcribe",
+                                  "4",
+                                  t(
+                                    "settings.recording.transcriptionEngine.diagnostics.testTranscription",
+                                  ),
+                                ],
+                              ] as const
+                            ).map(([key, num, label]) => {
+                              const result = txTestResults[key];
+                              return (
+                                <div
+                                  key={key}
+                                  className="flex items-start gap-2"
+                                >
+                                  <div className="flex items-center gap-1.5 min-w-[150px]">
+                                    {result.status === "pass" ? (
+                                      <CheckCircle2 className="h-3.5 w-3.5 text-foreground shrink-0" />
+                                    ) : result.status === "fail" ? (
+                                      <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
+                                    ) : result.status === "running" ? (
+                                      <Loader2 className="h-3.5 w-3.5 animate-spin text-muted-foreground shrink-0" />
+                                    ) : (
+                                      <Circle className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
+                                    )}
+                                    <span
+                                      className={cn(
+                                        result.status === "skip" ||
+                                          result.status === "pending"
+                                          ? "text-muted-foreground/40"
+                                          : result.status === "fail"
+                                            ? "text-destructive"
+                                            : "",
+                                      )}
+                                    >
+                                      {num}. {label}
+                                    </span>
+                                  </div>
+                                  {result.message && (
+                                    <span
+                                      className={cn(
+                                        "text-xs",
+                                        result.status === "fail"
+                                          ? "text-destructive"
+                                          : "text-muted-foreground",
+                                      )}
+                                    >
+                                      {result.message}
+                                    </span>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 )}
               </CardContent>
             </Card>
-          );
-        })()}
+          )}
 
-        {/* Echo cancellation */}
-        {!settings.disableAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div className="min-w-0">
-                  <div className="flex items-center space-x-1.5">
-                    <h3 className="text-sm font-medium text-foreground">
-                      {t("settings.recording.aec.title")}
-                    </h3>
-                    <HelpTooltip text={t("settings.recording.aec.help")} />
+          {/* Languages */}
+          {!settings.disableAudio && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Languages className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.languages.title")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {languageSupportDescription}
+                      </p>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {aecDetails.description}
-                  </p>
+                  <Popover open={openLanguages} onOpenChange={setOpenLanguages}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                      >
+                        {languageTriggerLabel}
+                        <ChevronsUpDown className="ml-1 h-3 w-3 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[250px] p-0">
+                      <Command>
+                        <CommandInput
+                          placeholder={t(
+                            "settings.recording.languages.searchPlaceholder",
+                          )}
+                        />
+                        <CommandList>
+                          <CommandEmpty>
+                            {t("settings.recording.languages.empty")}
+                          </CommandEmpty>
+                          <CommandGroup>
+                            <CommandItem
+                              value="auto-detect"
+                              onSelect={() => handleLanguageChange(null)}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-3 w-3",
+                                  settings.languages.length === 0
+                                    ? "opacity-100"
+                                    : "opacity-0",
+                                )}
+                              />
+                              <span className="text-xs">
+                                {t("settings.recording.languages.autoDetect")}
+                              </span>
+                            </CommandItem>
+                            {supportedLanguageOptions.map((language) => (
+                              <CommandItem
+                                key={language.code}
+                                value={language.code}
+                                onSelect={() =>
+                                  handleLanguageChange(language.code)
+                                }
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-3 w-3",
+                                    settings.languages.includes(language.code)
+                                      ? "opacity-100"
+                                      : "opacity-0",
+                                  )}
+                                />
+                                <span className="text-xs">{language.name}</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 </div>
-              </div>
-              <Select value={aecMode} onValueChange={(value) => handleAecModeChange(value as AecMode)}>
-                <SelectTrigger id="aecMode" className="h-8 w-full text-xs sm:w-[300px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="off">
-                    {getAecModeDetails("off", t).label}
-                  </SelectItem>
-                  <SelectItem value="screenpipe">
-                    {getAecModeDetails("screenpipe", t).label}
-                  </SelectItem>
-                  {isMacOS && (
-                    <SelectItem value="macos">
-                      {getAecModeDetails("macos", t).label}
-                    </SelectItem>
-                  )}
-                  {isWindows && (
-                    <SelectItem value="windows">
-                      {getAecModeDetails("windows", t).label}
-                    </SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-        )}
+              </CardContent>
+            </Card>
+          )}
 
-        {/* CoreAudio System Audio (macOS 14.4+ only) */}
-        {!settings.disableAudio && coreaudioTapAvailable && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <h3 className="text-sm font-medium text-foreground">
-                    {t("settings.recording.coreaudio.title")}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    {t("settings.recording.coreaudio.description")}
-                  </p>
+          {/* Transcription Mode - hidden when transcription engine is disabled */}
+          {!settings.disableAudio &&
+            settings.audioTranscriptionEngine !== "disabled" && (
+              <Card className="border-border bg-card">
+                <CardContent className="px-3 py-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <Zap className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <div>
+                        <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                          {t("settings.recording.batchTranscription.title")}
+                          <HelpTooltip
+                            text={t(
+                              "settings.recording.batchTranscription.help",
+                            )}
+                          />
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {t(
+                            "settings.recording.batchTranscription.description",
+                          )}
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      id="transcriptionMode"
+                      checked={["smart", "batch"].includes(
+                        settings.transcriptionMode ?? "realtime",
+                      )}
+                      onCheckedChange={(checked) =>
+                        handleSettingsChange(
+                          { transcriptionMode: checked ? "batch" : "realtime" },
+                          true,
+                        )
+                      }
+                    />
+                  </div>
+                  {["smart", "batch"].includes(
+                    settings.transcriptionMode ?? "realtime",
+                  ) &&
+                    settings.audioTranscriptionEngine ===
+                      "openai-compatible" && (
+                      <div className="mt-2.5 pt-2.5 border-t border-border/50">
+                        <div className="flex items-center justify-between mb-1.5">
+                          <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                            {t(
+                              "settings.recording.batchTranscription.maxDuration",
+                            )}
+                            <HelpTooltip
+                              text={t(
+                                "settings.recording.batchTranscription.maxDurationHelp",
+                              )}
+                            />
+                          </span>
+                          <span className="text-xs font-mono text-foreground">
+                            {(settings.batchMaxDurationSecs ?? 0) === 0
+                              ? t("settings.recording.auto")
+                              : `${Math.floor((settings.batchMaxDurationSecs ?? 0) / 60)}min`}
+                          </span>
+                        </div>
+                        <Slider
+                          value={[settings.batchMaxDurationSecs ?? 0]}
+                          onValueChange={([value]) =>
+                            handleSettingsChange(
+                              { batchMaxDurationSecs: value ?? 0 } as any,
+                              true,
+                            )
+                          }
+                          min={0}
+                          max={5400}
+                          step={60}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                          <span>{t("settings.recording.auto")}</span>
+                          <span>90min</span>
+                        </div>
+                      </div>
+                    )}
+                </CardContent>
+              </Card>
+            )}
+
+          {/* Filter Music - hidden when transcription engine is disabled */}
+          {!settings.disableAudio &&
+            settings.audioTranscriptionEngine !== "disabled" && (
+              <Card className="border-border bg-card">
+                <CardContent className="px-3 py-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <Music className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <div>
+                        <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                          {t("settings.recording.filterMusic.title")}
+                          <HelpTooltip
+                            text={t("settings.recording.filterMusic.help")}
+                          />
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {t("settings.recording.filterMusic.description")}
+                        </p>
+                      </div>
+                    </div>
+                    <Switch
+                      id="filterMusic"
+                      checked={settings.filterMusic ?? false}
+                      onCheckedChange={(checked) =>
+                        handleSettingsChange({ filterMusic: checked }, true)
+                      }
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+          {!settings.disableAudio && (
+            <div className="flex items-center gap-2 px-1 pt-1.5">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                {t("settings.recording.section.meetings")}
+              </span>
+              <div className="h-px flex-1 bg-border/60" />
+            </div>
+          )}
+
+          {/* Meeting Live Notes */}
+          {!settings.disableAudio && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    <Headphones className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                        {t("settings.recording.liveMeetingNotes.title")}
+                        <HelpTooltip
+                          text={t("settings.recording.liveMeetingNotes.help")}
+                        />
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.liveMeetingNotes.description")}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {(settings.meetingLiveTranscriptionEnabled ?? true) && (
+                      <Select
+                        value={
+                          settings.meetingLiveTranscriptionProvider ??
+                          "selected-engine"
+                        }
+                        onValueChange={(value) =>
+                          handleSettingsChange(
+                            {
+                              meetingLiveTranscriptionProvider:
+                                value as Settings["meetingLiveTranscriptionProvider"],
+                            },
+                            true,
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-7 w-[190px] text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="selected-engine">
+                            {t(
+                              "settings.recording.liveMeetingNotes.provider.selectedEngine",
+                            )}
+                          </SelectItem>
+                          <SelectItem value="screenpipe-cloud">
+                            {t(
+                              "settings.recording.liveMeetingNotes.provider.screenpipeCloudLive",
+                            )}
+                          </SelectItem>
+                          <SelectItem value="deepgram-live">
+                            {t(
+                              "settings.recording.liveMeetingNotes.provider.deepgramLive",
+                            )}
+                          </SelectItem>
+                        </SelectContent>
+                      </Select>
+                    )}
+                    <Switch
+                      id="meetingLiveTranscriptionEnabled"
+                      checked={settings.meetingLiveTranscriptionEnabled ?? true}
+                      onCheckedChange={(checked) =>
+                        handleSettingsChange(
+                          {
+                            meetingLiveTranscriptionEnabled: checked,
+                            meetingLiveTranscriptionProvider: checked
+                              ? settings.meetingLiveTranscriptionProvider &&
+                                settings.meetingLiveTranscriptionProvider !==
+                                  "disabled"
+                                ? settings.meetingLiveTranscriptionProvider
+                                : "selected-engine"
+                              : "disabled",
+                          },
+                          true,
+                        )
+                      }
+                    />
+                  </div>
                 </div>
-              </div>
-              <Switch
-                id="experimentalCoreaudioSystemAudio"
-                checked={Boolean(settings.experimentalCoreaudioSystemAudio ?? false)}
-                onCheckedChange={(checked) => handleSettingsChange({ experimentalCoreaudioSystemAudio: checked }, true)}
-              />
-            </div>
-          </CardContent>
-        </Card>
-        )}
-
-        {/* Per-app exclusion list for the CoreAudio Process Tap. Only
-            meaningful when the tap is the active backend. */}
-        {!settings.disableAudio && coreaudioTapAvailable && settings.experimentalCoreaudioSystemAudio && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5 space-y-2">
-            <div className="flex items-center space-x-2.5">
-              <VolumeX className="h-4 w-4 text-muted-foreground shrink-0" />
-              <div>
-                <h3 className="text-sm font-medium text-foreground">
-                  {t("settings.recording.audioExclusions.title")}
-                </h3>
-                <p className="text-xs text-muted-foreground">
-                  {t("settings.recording.audioExclusions.description")}
-                </p>
-              </div>
-            </div>
-            <div
-              className="flex flex-wrap gap-1.5 pl-6"
-              onClick={() => setSelectedBundleId(null)}
-            >
-              {effectiveAudioExclusions.map((app) => (
-                <Badge
-                  key={app.bundleId}
-                  variant={selectedBundleId === app.bundleId ? "default" : "secondary"}
-                  className="gap-1.5 pr-1 cursor-pointer"
-                  role="button"
-                  tabIndex={0}
-                  aria-pressed={selectedBundleId === app.bundleId}
-                  title={app.bundleId}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setSelectedBundleId(
-                      selectedBundleId === app.bundleId ? null : app.bundleId
-                    );
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      setSelectedBundleId(
-                        selectedBundleId === app.bundleId ? null : app.bundleId
-                      );
+                {(settings.meetingLiveTranscriptionEnabled ?? true) &&
+                  (settings.meetingLiveTranscriptionProvider ??
+                    "selected-engine") === "screenpipe-cloud" &&
+                  !settings.user?.token &&
+                  !settings.user?.id && (
+                    <p className="mt-2 ml-[26px] text-xs text-muted-foreground">
+                      {t("settings.recording.liveMeetingNotes.loginRequired")}
+                    </p>
+                  )}
+                {(settings.meetingLiveTranscriptionEnabled ?? true) &&
+                  (settings.meetingLiveTranscriptionProvider ??
+                    "selected-engine") === "selected-engine" &&
+                  settings.audioTranscriptionEngine === "disabled" && (
+                    <p className="mt-2 ml-[26px] text-xs text-muted-foreground">
+                      {t("settings.recording.liveMeetingNotes.pickEngine")}
+                    </p>
+                  )}
+                <div className="mt-2.5 pt-2.5 border-t border-border/50 flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                      {t("settings.recording.appendTypedText.title")}
+                      <HelpTooltip
+                        text={t("settings.recording.appendTypedText.help")}
+                      />
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {t("settings.recording.appendTypedText.description")}
+                    </p>
+                  </div>
+                  <Switch
+                    id="appendTypedTextToMeetingNote"
+                    checked={settings.appendTypedTextToMeetingNote ?? true}
+                    onCheckedChange={(checked) =>
+                      handleSettingsChange(
+                        { appendTypedTextToMeetingNote: checked },
+                        true,
+                      )
                     }
-                  }}
-                >
-                  {app.icon && (
-                    <img src={app.icon} alt="" className="h-4 w-4 rounded-sm" />
-                  )}
-                  <span className="text-xs">{app.name ?? app.bundleId}</span>
-                  <button
-                    type="button"
-                    className="inline-flex rounded-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                    aria-label={t("settings.recording.audioExclusions.removeApp", {
-                      app: app.name ?? app.bundleId,
-                    })}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeAudioExclusion(app.bundleId);
-                    }}
-                  >
-                    <XCircle className="h-3 w-3" />
-                  </button>
-                </Badge>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                className="h-6 text-xs"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  pickAppToExclude();
-                }}
-              >
-                {t("settings.recording.audioExclusions.addApp")}
-              </Button>
-              {effectiveAudioExclusions.length === 0 && (
-                <span className="text-xs text-muted-foreground italic self-center">
-                  {t("settings.recording.audioExclusions.empty")}
-                </span>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-        )}
-
-        {!settings.disableAudio && (
-          <div className="flex items-center gap-2 px-1 pt-1.5">
-            <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">{t("settings.recording.voice.section")}</span>
-            <div className="h-px flex-1 bg-border/60" />
-          </div>
-        )}
-
-        {/* Your Name + Train Voice — hidden when transcription is disabled */}
-        {!settings.disableAudio && settings.audioTranscriptionEngine !== "disabled" && (
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <User className="h-4 w-4 text-muted-foreground shrink-0" />
-                <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
-                  {t("settings.recording.userName.title")}
-                  <HelpTooltip text={t("settings.recording.userName.help")} />
-                </h3>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <div className="relative">
-                  <Input
-                    placeholder={t("settings.recording.userName.placeholder")}
-                    value={settings.userName || ""}
-                    onChange={(e) => handleSettingsChange({ userName: e.target.value }, false)}
-                    onFocus={() => setSpeakerInputFocused(true)}
-                    onBlur={() => setTimeout(() => setSpeakerInputFocused(false), 150)}
-                    className="w-32 h-7 text-xs"
                   />
-                  {speakerInputFocused && speakerSuggestions.length > 0 && (
-                    <div className="absolute top-full left-0 w-44 mt-0.5 z-50 bg-popover border border-border shadow-md max-h-[120px] overflow-y-auto">
-                      {speakerSuggestions.map((s) => (
-                        <button
-                          key={s.id}
-                          type="button"
-                          className="w-full px-2 py-1 text-left text-xs hover:bg-accent truncate"
-                          onMouseDown={(e) => {
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Automatic meeting detection */}
+          {!settings.disableAudio && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Users className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                        {t("settings.recording.meetingDetection.title")}
+                        <HelpTooltip
+                          text={t("settings.recording.meetingDetection.help")}
+                        />
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.meetingDetection.description")}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {!settings.disableMeetingDetector && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-[11px] gap-1.5"
+                        onClick={() => setMeetingAppsPickerOpen(true)}
+                        title={t(
+                          "settings.recording.meetingDetection.ignoreAppsTitle",
+                        )}
+                        data-testid="settings-ignore-meeting-apps-button"
+                      >
+                        <UserX className="h-3.5 w-3.5" />
+                        {t("settings.recording.meetingDetection.ignoreApps")}
+                        {(settings.ignoredMeetingApps?.length ?? 0) > 0 && (
+                          <span
+                            className="rounded bg-muted px-1.5 py-0.5 text-[10px] tabular-nums"
+                            data-testid="settings-ignore-meeting-apps-count"
+                          >
+                            {settings.ignoredMeetingApps!.length}
+                          </span>
+                        )}
+                      </Button>
+                    )}
+                    <ManagedSwitch
+                      settingKey="disableMeetingDetector"
+                      id="disableMeetingDetector"
+                      checked={!settings.disableMeetingDetector}
+                      onCheckedChange={(checked) =>
+                        handleSettingsChange(
+                          { disableMeetingDetector: !checked },
+                          true,
+                        )
+                      }
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <MeetingAppsPicker
+            open={meetingAppsPickerOpen}
+            onOpenChange={setMeetingAppsPickerOpen}
+            selected={settings.ignoredMeetingApps ?? []}
+            onToggle={handleToggleIgnoredMeetingApp}
+          />
+
+          {!settings.disableAudio && (
+            <div className="flex items-center gap-2 px-1 pt-1.5">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                {t("settings.recording.section.devicesCapture")}
+              </span>
+              <div className="h-px flex-1 bg-border/60" />
+            </div>
+          )}
+
+          {/* System Default Audio */}
+          {!settings.disableAudio && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.audioDevices.autoSelectTitle")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t(
+                          "settings.recording.audioDevices.autoSelectDescription",
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="useSystemDefaultAudio"
+                    checked={settings.useSystemDefaultAudio ?? true}
+                    onCheckedChange={(checked) =>
+                      handleSettingsChange(
+                        { useSystemDefaultAudio: checked },
+                        true,
+                      )
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Audio Devices — grouped by input (microphones) vs output (system audio) */}
+          {!settings.disableAudio &&
+            !settings.useSystemDefaultAudio &&
+            (() => {
+              const inputDevices = availableAudioDevices.filter(
+                (d) => getAudioDeviceType(d.name) === "input",
+              );
+              const outputDevices = availableAudioDevices.filter(
+                (d) => getAudioDeviceType(d.name) === "output",
+              );
+
+              const renderDevice = (
+                device: (typeof availableAudioDevices)[number],
+              ) => {
+                const isSelected = settings.audioDevices.includes(device.name);
+                const DeviceIcon = getAudioDeviceIcon(device.name);
+                const displayName = getAudioDeviceDisplayName(device.name);
+                // Use per-device level if available, fall back to global speechRatio
+                const deviceLevel =
+                  overlayData.deviceLevels[device.name] ??
+                  overlayData.speechRatio;
+                return (
+                  <div
+                    key={device.name}
+                    className={cn(
+                      "relative rounded-lg border cursor-pointer transition-all overflow-hidden",
+                      isSelected
+                        ? "border-foreground bg-foreground/5"
+                        : "border-border opacity-70 hover:opacity-100 hover:bg-accent/50",
+                    )}
+                    onClick={() => handleAudioDeviceChange(device.name)}
+                  >
+                    <div className="px-2.5 py-2 flex items-start gap-2">
+                      <DeviceIcon className="h-3.5 w-3.5 text-muted-foreground shrink-0 mt-0.5" />
+                      <div className="min-w-0 flex-1 flex items-center gap-1.5">
+                        <p className="text-xs font-medium truncate">
+                          {displayName}
+                        </p>
+                        {device.isDefault && (
+                          <Badge
+                            variant="secondary"
+                            className="text-[9px] h-3.5 px-1 shrink-0"
+                          >
+                            {t("settings.recording.audioDevices.default")}
+                          </Badge>
+                        )}
+                      </div>
+                      {isSelected && (
+                        <Check className="h-3 w-3 text-foreground shrink-0 mt-0.5" />
+                      )}
+                    </div>
+
+                    {/* Audio level meter — always rendered for consistent height, invisible when not selected */}
+                    <div
+                      className={cn("px-2.5 pb-2", !isSelected && "invisible")}
+                    >
+                      <div className="h-1.5 w-full rounded-full bg-muted overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-foreground/60 transition-all duration-75"
+                          style={{
+                            width: `${Math.min(100, Math.pow(deviceLevel, 3) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              };
+
+              return (
+                <Card className="border-border bg-card">
+                  <CardContent className="px-3 py-2.5">
+                    {inputDevices.length > 0 && (
+                      <div className="mb-2.5">
+                        <div className="flex items-center space-x-2 mb-1.5">
+                          <Mic className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <h3 className="text-xs font-medium text-muted-foreground">
+                            {t("settings.recording.audioDevices.microphones")}
+                          </h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {inputDevices.map(renderDevice)}
+                        </div>
+                      </div>
+                    )}
+                    {outputDevices.length > 0 && (
+                      <div>
+                        <div className="flex items-center space-x-2 mb-1.5">
+                          <Volume2 className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                          <h3 className="text-xs font-medium text-muted-foreground">
+                            {t("settings.recording.audioDevices.systemAudio")}
+                          </h3>
+                        </div>
+                        <div className="grid grid-cols-2 gap-1.5">
+                          {outputDevices.map(renderDevice)}
+                        </div>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              );
+            })()}
+
+          {/* Echo cancellation */}
+          {!settings.disableAudio && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Mic className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center space-x-1.5">
+                        <h3 className="text-sm font-medium text-foreground">
+                          {t("settings.recording.aec.title")}
+                        </h3>
+                        <HelpTooltip text={t("settings.recording.aec.help")} />
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {aecDetails.description}
+                      </p>
+                    </div>
+                  </div>
+                  <Select
+                    value={aecMode}
+                    onValueChange={(value) =>
+                      handleAecModeChange(value as AecMode)
+                    }
+                  >
+                    <SelectTrigger
+                      id="aecMode"
+                      className="h-8 w-full text-xs sm:w-[300px]"
+                    >
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="off">
+                        {getAecModeDetails("off", t).label}
+                      </SelectItem>
+                      <SelectItem value="screenpipe">
+                        {getAecModeDetails("screenpipe", t).label}
+                      </SelectItem>
+                      {isMacOS && (
+                        <SelectItem value="macos">
+                          {getAecModeDetails("macos", t).label}
+                        </SelectItem>
+                      )}
+                      {isWindows && (
+                        <SelectItem value="windows">
+                          {getAecModeDetails("windows", t).label}
+                        </SelectItem>
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* CoreAudio System Audio (macOS 14.4+ only) */}
+          {!settings.disableAudio && coreaudioTapAvailable && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.coreaudio.title")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.coreaudio.description")}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="experimentalCoreaudioSystemAudio"
+                    checked={Boolean(
+                      settings.experimentalCoreaudioSystemAudio ?? false,
+                    )}
+                    onCheckedChange={(checked) =>
+                      handleSettingsChange(
+                        { experimentalCoreaudioSystemAudio: checked },
+                        true,
+                      )
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Per-app exclusion list for the CoreAudio Process Tap. Only
+            meaningful when the tap is the active backend. */}
+          {!settings.disableAudio &&
+            coreaudioTapAvailable &&
+            settings.experimentalCoreaudioSystemAudio && (
+              <Card className="border-border bg-card">
+                <CardContent className="px-3 py-2.5 space-y-2">
+                  <div className="flex items-center space-x-2.5">
+                    <VolumeX className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.audioExclusions.title")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.audioExclusions.description")}
+                      </p>
+                    </div>
+                  </div>
+                  <div
+                    className="flex flex-wrap gap-1.5 pl-6"
+                    onClick={() => setSelectedBundleId(null)}
+                  >
+                    {effectiveAudioExclusions.map((app) => (
+                      <Badge
+                        key={app.bundleId}
+                        variant={
+                          selectedBundleId === app.bundleId
+                            ? "default"
+                            : "secondary"
+                        }
+                        className="gap-1.5 pr-1 cursor-pointer"
+                        role="button"
+                        tabIndex={0}
+                        aria-pressed={selectedBundleId === app.bundleId}
+                        title={app.bundleId}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedBundleId(
+                            selectedBundleId === app.bundleId
+                              ? null
+                              : app.bundleId,
+                          );
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
                             e.preventDefault();
-                            handleSettingsChange({ userName: s.name }, false);
-                            setSpeakerInputFocused(false);
+                            setSelectedBundleId(
+                              selectedBundleId === app.bundleId
+                                ? null
+                                : app.bundleId,
+                            );
+                          }
+                        }}
+                      >
+                        {app.icon && (
+                          <img
+                            src={app.icon}
+                            alt=""
+                            className="h-4 w-4 rounded-sm"
+                          />
+                        )}
+                        <span className="text-xs">
+                          {app.name ?? app.bundleId}
+                        </span>
+                        <button
+                          type="button"
+                          className="inline-flex rounded-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                          aria-label={t(
+                            "settings.recording.audioExclusions.removeApp",
+                            {
+                              app: app.name ?? app.bundleId,
+                            },
+                          )}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            removeAudioExclusion(app.bundleId);
                           }}
                         >
-                          {s.name}
+                          <XCircle className="h-3 w-3" />
                         </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 text-xs"
-                  onClick={handleStartTraining}
-                  disabled={voiceTraining.active || !settings.userName?.trim()}
-                >
-                  {t("settings.recording.userName.train")}
-                </Button>
-              </div>
+                      </Badge>
+                    ))}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="h-6 text-xs"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        pickAppToExclude();
+                      }}
+                    >
+                      {t("settings.recording.audioExclusions.addApp")}
+                    </Button>
+                    {effectiveAudioExclusions.length === 0 && (
+                      <span className="text-xs text-muted-foreground italic self-center">
+                        {t("settings.recording.audioExclusions.empty")}
+                      </span>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+
+          {!settings.disableAudio && (
+            <div className="flex items-center gap-2 px-1 pt-1.5">
+              <span className="text-[11px] font-medium uppercase tracking-wider text-muted-foreground/70">
+                {t("settings.recording.voice.section")}
+              </span>
+              <div className="h-px flex-1 bg-border/60" />
             </div>
-          </CardContent>
-        </Card>
-        )}
+          )}
 
-        {/* Transcription Dictionary */}
-        {!settings.disableAudio && (
-        <TranscriptionDictionary
-          vocabularyWords={settings.vocabularyWords ?? []}
-          onChange={(words) => handleSettingsChange({ vocabularyWords: words }, true)}
-        />
-        )}
+          {/* Your Name + Train Voice — hidden when transcription is disabled */}
+          {!settings.disableAudio &&
+            settings.audioTranscriptionEngine !== "disabled" && (
+              <Card className="border-border bg-card">
+                <CardContent className="px-3 py-2.5">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2.5">
+                      <User className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <h3 className="text-sm font-medium text-foreground flex items-center gap-1.5">
+                        {t("settings.recording.userName.title")}
+                        <HelpTooltip
+                          text={t("settings.recording.userName.help")}
+                        />
+                      </h3>
+                    </div>
+                    <div className="flex items-center gap-1.5">
+                      <div className="relative">
+                        <Input
+                          placeholder={t(
+                            "settings.recording.userName.placeholder",
+                          )}
+                          value={settings.userName || ""}
+                          onChange={(e) =>
+                            handleSettingsChange(
+                              { userName: e.target.value },
+                              false,
+                            )
+                          }
+                          onFocus={() => setSpeakerInputFocused(true)}
+                          onBlur={() =>
+                            setTimeout(() => setSpeakerInputFocused(false), 150)
+                          }
+                          className="w-32 h-7 text-xs"
+                        />
+                        {speakerInputFocused &&
+                          speakerSuggestions.length > 0 && (
+                            <div className="absolute top-full left-0 w-44 mt-0.5 z-50 bg-popover border border-border shadow-md max-h-[120px] overflow-y-auto">
+                              {speakerSuggestions.map((s) => (
+                                <button
+                                  key={s.id}
+                                  type="button"
+                                  className="w-full px-2 py-1 text-left text-xs hover:bg-accent truncate"
+                                  onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    handleSettingsChange(
+                                      { userName: s.name },
+                                      false,
+                                    );
+                                    setSpeakerInputFocused(false);
+                                  }}
+                                >
+                                  {s.name}
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                        onClick={handleStartTraining}
+                        disabled={
+                          voiceTraining.active || !settings.userName?.trim()
+                        }
+                      >
+                        {t("settings.recording.userName.train")}
+                      </Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
-      </div>
+          {/* Transcription Dictionary */}
+          {!settings.disableAudio && (
+            <TranscriptionDictionary
+              vocabularyWords={settings.vocabularyWords ?? []}
+              onChange={(words) =>
+                handleSettingsChange({ vocabularyWords: words }, true)
+              }
+            />
+          )}
+        </div>
       </LockedSetting>
 
       {/* Screen */}
       <LockedSetting settingKey="screen_recording">
-      <div className="space-y-2 pt-2">
-        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">{t("settings.recording.section.screen")}</h2>
+        <div className="space-y-2 pt-2">
+          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+            {t("settings.recording.section.screen")}
+          </h2>
 
-        {/* Screen context capture toggle */}
-        <Card className="border-border bg-card">
-          <CardContent className="px-3 py-2.5">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2.5">
-                <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                <div>
-                  <h3 className="text-sm font-medium text-foreground">{t("settings.recording.screenRecording.title")}</h3>
-                  <p className="text-xs text-muted-foreground">{t("settings.recording.screenRecording.description")}</p>
-                </div>
-              </div>
-              <ManagedSwitch settingKey="disableVision" id="disableVision" checked={!settings.disableVision} onCheckedChange={(checked) => handleSettingsChange({ disableVision: !checked }, true)} />
-            </div>
-          </CardContent>
-        </Card>
-
-        {!settings.disableVision && (
+          {/* Screen context capture toggle */}
           <Card className="border-border bg-card">
             <CardContent className="px-3 py-2.5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-2.5">
                   <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
                   <div>
-                    <h3 className="text-sm font-medium text-foreground">{t("settings.recording.screenshotImages.title")}</h3>
-                    <p className="text-xs text-muted-foreground">{t("settings.recording.screenshotImages.description")}</p>
+                    <h3 className="text-sm font-medium text-foreground">
+                      {t("settings.recording.screenRecording.title")}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      {t("settings.recording.screenRecording.description")}
+                    </p>
                   </div>
                 </div>
                 <ManagedSwitch
-                  settingKey="disableScreenshots"
-                  id="disableScreenshots"
-                  checked={!(settings.disableScreenshots ?? false)}
-                  onCheckedChange={(checked) => handleSettingsChange({ disableScreenshots: !checked }, true)}
+                  settingKey="disableVision"
+                  id="disableVision"
+                  checked={!settings.disableVision}
+                  onCheckedChange={(checked) =>
+                    handleSettingsChange({ disableVision: !checked }, true)
+                  }
                 />
               </div>
             </CardContent>
           </Card>
-        )}
 
-        {/* Use All Monitors - right below screen capture toggles */}
-        {screenshotImagesEnabled && (
-          <Card className="border-border bg-card">
-            <CardContent className="px-3 py-2.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2.5">
-                  <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div>
-                    <h3 className="text-sm font-medium text-foreground">{t("settings.recording.monitors.useAllTitle")}</h3>
-                    <p className="text-xs text-muted-foreground">{t("settings.recording.monitors.useAllDescription")}</p>
+          {!settings.disableVision && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.screenshotImages.title")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.screenshotImages.description")}
+                      </p>
+                    </div>
                   </div>
+                  <ManagedSwitch
+                    settingKey="disableScreenshots"
+                    id="disableScreenshots"
+                    checked={!(settings.disableScreenshots ?? false)}
+                    onCheckedChange={(checked) =>
+                      handleSettingsChange(
+                        { disableScreenshots: !checked },
+                        true,
+                      )
+                    }
+                  />
                 </div>
-                <Switch id="useAllMonitors" checked={settings.useAllMonitors} onCheckedChange={(checked) => handleSettingsChange({ useAllMonitors: checked }, true)} />
-              </div>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          )}
 
-        {/* Monitor Selection — paired directly under "Use all monitors" so
+          {/* Use All Monitors - right below screen capture toggles */}
+          {screenshotImagesEnabled && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2.5">
+                    <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div>
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.monitors.useAllTitle")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.monitors.useAllDescription")}
+                      </p>
+                    </div>
+                  </div>
+                  <Switch
+                    id="useAllMonitors"
+                    checked={settings.useAllMonitors}
+                    onCheckedChange={(checked) =>
+                      handleSettingsChange({ useAllMonitors: checked }, true)
+                    }
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Monitor Selection — paired directly under "Use all monitors" so
             the picker it reveals sits next to the toggle that controls it,
             not buried below the quality/frequency/HD cards. */}
-        {screenshotImagesEnabled && !settings.useAllMonitors && (
-          <Card className="border-border bg-card overflow-hidden">
-            <CardContent className="px-3 py-2.5">
-              <div className="flex items-center space-x-2.5 mb-3">
-                <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                <h3 className="text-sm font-medium text-foreground">{t("settings.recording.monitors.title")}</h3>
-              </div>
-
-              <div className="flex items-end justify-center gap-6 py-2">
-                {/* Default option as a monitor */}
-                <button
-                  className="flex flex-col items-center gap-1.5 group"
-                  onClick={() => {
-                    const isDefaultSelected = settings.monitorIds.includes("default");
-                    if (isDefaultSelected) { handleSettingsChange({ monitorIds: settings.monitorIds.filter(id => id !== "default") }, true); }
-                    else { handleSettingsChange({ monitorIds: ["default"] }, true); }
-                  }}
-                >
-                  {/* Monitor SVG */}
-                  <svg width="80" height="56" viewBox="0 0 80 56" fill="none" className={cn("transition-opacity", settings.monitorIds.includes("default") ? "opacity-100" : "opacity-40 group-hover:opacity-60")}>
-                    <rect x="4" y="2" width="72" height="42" rx="3" className="fill-muted stroke-border" strokeWidth="1.5" />
-                    <rect x="8" y="6" width="64" height="34" rx="1" className={cn(settings.monitorIds.includes("default") ? "fill-foreground/10" : "fill-background")} />
-                    <path d="M30 44 L30 50 L50 50 L50 44" className="stroke-border" strokeWidth="1.5" fill="none" />
-                    <line x1="24" y1="50" x2="56" y2="50" className="stroke-border" strokeWidth="1.5" strokeLinecap="round" />
-                    {settings.monitorIds.includes("default") && (
-                      <path d="M32 20 L37 25 L48 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-foreground" />
-                    )}
-                  </svg>
-                  <span className={cn("text-[11px] font-medium", settings.monitorIds.includes("default") ? "text-foreground" : "text-muted-foreground")}>
-                    {t("settings.recording.monitors.default")}
-                  </span>
-                </button>
-
-                {availableMonitors.map((monitor) => {
-                  const isSelected = settings.monitorIds.includes(monitor.stableId);
-                  return (
-                    <button
-                      key={monitor.stableId}
-                      className="flex flex-col items-center gap-1.5 group"
-                      onClick={() => {
-                        const newIds = isSelected
-                          ? settings.monitorIds.filter(id => id !== monitor.stableId)
-                          : [...settings.monitorIds.filter(id => id !== "default"), monitor.stableId];
-                        handleSettingsChange({ monitorIds: newIds }, true);
-                      }}
-                    >
-                      <svg width="80" height="56" viewBox="0 0 80 56" fill="none" className={cn("transition-opacity", isSelected ? "opacity-100" : "opacity-40 group-hover:opacity-60")}>
-                        <rect x="4" y="2" width="72" height="42" rx="3" className="fill-muted stroke-border" strokeWidth="1.5" />
-                        <rect x="8" y="6" width="64" height="34" rx="1" className={cn(isSelected ? "fill-foreground/10" : "fill-background")} />
-                        <path d="M30 44 L30 50 L50 50 L50 44" className="stroke-border" strokeWidth="1.5" fill="none" />
-                        <line x1="24" y1="50" x2="56" y2="50" className="stroke-border" strokeWidth="1.5" strokeLinecap="round" />
-                        {isSelected && (
-                          <path d="M32 20 L37 25 L48 14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-foreground" />
-                        )}
-                      </svg>
-                      <div className="text-center">
-                        <span className={cn("text-[11px] font-medium block", isSelected ? "text-foreground" : "text-muted-foreground")}>
-                          {monitor.name || t("settings.recording.monitors.monitorName", { id: monitor.id })}
-                        </span>
-                        <p className="text-[10px] text-muted-foreground">{monitor.width}x{monitor.height}</p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Recording quality — single knob for crispness + disk cost */}
-        {screenshotImagesEnabled && (
-          <Card className="border-border bg-card">
-            <CardContent className="px-3 py-2.5">
-              <div className="flex items-center justify-between gap-3">
-                <div className="flex items-center space-x-2.5 min-w-0">
+          {screenshotImagesEnabled && !settings.useAllMonitors && (
+            <Card className="border-border bg-card overflow-hidden">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center space-x-2.5 mb-3">
                   <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-medium text-foreground">{t("settings.recording.videoQuality.title")}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {t("settings.recording.videoQuality.description")}
-                    </p>
-                  </div>
+                  <h3 className="text-sm font-medium text-foreground">
+                    {t("settings.recording.monitors.title")}
+                  </h3>
                 </div>
-                <Select
-                  value={settings.videoQuality || "balanced"}
-                  onValueChange={(value) => handleSettingsChange({ videoQuality: value }, true)}
-                >
-                  <SelectTrigger className="w-[180px] h-8 text-xs">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="low">{t("settings.recording.videoQuality.low")}</SelectItem>
-                    <SelectItem value="balanced">{t("settings.recording.videoQuality.balanced")}</SelectItem>
-                    <SelectItem value="high">{t("settings.recording.videoQuality.high")}</SelectItem>
-                    <SelectItem value="max">{t("settings.recording.videoQuality.max")}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
-        )}
 
-        {/* Capture frequency — guaranteed screenshot cadence. Capture is
+                <div className="flex items-end justify-center gap-6 py-2">
+                  {/* Default option as a monitor */}
+                  <button
+                    className="flex flex-col items-center gap-1.5 group"
+                    onClick={() => {
+                      const isDefaultSelected =
+                        settings.monitorIds.includes("default");
+                      if (isDefaultSelected) {
+                        handleSettingsChange(
+                          {
+                            monitorIds: settings.monitorIds.filter(
+                              (id) => id !== "default",
+                            ),
+                          },
+                          true,
+                        );
+                      } else {
+                        handleSettingsChange({ monitorIds: ["default"] }, true);
+                      }
+                    }}
+                  >
+                    {/* Monitor SVG */}
+                    <svg
+                      width="80"
+                      height="56"
+                      viewBox="0 0 80 56"
+                      fill="none"
+                      className={cn(
+                        "transition-opacity",
+                        settings.monitorIds.includes("default")
+                          ? "opacity-100"
+                          : "opacity-40 group-hover:opacity-60",
+                      )}
+                    >
+                      <rect
+                        x="4"
+                        y="2"
+                        width="72"
+                        height="42"
+                        rx="3"
+                        className="fill-muted stroke-border"
+                        strokeWidth="1.5"
+                      />
+                      <rect
+                        x="8"
+                        y="6"
+                        width="64"
+                        height="34"
+                        rx="1"
+                        className={cn(
+                          settings.monitorIds.includes("default")
+                            ? "fill-foreground/10"
+                            : "fill-background",
+                        )}
+                      />
+                      <path
+                        d="M30 44 L30 50 L50 50 L50 44"
+                        className="stroke-border"
+                        strokeWidth="1.5"
+                        fill="none"
+                      />
+                      <line
+                        x1="24"
+                        y1="50"
+                        x2="56"
+                        y2="50"
+                        className="stroke-border"
+                        strokeWidth="1.5"
+                        strokeLinecap="round"
+                      />
+                      {settings.monitorIds.includes("default") && (
+                        <path
+                          d="M32 20 L37 25 L48 14"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          className="text-foreground"
+                        />
+                      )}
+                    </svg>
+                    <span
+                      className={cn(
+                        "text-[11px] font-medium",
+                        settings.monitorIds.includes("default")
+                          ? "text-foreground"
+                          : "text-muted-foreground",
+                      )}
+                    >
+                      {t("settings.recording.monitors.default")}
+                    </span>
+                  </button>
+
+                  {availableMonitors.map((monitor) => {
+                    const isSelected = settings.monitorIds.includes(
+                      monitor.stableId,
+                    );
+                    return (
+                      <button
+                        key={monitor.stableId}
+                        className="flex flex-col items-center gap-1.5 group"
+                        onClick={() => {
+                          const newIds = isSelected
+                            ? settings.monitorIds.filter(
+                                (id) => id !== monitor.stableId,
+                              )
+                            : [
+                                ...settings.monitorIds.filter(
+                                  (id) => id !== "default",
+                                ),
+                                monitor.stableId,
+                              ];
+                          handleSettingsChange({ monitorIds: newIds }, true);
+                        }}
+                      >
+                        <svg
+                          width="80"
+                          height="56"
+                          viewBox="0 0 80 56"
+                          fill="none"
+                          className={cn(
+                            "transition-opacity",
+                            isSelected
+                              ? "opacity-100"
+                              : "opacity-40 group-hover:opacity-60",
+                          )}
+                        >
+                          <rect
+                            x="4"
+                            y="2"
+                            width="72"
+                            height="42"
+                            rx="3"
+                            className="fill-muted stroke-border"
+                            strokeWidth="1.5"
+                          />
+                          <rect
+                            x="8"
+                            y="6"
+                            width="64"
+                            height="34"
+                            rx="1"
+                            className={cn(
+                              isSelected
+                                ? "fill-foreground/10"
+                                : "fill-background",
+                            )}
+                          />
+                          <path
+                            d="M30 44 L30 50 L50 50 L50 44"
+                            className="stroke-border"
+                            strokeWidth="1.5"
+                            fill="none"
+                          />
+                          <line
+                            x1="24"
+                            y1="50"
+                            x2="56"
+                            y2="50"
+                            className="stroke-border"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                          {isSelected && (
+                            <path
+                              d="M32 20 L37 25 L48 14"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              className="text-foreground"
+                            />
+                          )}
+                        </svg>
+                        <div className="text-center">
+                          <span
+                            className={cn(
+                              "text-[11px] font-medium block",
+                              isSelected
+                                ? "text-foreground"
+                                : "text-muted-foreground",
+                            )}
+                          >
+                            {monitor.name ||
+                              t("settings.recording.monitors.monitorName", {
+                                id: monitor.id,
+                              })}
+                          </span>
+                          <p className="text-[10px] text-muted-foreground">
+                            {monitor.width}x{monitor.height}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Recording quality — single knob for crispness + disk cost */}
+          {screenshotImagesEnabled && (
+            <Card className="border-border bg-card">
+              <CardContent className="px-3 py-2.5">
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center space-x-2.5 min-w-0">
+                    <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-foreground">
+                        {t("settings.recording.videoQuality.title")}
+                      </h3>
+                      <p className="text-xs text-muted-foreground">
+                        {t("settings.recording.videoQuality.description")}
+                      </p>
+                    </div>
+                  </div>
+                  <Select
+                    value={settings.videoQuality || "balanced"}
+                    onValueChange={(value) =>
+                      handleSettingsChange({ videoQuality: value }, true)
+                    }
+                  >
+                    <SelectTrigger className="w-[180px] h-8 text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="low">
+                        {t("settings.recording.videoQuality.low")}
+                      </SelectItem>
+                      <SelectItem value="balanced">
+                        {t("settings.recording.videoQuality.balanced")}
+                      </SelectItem>
+                      <SelectItem value="high">
+                        {t("settings.recording.videoQuality.high")}
+                      </SelectItem>
+                      <SelectItem value="max">
+                        {t("settings.recording.videoQuality.max")}
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Capture frequency — guaranteed screenshot cadence. Capture is
             event-driven (clicks, typing, app/window switches, visual change),
             so a screen that sits still can go uncaptured for the power
             profile's idle floor (30s on AC, longer on battery). This pins a
@@ -4004,74 +5134,92 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
             feel capture is too sparse. Backed by `idleCaptureIntervalMs`
             (null = follow the power profile). Needs a recording restart to
             take effect, hence handleSettingsChange(..., true). */}
-        {screenshotImagesEnabled && (() => {
-          const idleMs = settings.idleCaptureIntervalMs ?? null;
-          const seconds = idleMs == null ? 0 : Math.round(idleMs / 1000);
-          return (
-            <Card className="border-border bg-card">
-              <CardContent className="px-3 py-2.5">
-                <div className="flex items-center space-x-2.5 mb-2">
-                  <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
-                  <div className="min-w-0">
-                    <h3 className="text-sm font-medium text-foreground">{t("settings.recording.captureFrequency.title")}</h3>
-                    <p className="text-xs text-muted-foreground">
-                      {t("settings.recording.captureFrequency.description")}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-xs text-muted-foreground">{t("settings.recording.captureFrequency.minimumInterval")}</span>
-                  <span className="text-xs font-mono text-foreground">
-                    {seconds === 0
-                      ? t("settings.recording.captureFrequency.autoPowerProfile")
-                      : t("settings.recording.captureFrequency.everySeconds", { seconds })}
-                  </span>
-                </div>
-                <Slider
-                  value={[seconds]}
-                  onValueChange={([value]) =>
-                    handleSettingsChange(
-                      {
-                        idleCaptureIntervalMs:
-                          (value ?? 0) === 0 ? null : (value as number) * 1000,
-                      },
-                      true,
-                    )
-                  }
-                  min={0}
-                  max={10}
-                  step={1}
-                  className="w-full"
-                />
-                <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
-                  <span>{t("settings.recording.auto")}</span>
-                  <span>{t("settings.recording.captureFrequency.everySeconds", { seconds: 10 })}</span>
-                </div>
-                <CaptureFrequencyPreview seconds={seconds} />
-              </CardContent>
-            </Card>
-          );
-        })()}
+          {screenshotImagesEnabled &&
+            (() => {
+              const idleMs = settings.idleCaptureIntervalMs ?? null;
+              const seconds = idleMs == null ? 0 : Math.round(idleMs / 1000);
+              return (
+                <Card className="border-border bg-card">
+                  <CardContent className="px-3 py-2.5">
+                    <div className="flex items-center space-x-2.5 mb-2">
+                      <Monitor className="h-4 w-4 text-muted-foreground shrink-0" />
+                      <div className="min-w-0">
+                        <h3 className="text-sm font-medium text-foreground">
+                          {t("settings.recording.captureFrequency.title")}
+                        </h3>
+                        <p className="text-xs text-muted-foreground">
+                          {t("settings.recording.captureFrequency.description")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-xs text-muted-foreground">
+                        {t(
+                          "settings.recording.captureFrequency.minimumInterval",
+                        )}
+                      </span>
+                      <span className="text-xs font-mono text-foreground">
+                        {seconds === 0
+                          ? t(
+                              "settings.recording.captureFrequency.autoPowerProfile",
+                            )
+                          : t(
+                              "settings.recording.captureFrequency.everySeconds",
+                              { seconds },
+                            )}
+                      </span>
+                    </div>
+                    <Slider
+                      value={[seconds]}
+                      onValueChange={([value]) =>
+                        handleSettingsChange(
+                          {
+                            idleCaptureIntervalMs:
+                              (value ?? 0) === 0
+                                ? null
+                                : (value as number) * 1000,
+                          },
+                          true,
+                        )
+                      }
+                      min={0}
+                      max={10}
+                      step={1}
+                      className="w-full"
+                    />
+                    <div className="flex justify-between text-[10px] text-muted-foreground mt-0.5">
+                      <span>{t("settings.recording.auto")}</span>
+                      <span>
+                        {t("settings.recording.captureFrequency.everySeconds", {
+                          seconds: 10,
+                        })}
+                      </span>
+                    </div>
+                    <CaptureFrequencyPreview seconds={seconds} />
+                  </CardContent>
+                </Card>
+              );
+            })()}
 
-        {/* HD recording — bound sessions only (meeting or timer; no
+          {/* HD recording — bound sessions only (meeting or timer; no
             indefinite mode). The controller lives in the engine and is
             HTTP-controlled so settings take effect immediately. Primary
             UX is the meeting-start notification's "+ HD" action and the
             tray timer submenu; this card exposes the persistent prefs. */}
-        {!settings.disableVision && (
-          <HighFpsCard
-            settings={settings}
-            onSettingsChange={(patch) => handleSettingsChange(patch, true)}
-          />
-        )}
-
-      </div>
+          {!settings.disableVision && (
+            <HighFpsCard
+              settings={settings}
+              onSettingsChange={(patch) => handleSettingsChange(patch, true)}
+            />
+          )}
+        </div>
       </LockedSetting>
-
 
       {/* System */}
       <div className="space-y-2 pt-2">
-        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">{t("settings.recording.section.system")}</h2>
+        <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider px-1">
+          {t("settings.recording.section.system")}
+        </h2>
 
         <Card className="border-border bg-card">
           <CardContent className="px-3 py-2.5">
@@ -4079,30 +5227,47 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
               <div className="flex items-center space-x-2.5">
                 <Globe className="h-4 w-4 text-muted-foreground shrink-0" />
                 <div>
-                  <h3 className="text-sm font-medium text-foreground">{t("settings.recording.system.chineseMirror.title")}</h3>
-                  <p className="text-xs text-muted-foreground">{t("settings.recording.system.chineseMirror.description")}</p>
+                  <h3 className="text-sm font-medium text-foreground">
+                    {t("settings.recording.system.chineseMirror.title")}
+                  </h3>
+                  <p className="text-xs text-muted-foreground">
+                    {t("settings.recording.system.chineseMirror.description")}
+                  </p>
                 </div>
               </div>
-              <Switch id="useChineseMirror" checked={settings.useChineseMirror} onCheckedChange={handleChineseMirrorToggle} />
+              <Switch
+                id="useChineseMirror"
+                checked={settings.useChineseMirror}
+                onCheckedChange={handleChineseMirrorToggle}
+              />
             </div>
           </CardContent>
         </Card>
       </div>
 
       {/* Voice Training Dialog */}
-      <Dialog open={voiceTraining.dialogOpen} onOpenChange={(open) => {
-        if (!open) {
-          if (trainingIntervalRef.current) clearInterval(trainingIntervalRef.current);
-          setVoiceTraining({ active: false, secondsLeft: 0, dialogOpen: false });
-        }
-      }}>
+      <Dialog
+        open={voiceTraining.dialogOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            if (trainingIntervalRef.current)
+              clearInterval(trainingIntervalRef.current);
+            setVoiceTraining({
+              active: false,
+              secondsLeft: 0,
+              dialogOpen: false,
+            });
+          }
+        }}
+      >
         <DialogContent className="max-w-lg">
-          <DialogTitle className="text-sm font-medium">{t("settings.recording.voiceTraining.title")}</DialogTitle>
+          <DialogTitle className="text-sm font-medium">
+            {t("settings.recording.voiceTraining.title")}
+          </DialogTitle>
           <DialogDescription className="text-xs text-muted-foreground">
             {t("settings.recording.voiceTraining.description")}
           </DialogDescription>
           <div className="space-y-4">
-
             <div className="bg-muted/50 border border-border p-4 rounded-sm max-h-[300px] overflow-y-auto">
               <p className="text-sm leading-relaxed whitespace-pre-line">
                 {VOICE_TRAINING_TEXT}
@@ -4111,12 +5276,21 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
 
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-muted-foreground">
-                <span>{voiceTraining.secondsLeft > 0
-                  ? t("settings.recording.voiceTraining.secondsRemaining", { seconds: voiceTraining.secondsLeft })
-                  : t("settings.recording.voiceTraining.doneClickFinish")}</span>
-                <span>{Math.round(((30 - voiceTraining.secondsLeft) / 30) * 100)}%</span>
+                <span>
+                  {voiceTraining.secondsLeft > 0
+                    ? t("settings.recording.voiceTraining.secondsRemaining", {
+                        seconds: voiceTraining.secondsLeft,
+                      })
+                    : t("settings.recording.voiceTraining.doneClickFinish")}
+                </span>
+                <span>
+                  {Math.round(((30 - voiceTraining.secondsLeft) / 30) * 100)}%
+                </span>
               </div>
-              <Progress value={((30 - voiceTraining.secondsLeft) / 30) * 100} className="h-1.5" />
+              <Progress
+                value={((30 - voiceTraining.secondsLeft) / 30) * 100}
+                className="h-1.5"
+              />
             </div>
 
             <div className="flex justify-end">
@@ -4128,8 +5302,8 @@ Your screen is a pipe. Everything you see, hear, and type flows through it. Scre
                 {voiceTraining.secondsLeft > 25
                   ? t("settings.recording.voiceTraining.keepReading")
                   : voiceTraining.secondsLeft > 0
-                  ? t("settings.recording.voiceTraining.finishEarly")
-                  : t("settings.recording.voiceTraining.done")}
+                    ? t("settings.recording.voiceTraining.finishEarly")
+                    : t("settings.recording.voiceTraining.done")}
               </Button>
             </div>
           </div>

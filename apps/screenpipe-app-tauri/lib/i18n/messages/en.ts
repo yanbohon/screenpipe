@@ -31,7 +31,7 @@ export const enMessages = {
   "common.copiedCode": "Copied code",
   "common.enterFileName": "Enter file name",
   "common.selectOptions": "Select options",
-  "common.addQuoted": "Add \"{value}\"",
+  "common.addQuoted": 'Add "{value}"',
   "common.noResultsFound": "No results found.",
   "common.moreCount": "+ {count} more",
   "common.selectAll": "(Select All)",
@@ -107,8 +107,7 @@ export const enMessages = {
   "onboarding.loginGate.useDifferentAccount": "use a different account",
   "onboarding.loginGate.signIn": "sign in",
   "onboarding.loginGate.activatePlan": "sign in to activate your plan",
-  "onboarding.loginGate.skipDev":
-    "skip for dev — continue without an account",
+  "onboarding.loginGate.skipDev": "skip for dev — continue without an account",
   "onboarding.permissions.title": "Unlock the full experience",
   "onboarding.permissions.description":
     "Enable these permissions to get the most out of Screenpipe",
@@ -130,11 +129,9 @@ export const enMessages = {
   "onboarding.permissions.continueWithoutAll":
     "continue without all permissions →",
   "onboarding.pickPipe.pipe.digitalClone.title": "Your AI twin",
-  "onboarding.pickPipe.pipe.digitalClone.subtitle":
-    "writes and acts like you",
+  "onboarding.pickPipe.pipe.digitalClone.subtitle": "writes and acts like you",
   "onboarding.pickPipe.pipe.personalCrm.title": "People memory",
-  "onboarding.pickPipe.pipe.personalCrm.subtitle":
-    "remember everyone you meet",
+  "onboarding.pickPipe.pipe.personalCrm.subtitle": "remember everyone you meet",
   "onboarding.pickPipe.notification.title": "You're all set",
   "onboarding.pickPipe.notification.body":
     "Screenpipe is set up. Your first results arrive shortly.",
@@ -154,11 +151,11 @@ export const enMessages = {
   "onboarding.engineStartup.local.manyApps":
     "i caught you across {apps}, and {last}",
   "onboarding.engineStartup.local.voice":
-    "heard a bit of you talking — \"{snippet}{ellipsis}\"",
+    'heard a bit of you talking — "{snippet}{ellipsis}"',
   "onboarding.engineStartup.local.keepWatching":
     "i'll keep watching quietly so we can pick up where you left off",
   "onboarding.engineStartup.summary.systemPrompt":
-    "you are writing a friendly, warm 4-5 sentence note to a person who just started screenpipe. they are watching this on their onboarding screen. the goal is to make them feel seen - show that you noticed what they were doing in the last few minutes - without sounding like a surveillance log.\n\nstyle:\n- lowercase, plain conversational tone, like a thoughtful friend\n- use \"you\" - speak directly to the person\n- weave the apps, voice, and topics into a flowing narrative - not a bulleted list\n- 4-5 short sentences, about 40-70 words total\n- end with one warm sentence like \"i'll keep watching quietly so we can pick up where you left off.\"\n\nnever use these technical words: {bannedWords}. these break the spell.\n\ninstead say things like: \"you spent some time in slack\", \"you were typing notes about X\", \"you had a quick voice conversation about Y\", \"i caught a bit of your work in vscode\".\n\nif the input is sparse, just describe what little you have warmly. don't apologize for not having more.",
+    'you are writing a friendly, warm 4-5 sentence note to a person who just started screenpipe. they are watching this on their onboarding screen. the goal is to make them feel seen - show that you noticed what they were doing in the last few minutes - without sounding like a surveillance log.\n\nstyle:\n- lowercase, plain conversational tone, like a thoughtful friend\n- use "you" - speak directly to the person\n- weave the apps, voice, and topics into a flowing narrative - not a bulleted list\n- 4-5 short sentences, about 40-70 words total\n- end with one warm sentence like "i\'ll keep watching quietly so we can pick up where you left off."\n\nnever use these technical words: {bannedWords}. these break the spell.\n\ninstead say things like: "you spent some time in slack", "you were typing notes about X", "you had a quick voice conversation about Y", "i caught a bit of your work in vscode".\n\nif the input is sparse, just describe what little you have warmly. don\'t apologize for not having more.',
   "onboarding.engineStartup.summary.userPrompt":
     "here is what you saw in the last few minutes:\n\n{digest}\n\nwrite the note now.",
   "onboarding.engineStartup.progress.engine": "engine",
@@ -185,8 +182,7 @@ export const enMessages = {
     "currently running as:",
   "onboarding.engineStartup.permission.openSystemSettings":
     "open system settings →",
-  "onboarding.engineStartup.permission.resetAndRerequest":
-    "reset & re-request",
+  "onboarding.engineStartup.permission.resetAndRerequest": "reset & re-request",
   "onboarding.engineStartup.permission.troubleshootingGuide":
     "troubleshooting guide ↗",
   "onboarding.engineStartup.stuck.engineFailed": "engine failed to start.",
@@ -219,8 +215,7 @@ export const enMessages = {
     "pause screen recording for this display",
   "recordingStatus.device.resumeScreenTitle":
     "resume screen recording for this display",
-  "recordingStatus.device.pauseDeviceTitle":
-    "pause recording for this device",
+  "recordingStatus.device.pauseDeviceTitle": "pause recording for this device",
   "recordingStatus.device.resumeDeviceTitle":
     "resume recording for this device",
   "recordingStatus.device.pause": "pause",
@@ -239,8 +234,7 @@ export const enMessages = {
   "browserSidebar.cookies": "Browser session cookies",
   "browserSidebar.reload": "Reload",
   "browserSidebar.pageLoading": "Page loading",
-  "browserSidebar.sessionAccess.macosMayAskTitle":
-    "macOS may ask for access",
+  "browserSidebar.sessionAccess.macosMayAskTitle": "macOS may ask for access",
   "browserSidebar.sessionAccess.useBrowserLoginTitle":
     "Use your browser login?",
   "browserSidebar.sessionAccess.alreadyGrantedDescription":
@@ -264,15 +258,12 @@ export const enMessages = {
     "Chrome or Edge has matching session cookies, but Windows app-bound encryption prevents Screenpipe from reusing them directly.",
   "browserSidebar.v20.encryptedBridgeDescription":
     "Connect the Screenpipe Browser Bridge extension to reuse this login without sharing passwords.",
-  "browserSidebar.v20.protectedCookies":
-    "Found {count} protected cookies.",
+  "browserSidebar.v20.protectedCookies": "Found {count} protected cookies.",
   "browserSidebar.v20.protectedCookiesWithSources":
     "Found {count} protected cookies in {sources}.",
-  "browserSidebar.v20.extensionConnected":
-    "Extension connected - retrying...",
+  "browserSidebar.v20.extensionConnected": "Extension connected - retrying...",
   "browserSidebar.v20.connectExtension": "Connect extension",
-  "browserSidebar.v20.continueWithoutSigningIn":
-    "Continue without signing in",
+  "browserSidebar.v20.continueWithoutSigningIn": "Continue without signing in",
 
   "fileViewer.errorTitle": "couldn't open file",
   "fileViewer.lookedIn": "looked in:",
@@ -283,8 +274,7 @@ export const enMessages = {
   "fileViewer.binaryDescription":
     "this file isn't safe to render as text. open it in your system's default app to view it properly.",
   "fileViewer.openDefaultApp": "open in default app",
-  "fileViewer.truncatedSummary":
-    "showing first {preview} - file is {total}",
+  "fileViewer.truncatedSummary": "showing first {preview} - file is {total}",
   "fileViewer.openFullFile": "open full file",
   "fileViewer.emptyFile": "(empty file)",
   "fileViewer.htmlStatus": "html document - sandboxed - {mode}",
@@ -318,7 +308,7 @@ export const enMessages = {
     "encrypt api keys & credentials",
   "permissionRecovery.autoClose": "closes automatically once fixed",
 
-  "postInstallConnections.title": "set up connections for \"{pipeName}\"",
+  "postInstallConnections.title": 'set up connections for "{pipeName}"',
   "postInstallConnections.description":
     "this pipe requires the following connections to work properly. configure them now or skip and set them up later in settings.",
   "postInstallConnections.loading": "loading connections...",
@@ -348,7 +338,7 @@ export const enMessages = {
   "postInstallConnections.manualConfig.location": "settings > connections",
   "postInstallConnections.manualConfig.suffix": "then come back here.",
   "postInstallConnections.unavailable":
-    "connection \"{id}\" is not available. it may need to be configured manually in settings > connections.",
+    'connection "{id}" is not available. it may need to be configured manually in settings > connections.',
   "postInstallConnections.skip": "skip",
   "postInstallConnections.done": "done",
 
@@ -393,8 +383,7 @@ export const enMessages = {
   "chat.summaryCards.browseConnections": "Browse all connections",
   "chat.summaryCards.greetingWithName": "How can I help, {name}?",
   "chat.summaryCards.greeting": "How can I help today?",
-  "chat.summaryCards.subtitle":
-    "One-click summaries from your screen activity",
+  "chat.summaryCards.subtitle": "One-click summaries from your screen activity",
   "chat.summaryCards.customSummary": "Custom Summary",
   "chat.summaryCards.buildYourOwn": "Build your own",
   "chat.summaryCards.showLess": "Show Less",
@@ -589,8 +578,7 @@ export const enMessages = {
     "Run this prompt automatically on a schedule",
   "chat.schedulePrompt.promptPreview": "prompt preview",
   "chat.schedulePrompt.pipeName": "Pipe Name",
-  "chat.schedulePrompt.pipeNamePlaceholder":
-    "e.g. daily-recap, standup-notes",
+  "chat.schedulePrompt.pipeNamePlaceholder": "e.g. daily-recap, standup-notes",
   "chat.schedulePrompt.schedule": "Schedule",
   "chat.schedulePrompt.customCron": "Custom cron...",
   "chat.schedulePrompt.customCronPlaceholder":
@@ -646,11 +634,9 @@ export const enMessages = {
   "chat.autoSuggestions.lastHour": "what did I work on in the last hour?",
   "chat.autoSuggestions.daySoFar": "summarize my day so far",
   "chat.autoSuggestions.appsMostToday": "which apps did I use most today",
-  "chat.autoSuggestions.recentScreenActivity":
-    "show my recent screen activity",
+  "chat.autoSuggestions.recentScreenActivity": "show my recent screen activity",
   "chat.autoSuggestions.currentWork": "what was I working on",
-  "chat.autoSuggestions.timeByApp":
-    "how much time did I spend on each app",
+  "chat.autoSuggestions.timeByApp": "how much time did I spend on each app",
   "chat.connectionSuggestions.previewUses": "uses {name}",
   "chat.connectionSuggestions.calendarWithDescriptor":
     "Prep {day} {descriptor} from {name}",
@@ -679,8 +665,7 @@ export const enMessages = {
   "chat.connectionSuggestions.namePairSeparator": " and ",
   "chat.connectionSuggestions.nameListSeparator": ", ",
   "chat.connectionSuggestions.nameFinalSeparator": ", and ",
-  "chat.connectionSuggestions.descriptor.callBriefs":
-    "{names} call briefs",
+  "chat.connectionSuggestions.descriptor.callBriefs": "{names} call briefs",
   "chat.connectionSuggestions.descriptor.titleBrief": "{title} brief",
   "chat.connectionSuggestions.descriptor.meetingBriefs": "meeting briefs",
   "chat.connectionSuggestions.day.tomorrow": "tomorrow's",
@@ -744,6 +729,8 @@ export const enMessages = {
   "chat.loader.runningTool": "running tool...",
   "chat.loader.writing": "writing...",
   "chat.loader.analyzing": "analyzing...",
+  "chat.thinking.runningWithSeconds": "thinking... ({seconds}s)",
+  "chat.thinking.thoughtForSeconds": "thought for {seconds}s",
 
   "chat.duration.seconds": "{count}s",
   "chat.duration.minutes": "{count} min",
@@ -752,6 +739,8 @@ export const enMessages = {
   "chat.work.workingFor": "Working for {duration}",
   "chat.work.worked": "Worked",
   "chat.work.workedFor": "Worked for {duration}",
+  "chat.work.thought": "thought",
+  "chat.work.thoughtFor": "thought for {duration}",
   "chat.work.steps": "{count} steps",
   "chat.work.failedCount": "{count} failed",
   "chat.work.youStopped": "You stopped",
@@ -814,18 +803,16 @@ export const enMessages = {
   "chat.tool.deletedMemory": "Deleted memory #{id}",
   "chat.tool.gotMemory": "Got memory #{id}",
   "chat.tool.listedMeetings": "Listed meetings",
-  "chat.tool.renamedSummarizedMeeting":
-    "Renamed + summarized meeting #{id}",
+  "chat.tool.renamedSummarizedMeeting": "Renamed + summarized meeting #{id}",
   "chat.tool.summarizedMeeting": "Summarized meeting #{id}",
   "chat.tool.renamedMeeting": "Renamed meeting #{id}",
   "chat.tool.updatedMeeting": "Updated meeting #{id}",
   "chat.tool.deletedMeeting": "Deleted meeting #{id}",
   "chat.tool.gotMeeting": "Got meeting #{id}",
-  "chat.tool.foundSimilarSpeakersFor":
-    "Found similar speakers for \"{name}\"",
+  "chat.tool.foundSimilarSpeakersFor": 'Found similar speakers for "{name}"',
   "chat.tool.foundSimilarSpeakers": "Found similar speakers",
   "chat.tool.mergedSpeakers": "Merged speakers",
-  "chat.tool.searchedSpeakersFor": "Searched speakers \"{query}\"",
+  "chat.tool.searchedSpeakersFor": 'Searched speakers "{query}"',
   "chat.tool.searchedSpeakers": "Searched speakers",
   "chat.tool.listedUnnamedSpeakers": "Listed unnamed speakers",
   "chat.tool.renamedSpeaker": "Renamed speaker #{id}",
@@ -890,8 +877,7 @@ export const enMessages = {
   "chat.toolResults.found": "{count} {noun} found",
   "chat.toolResults.noWebSourcesReturned": "No web sources returned",
   "chat.toolResults.webSourcesReturned": "{count} web sources returned",
-  "chat.toolResults.responsesReturned":
-    "{count} response{plural} returned",
+  "chat.toolResults.responsesReturned": "{count} response{plural} returned",
   "chat.toolResults.requestSucceeded": "Request succeeded",
   "chat.toolResults.requestFailed": "Request did not succeed",
   "chat.toolResults.status": "Status: {status}",
@@ -1005,15 +991,14 @@ export const enMessages = {
   "chat.mainPane.noModelSelected": "No Model Selected",
   "chat.mainPane.loginToContinue": "Login to continue",
   "chat.mainPane.setupRequired": "Setup Required",
-  "chat.mainPane.signInToUseAssistant":
-    "Sign in to use the AI assistant",
+  "chat.mainPane.signInToUseAssistant": "Sign in to use the AI assistant",
   "chat.mainPane.signIn": "Sign in",
   "chat.mainPane.goToSettings": "Go to Settings",
   "chat.mainPane.newContent": "new content",
   "chat.pi.disabled.noAiPresets": "No AI presets configured",
   "chat.pi.disabled.noPresetSelected": "No preset selected",
   "chat.pi.disabled.noModelSelectedInPreset":
-    "No model selected in \"{preset}\" preset",
+    'No model selected in "{preset}" preset',
   "chat.pi.disabled.startingPiAgent": "Starting Pi agent...",
   "chat.pi.error.didNotStart": "Pi did not start",
   "chat.errors.sessionExpired":
@@ -1031,11 +1016,11 @@ export const enMessages = {
   "chat.errors.ollamaConnection":
     "Cannot connect to Ollama - is it running? Start with: ollama serve",
   "chat.errors.ollamaConnectionWithModel":
-    "Cannot connect to Ollama. Start it with `ollama serve` and make sure \"{model}\" is pulled.",
+    'Cannot connect to Ollama. Start it with `ollama serve` and make sure "{model}" is pulled.',
   "chat.errors.ollamaConnectionGeneric":
     "Cannot connect to Ollama. Start it with `ollama serve` and make sure the model is pulled.",
   "chat.errors.ollamaModelMissing":
-    "Ollama model \"{model}\" is not installed. Run `ollama pull {model}`, or switch your AI preset to a model from `ollama list`.",
+    'Ollama model "{model}" is not installed. Run `ollama pull {model}`, or switch your AI preset to a model from `ollama list`.',
   "chat.errors.ollamaModelMissingGeneric":
     "The selected Ollama model was not found. Check your AI preset in settings.",
   "chat.errors.ollamaNotRunning":
@@ -1212,14 +1197,13 @@ export const enMessages = {
   "shareLogs.sendLogsAndFeedback": "send logs & feedback",
 
   "advisory.more": "more",
-  "pipeAdvisory.title": "pipe \"{name}\" may have an issue",
+  "pipeAdvisory.title": 'pipe "{name}" may have an issue',
   "pipeAdvisory.body.dailyLimitWithUsage":
     "daily AI usage limit reached ({used}/{limit})",
   "pipeAdvisory.body.dailyLimit": "daily AI usage limit reached",
   "pipeAdvisory.body.creditsExhausted":
     "daily AI limit reached — upgrade or wait until tomorrow",
-  "pipeAdvisory.body.quotaExhausted":
-    "provider quota or billing limit reached",
+  "pipeAdvisory.body.quotaExhausted": "provider quota or billing limit reached",
   "pipeAdvisory.body.modelNotAllowed":
     "uses a model that needs business — switch to a free model (auto) or upgrade",
   "pipeAdvisory.upgrade": "upgrade",
@@ -1431,8 +1415,7 @@ export const enMessages = {
   "rewind.frame.actions.copyImage": "copy image",
   "rewind.frame.actions.copyImageTitle": "Copy frame image to clipboard",
   "rewind.frame.actions.copyDeeplink": "copy deeplink",
-  "rewind.frame.actions.copyDeeplinkTitle":
-    "Copy screenpipe://frame/N link",
+  "rewind.frame.actions.copyDeeplinkTitle": "Copy screenpipe://frame/N link",
   "rewind.frame.actions.askAboutFrame": "ask about this frame",
   "rewind.frame.actions.runPipe": "run pipe",
   "rewind.frame.toast.copiedImage": "copied image",
@@ -1449,12 +1432,10 @@ export const enMessages = {
   "rewind.frame.toast.askAboutFrame": "ask about this frame",
   "rewind.frame.toast.chatOpened": "chat opened with frame context",
   "rewind.frame.toast.runningPipe": "running pipe with frame context",
-  "rewind.frame.toast.allFrameTextCopied":
-    "all frame text copied to clipboard",
+  "rewind.frame.toast.allFrameTextCopied": "all frame text copied to clipboard",
   "rewind.frame.toast.frameTextCopied": "frame text copied to clipboard",
   "rewind.frame.toast.copiedSelection": "copied selection",
-  "rewind.frame.toast.selectedTextCopied":
-    "selected text copied to clipboard",
+  "rewind.frame.toast.selectedTextCopied": "selected text copied to clipboard",
 
   "rewind.controls.jumpToNow": "Jump to now",
   "rewind.controls.pauseSpace": "Pause (Space)",
@@ -1525,10 +1506,8 @@ export const enMessages = {
   "rewind.aiPresetsSelector.businessPlanOnly": "business plan only",
   "rewind.aiPresetsSelector.createNewPreset": "create new preset",
   "rewind.aiPresetsSelector.toast.presetChanged": "Preset changed",
-  "rewind.aiPresetsSelector.toast.switchedTo":
-    "Switched to {id} ({model})",
-  "rewind.aiPresetsSelector.toast.managedTitle":
-    "Managed by your organization",
+  "rewind.aiPresetsSelector.toast.switchedTo": "Switched to {id} ({model})",
+  "rewind.aiPresetsSelector.toast.managedTitle": "Managed by your organization",
   "rewind.aiPresetsSelector.toast.adminControlsPresets":
     "Your admin controls which AI presets are available",
   "rewind.aiPresetsSelector.toast.enterNameTitle":
@@ -1542,16 +1521,14 @@ export const enMessages = {
   "rewind.aiPresetsSelector.toast.copyCreated":
     "New preset has been created from copy",
   "rewind.aiPresetsSelector.toast.presetUpdated": "Preset updated",
-  "rewind.aiPresetsSelector.toast.changesSaved":
-    "Your changes have been saved",
+  "rewind.aiPresetsSelector.toast.changesSaved": "Your changes have been saved",
   "rewind.aiPresetsSelector.toast.presetCreated": "Preset created",
   "rewind.aiPresetsSelector.toast.presetAdded": "New preset has been added",
   "rewind.aiPresetsSelector.toast.defaultLockedTitle":
     "Default preset is locked",
   "rewind.aiPresetsSelector.toast.adminControlsDefault":
     "Your admin controls the default AI preset",
-  "rewind.aiPresetsSelector.toast.defaultUpdated":
-    "Default preset updated",
+  "rewind.aiPresetsSelector.toast.defaultUpdated": "Default preset updated",
   "rewind.aiPresetsSelector.toast.defaultUpdatedDescription":
     "{id} is now the default preset",
   "rewind.aiPresetsSelector.toast.cannotDeleteDefault":
@@ -1559,8 +1536,7 @@ export const enMessages = {
   "rewind.aiPresetsSelector.toast.setAnotherDefault":
     "Please set another preset as default first",
   "rewind.aiPresetsSelector.toast.presetRemoved": "Preset removed",
-  "rewind.aiPresetsSelector.toast.removedDescription":
-    "{id} has been removed",
+  "rewind.aiPresetsSelector.toast.removedDescription": "{id} has been removed",
   "rewind.aiPresetsSelector.toast.presetSelected": "Preset selected",
   "rewind.aiPresetsSelector.toast.activeDescription": "{id} is now active",
   "rewind.mermaid.renderFailed": "Failed to render diagram",
@@ -1580,11 +1556,9 @@ export const enMessages = {
   "rewind.searchModal.empty.noResultsFor": 'no results for "{query}"',
   "rewind.searchModal.empty.noTagsMatching": 'no tags matching "{query}"',
   "rewind.searchModal.empty.noTagsFound": "no tags found",
-  "rewind.searchModal.empty.noPeopleMatching":
-    'no people matching "{query}"',
+  "rewind.searchModal.empty.noPeopleMatching": 'no people matching "{query}"',
   "rewind.searchModal.empty.noSpeakersFound": "no speakers found",
-  "rewind.searchModal.empty.noChatsMatching":
-    'no chats matching "{query}"',
+  "rewind.searchModal.empty.noChatsMatching": 'no chats matching "{query}"',
   "rewind.searchModal.empty.noChatsYet": "no chats yet",
   "rewind.searchModal.filter.all": "All",
   "rewind.searchModal.filter.screen": "Screen",
@@ -1634,8 +1608,7 @@ export const enMessages = {
   "rewind.tagToolbar.toast.applyFailedDescription":
     "some frames could not be tagged",
   "rewind.tagToolbar.toast.removeFailedTitle": "remove failed",
-  "rewind.tagToolbar.toast.removeFailedDescription":
-    'could not remove "{tag}"',
+  "rewind.tagToolbar.toast.removeFailedDescription": 'could not remove "{tag}"',
   "rewind.tagToolbar.toast.deleteSuccessTitle": "deleted",
   "rewind.tagToolbar.toast.deleteSuccessDescription":
     "removed {frames} frames, {segments} audio segments",
@@ -1658,12 +1631,10 @@ export const enMessages = {
   "rewind.audioTranscript.copy.me": "me",
   "rewind.audioTranscript.copy.speaker": "speaker",
   "rewind.audioTranscript.copy.noTranscription": "(no transcription)",
-  "rewind.audioTranscript.toast.noDataToSend":
-    "no transcript data to send",
+  "rewind.audioTranscript.toast.noDataToSend": "no transcript data to send",
   "rewind.audioTranscript.chat.meetingTranscriptLabel":
     "meeting transcript ({timeRange})",
-  "rewind.audioTranscript.chat.nearbyAudioLabel":
-    "nearby audio ({timeRange})",
+  "rewind.audioTranscript.chat.nearbyAudioLabel": "nearby audio ({timeRange})",
   "rewind.audioTranscript.chat.contextIntro":
     "here is my {label}:\n\n{transcript}",
   "rewind.audioTranscript.tooltip.summarize": "summarize",
@@ -1676,8 +1647,7 @@ export const enMessages = {
     "summarize nearby audio",
   "rewind.audioTranscript.summaryPrompt.meeting": "meeting",
   "rewind.audioTranscript.summaryPrompt.audio": "audio",
-  "rewind.audioTranscript.summaryPrompt.ongoingNote":
-    " (still in progress)",
+  "rewind.audioTranscript.summaryPrompt.ongoingNote": " (still in progress)",
   "rewind.audioTranscript.summaryPrompt.contextTimeRange":
     "{label} from {start} to {end}{ongoingNote}",
   "rewind.audioTranscript.summaryPrompt.participants":
@@ -1698,10 +1668,8 @@ export const enMessages = {
   "rewind.audioTranscript.tooltip.close": "close",
   "rewind.audioTranscript.action.retranscribe": "retranscribe",
   "rewind.audioTranscript.action.selectReassign": "select & reassign",
-  "rewind.audioTranscript.empty.meeting":
-    "No transcriptions in this meeting",
-  "rewind.audioTranscript.action.loadEarlier":
-    "Load earlier ({count} more)",
+  "rewind.audioTranscript.empty.meeting": "No transcriptions in this meeting",
+  "rewind.audioTranscript.action.loadEarlier": "Load earlier ({count} more)",
   "rewind.audioTranscript.empty.timeWindow": "No audio in this time window",
   "rewind.audioTranscript.selection.selectedCount": "{count} selected",
   "rewind.audioTranscript.selection.assignTo": "assign to...",
@@ -1720,8 +1688,7 @@ export const enMessages = {
   "rewind.audioTranscript.conversation.duration.minutes": "{count}m",
   "rewind.audioTranscript.conversation.duration.minutesSeconds":
     "{minutes}m {seconds}s",
-  "rewind.audioTranscript.conversation.gap.minutesLater":
-    "{count} min later",
+  "rewind.audioTranscript.conversation.gap.minutesLater": "{count} min later",
   "rewind.audioTranscript.conversation.gap.hoursLater": "{count}h later",
   "rewind.audioTranscript.conversation.moreParticipants": "+{count} more",
   "rewind.audioTranscript.conversation.unidentifiedSpeaker":
@@ -1826,8 +1793,7 @@ export const enMessages = {
   "speakerAssign.actions.markNoise": "This is just noise (nobody speaking)",
   "speakerAssign.actions.undo": "undo",
   "speakerAssign.toast.assignedTo": 'assigned to "{name}"',
-  "speakerAssign.toast.propagatingSimilar":
-    "propagating to similar voices...",
+  "speakerAssign.toast.propagatingSimilar": "propagating to similar voices...",
   "speakerAssign.toast.foundSimilar": "found {count} similar voices",
   "speakerAssign.toast.undoHint": "click undo if incorrect",
   "speakerAssign.toast.undoActionAlt": "Undo speaker assignment",
@@ -1875,8 +1841,7 @@ export const enMessages = {
   "updateBanner.ready.suffix": "is ready",
 
   "regionOcr.toast.loginRequired": "login required",
-  "regionOcr.toast.loginRequiredDescription":
-    "login required for region OCR",
+  "regionOcr.toast.loginRequiredDescription": "login required for region OCR",
   "regionOcr.toast.readingText": "reading text...",
   "regionOcr.toast.analyzingRegion": "analyzing selected region",
   "regionOcr.toast.noTextFound": "no text found",
@@ -2127,8 +2092,7 @@ export const enMessages = {
   "meetingNotes.note.recordingContinues": "recording continues.",
   "meetingNotes.liveCapture.idle.label": "Meeting saved",
   "meetingNotes.liveCapture.idle.shortLabel": "saved",
-  "meetingNotes.liveCapture.idle.description":
-    "The meeting is no longer live.",
+  "meetingNotes.liveCapture.idle.description": "The meeting is no longer live.",
   "meetingNotes.liveCapture.idle.transcriptEmptyCopy":
     "no transcript was captured for this meeting",
   "meetingNotes.liveCapture.recording.label": "Recording",
@@ -2617,7 +2581,8 @@ export const enMessages = {
   "settings.recording.transcriptionEngine.option.disabled":
     "Disabled (capture only)",
   "settings.recording.transcriptionEngine.proSuffix": " (pro)",
-  "settings.recording.transcriptionEngine.experimentalSuffix": " (experimental)",
+  "settings.recording.transcriptionEngine.experimentalSuffix":
+    " (experimental)",
   "settings.recording.transcriptionEngine.fallback.title":
     "{engine} is not active",
   "settings.recording.transcriptionEngine.fallback.notLoggedIn":
@@ -3058,8 +3023,7 @@ export const enMessages = {
   "settings.aiPresets.model.haikuFast": "Haiku 4.5 (fast)",
   "settings.aiPresets.model.sonnetBalanced": "Sonnet 4.5 (balanced)",
   "settings.aiPresets.model.opusPowerfulPro": "Opus 4.8 (powerful, pro)",
-  "settings.aiPresets.model.fableMostCapablePro":
-    "Fable 5 (most capable, pro)",
+  "settings.aiPresets.model.fableMostCapablePro": "Fable 5 (most capable, pro)",
   "settings.aiPresets.model.geminiFlashFast": "Gemini 3 Flash (fast)",
   "settings.aiPresets.model.geminiFlashLiteCheapest":
     "Gemini 3.1 Flash-Lite (cheapest)",
@@ -3144,8 +3108,7 @@ export const enMessages = {
     "{status} Unauthorized. {hint}",
   "settings.aiPresets.diagnostics.message.unexpectedStatus":
     "Unexpected status {status}",
-  "settings.aiPresets.diagnostics.message.apiKeyAccepted":
-    "API key accepted",
+  "settings.aiPresets.diagnostics.message.apiKeyAccepted": "API key accepted",
   "settings.aiPresets.diagnostics.message.loading": "Loading...",
   "settings.aiPresets.diagnostics.message.parseModelsFailed":
     "Failed to parse models response",
@@ -3153,8 +3116,7 @@ export const enMessages = {
     "{count} model loaded",
   "settings.aiPresets.diagnostics.message.modelLoadedMany":
     "{count} models loaded",
-  "settings.aiPresets.diagnostics.message.requestFailed":
-    "{status}: {error}",
+  "settings.aiPresets.diagnostics.message.requestFailed": "{status}: {error}",
   "settings.aiPresets.diagnostics.message.requestFailedFallback":
     "Request failed",
   "settings.aiPresets.diagnostics.message.streamStarted": "Stream started OK",
@@ -3208,8 +3170,7 @@ export const enMessages = {
   "settings.aiPresets.dialog.cancel": "Cancel",
   "settings.aiPresets.dialog.delete": "Delete",
   "settings.aiPresets.dialog.continue": "Continue",
-  "settings.aiPresets.toast.managedByOrg.title":
-    "Managed by your organization",
+  "settings.aiPresets.toast.managedByOrg.title": "Managed by your organization",
   "settings.aiPresets.toast.managedByOrg.description":
     "Your admin controls which AI presets are available",
   "settings.aiPresets.toast.validationErrors.title": "Validation errors",
@@ -3248,8 +3209,7 @@ export const enMessages = {
   "settings.aiPresets.toast.shareToTeam.title": "shared to team",
   "settings.aiPresets.toast.shareToTeam.description":
     '"{preset}" is now available to all team members (e2e encrypted)',
-  "settings.aiPresets.toast.shareToTeamFailed.title":
-    "failed to share to team",
+  "settings.aiPresets.toast.shareToTeamFailed.title": "failed to share to team",
   "settings.aiPresets.toast.cannotDeleteCloud.title":
     "Cannot delete cloud preset",
   "settings.aiPresets.toast.cannotDeleteCloud.description":
@@ -3267,8 +3227,7 @@ export const enMessages = {
   "settings.aiPresets.toast.deleteError.title": "Error deleting preset",
   "settings.aiPresets.toast.deleteError.description":
     "Something went wrong while deleting the preset",
-  "settings.aiPresets.toast.defaultLocked.title":
-    "Default preset is locked",
+  "settings.aiPresets.toast.defaultLocked.title": "Default preset is locked",
   "settings.aiPresets.toast.defaultLocked.description":
     "Your admin controls the default AI preset",
   "settings.aiPresets.toast.defaultUpdated.title": "Default preset updated",
@@ -3492,9 +3451,9 @@ export const enMessages = {
   "settings.connections.mcpSetup.cursorWriteFailed":
     "Failed to write Cursor MCP config.\n\nManually add to ~/.cursor/mcp.json:\n\n{config}",
   "settings.connections.mcpSetup.codexWriteFailed":
-    "Failed to write Codex MCP config.\n\nManually add a [mcp_servers.screenpipe] block to ~/.codex/config.toml with command npx and args [\"-y\", \"screenpipe-mcp@latest\"].",
+    'Failed to write Codex MCP config.\n\nManually add a [mcp_servers.screenpipe] block to ~/.codex/config.toml with command npx and args ["-y", "screenpipe-mcp@latest"].',
   "settings.connections.mcpSetup.grokWriteFailed":
-    "Failed to write Grok CLI MCP config.\n\nManually add a screenpipe entry to the mcp.servers array in ~/.grok/user-settings.json with command npx and args [\"-y\", \"screenpipe-mcp@latest\"].",
+    'Failed to write Grok CLI MCP config.\n\nManually add a screenpipe entry to the mcp.servers array in ~/.grok/user-settings.json with command npx and args ["-y", "screenpipe-mcp@latest"].',
   "settings.connections.relative.justNow": "just now",
   "settings.connections.relative.secondsAgo": "{count}s ago",
   "settings.connections.relative.minutesAgo": "{count}m ago",
@@ -3597,7 +3556,8 @@ export const enMessages = {
   "settings.connections.memorySync.toast.failedTitle": "memory sync failed",
   "settings.connections.memorySync.outcome.wroteOne": "wrote 1 memory",
   "settings.connections.memorySync.outcome.wroteMany": "wrote {count} memories",
-  "settings.connections.memorySync.outcome.unchangedOne": "up to date · 1 memory",
+  "settings.connections.memorySync.outcome.unchangedOne":
+    "up to date · 1 memory",
   "settings.connections.memorySync.outcome.unchangedMany":
     "up to date · {count} memories",
   "settings.connections.memorySync.outcome.skipped": "skipped · {reason}",
@@ -3606,8 +3566,7 @@ export const enMessages = {
   "settings.connections.memorySync.error.testFailed": "test failed",
   "settings.connections.memorySync.error.saveFailed": "save failed",
   "settings.connections.memorySync.error.connectionFailed": "connection failed",
-  "settings.connections.memorySync.error.disconnectFailed":
-    "disconnect failed",
+  "settings.connections.memorySync.error.disconnectFailed": "disconnect failed",
   "settings.connections.obsidianMemorySync.description":
     "writes your screenpipe memories into a note in this vault so they show up in your graph and search. updates automatically every 5 minutes.",
   "settings.connections.obsidianMemorySync.note": "note",
@@ -3920,12 +3879,10 @@ export const enMessages = {
   "settings.userBrowser.status.disconnected":
     "extension not installed or not running",
   "settings.userBrowser.status.unreachable": "unreachable",
-  "settings.userBrowser.installOrReconnect":
-    "Install or reconnect extension",
+  "settings.userBrowser.installOrReconnect": "Install or reconnect extension",
   "settings.userBrowser.connectedDescription":
     "The extension is connected. Screenpipe can use your open tabs when you ask an agent to work in the browser.",
-  "settings.userBrowser.toast.openFailed.title":
-    "couldn't open your browser",
+  "settings.userBrowser.toast.openFailed.title": "couldn't open your browser",
   "settings.userBrowser.toast.openFailed.description":
     "link copied - paste in Chrome: {url}",
 
@@ -3949,8 +3906,7 @@ export const enMessages = {
   "settings.settingPreviews.power.batteryLife": "battery life",
   "settings.settingPreviews.power.performance":
     "full cadence & quality - ignores battery",
-  "settings.settingPreviews.power.auto":
-    "adapts to whether you're plugged in",
+  "settings.settingPreviews.power.auto": "adapts to whether you're plugged in",
   "settings.settingPreviews.power.batterySaver":
     "slows capture & trims quality to stretch battery",
   "settings.settingPreviews.cloudMedia.audio": "audio",
@@ -4160,10 +4116,8 @@ export const enMessages = {
   "settings.brain.artifacts.openViewer": "open viewer",
   "settings.brain.artifacts.revealInFinder": "reveal in finder",
   "settings.brain.artifacts.copyPath": "copy path",
-  "settings.brain.artifacts.openRunWithPreview":
-    "open pipe run with preview",
-  "settings.brain.artifacts.openChatWithPreview":
-    "open chat with preview",
+  "settings.brain.artifacts.openRunWithPreview": "open pipe run with preview",
+  "settings.brain.artifacts.openChatWithPreview": "open chat with preview",
   "settings.brain.artifacts.openRun": "open run",
   "settings.brain.artifacts.openChat": "open chat",
   "settings.brain.artifacts.open": "open",
@@ -4187,8 +4141,7 @@ export const enMessages = {
   "settings.brain.toast.createMemoryFailed": "failed to create memory",
   "settings.brain.toast.artifactDeleted": "artifact deleted",
   "settings.brain.toast.deletedItems": "deleted {count} items",
-  "settings.brain.toast.deleteSomeItemsFailed":
-    "failed to delete some items",
+  "settings.brain.toast.deleteSomeItemsFailed": "failed to delete some items",
   "settings.brain.relative.justNow": "just now",
   "settings.brain.relative.minutesAgo": "{count}m ago",
   "settings.brain.relative.hoursAgo": "{count}h ago",
@@ -4316,8 +4269,7 @@ export const enMessages = {
     "screenpipe couldn't load this voice clip",
   "settings.speakers.toast.renamed": 'speaker renamed to "{name}"',
   "settings.speakers.toast.deleted": "speaker deleted",
-  "settings.speakers.toast.markedFalseDetection":
-    "marked as false detection",
+  "settings.speakers.toast.markedFalseDetection": "marked as false detection",
   "settings.speakers.toast.merged": "speakers merged",
   "settings.speakers.relative.justNow": "just now",
   "settings.speakers.relative.minutesAgo": "{count}m ago",
@@ -4345,8 +4297,7 @@ export const enMessages = {
     "the remote API at {apiBase} did not answer. check that screenpipe is running on that device.",
   "settings.pipes.error.localDescription":
     "your pipe files may still be installed, but the local API at {apiBase} did not answer.",
-  "settings.pipes.error.timeoutConnecting":
-    "timed out connecting to {apiBase}",
+  "settings.pipes.error.timeoutConnecting": "timed out connecting to {apiBase}",
   "settings.pipes.error.fetchFailed": "failed to fetch pipes",
   "settings.pipes.retry": "retry",
   "settings.pipes.empty.noSearchMatches": "no pipes match your search",
@@ -5363,8 +5314,7 @@ export const enMessages = {
     "scoped: only this window of {appName}",
   "settings.privacy.filters.option.installedNotCaptured":
     "installed · not captured yet",
-  "settings.privacy.filters.option.visitsThisWeek":
-    "{count} visits this week",
+  "settings.privacy.filters.option.visitsThisWeek": "{count} visits this week",
   "settings.privacy.telemetry.analytics.title": "Analytics",
   "settings.privacy.telemetry.analytics.description": "Anonymous usage data",
 
@@ -5537,7 +5487,7 @@ export const enMessages = {
   "settings.general.resetOnboarding.description": "Run the setup wizard again",
   "settings.general.resetOnboarding.button": "reset",
 
-  "settings.storage.description": "Local disk, cloud archive, and sync",
+  "settings.storage.description": "Local disk usage and storage controls",
   "settings.storage.local": "Local",
   "settings.storage.archive": "Archive",
   "settings.storage.sync": "Sync",

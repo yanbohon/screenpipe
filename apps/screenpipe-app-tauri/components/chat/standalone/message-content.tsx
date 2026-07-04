@@ -235,11 +235,17 @@ function friendlyToolLabel(toolCall: ToolCall, t: TFunction): string {
           });
     }
     case "read":
-      return t("chat.toolLabel.readFile", { file: fileName(toolCall.args.path || "") });
+      return t("chat.toolLabel.readFile", {
+        file: fileName(toolCall.args.path || ""),
+      });
     case "edit":
-      return t("chat.toolLabel.editedFile", { file: fileName(toolCall.args.path || "") });
+      return t("chat.toolLabel.editedFile", {
+        file: fileName(toolCall.args.path || ""),
+      });
     case "write":
-      return t("chat.toolLabel.wroteFile", { file: fileName(toolCall.args.path || "") });
+      return t("chat.toolLabel.wroteFile", {
+        file: fileName(toolCall.args.path || ""),
+      });
     case "grep":
       return t("chat.toolLabel.searchedFor", {
         pattern: `\`${toolCall.args.pattern || t("chat.toolLabel.pattern")}\``,
@@ -313,12 +319,19 @@ function bashToolDetailsPresentation(
   if (path === "/raw_sql" && body && typeof body.query === "string") {
     const tables = sqlTables(body.query);
     if (tables.length > 0)
-      fields.push({ label: t("chat.toolDetails.tables"), value: tables.join(", ") });
+      fields.push({
+        label: t("chat.toolDetails.tables"),
+        value: tables.join(", "),
+      });
   }
 
   if (path.startsWith("/connections/")) {
     const connection = path.split("/")[2];
-    if (connection) fields.push({ label: t("chat.toolDetails.connection"), value: connection });
+    if (connection)
+      fields.push({
+        label: t("chat.toolDetails.connection"),
+        value: connection,
+      });
   }
 
   return {
@@ -660,6 +673,7 @@ function ThinkingBlock({
   durationMs?: number;
   defaultExpanded?: boolean;
 }) {
+  const { t } = useI18n();
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [elapsed, setElapsed] = useState(0);
   const startRef = useRef(Date.now());
@@ -692,7 +706,9 @@ function ThinkingBlock({
           )}
         />
         <span className="font-mono text-muted-foreground">
-          {isThinking ? `thinking... (${seconds}s)` : `thought for ${seconds}s`}
+          {isThinking
+            ? t("chat.thinking.runningWithSeconds", { seconds })
+            : t("chat.thinking.thoughtForSeconds", { seconds })}
         </span>
         <span className="ml-auto text-muted-foreground">
           {expanded ? "▾" : "▸"}
@@ -1116,8 +1132,6 @@ function collapseHiddenWorkGroups(
         pendingKey ??= group.key;
         continue;
       }
-      // Show thinking pills inline — flush pending tool work first so
-      // ordering is preserved and the thinking pill renders separately.
       flushPending();
       out.push(group);
       continue;
@@ -1129,6 +1143,66 @@ function collapseHiddenWorkGroups(
 
   flushPending();
   return out;
+}
+
+/**
+ * Merge all tool/work groups into a single "Worked for Xs" rail at the top.
+ * Intermediate narration text between tool calls is dropped — only the
+ * final text block (the actual response after all tools finish) renders
+ * as visible prose. Connection-action blocks always render outside.
+ */
+function mergeWorkAndIntermediateText(groups: GroupedBlock[]): GroupedBlock[] {
+  // Find the last work/tool group — everything up to that boundary is
+  // "work". Text after is the final response.
+  let lastWorkIdx = -1;
+  for (let i = groups.length - 1; i >= 0; i--) {
+    if (groups[i].type === "work-group" || groups[i].type === "tool-group") {
+      lastWorkIdx = i;
+      break;
+    }
+  }
+
+  // No tool calls at all → nothing to merge, show text as-is.
+  if (lastWorkIdx === -1) return groups;
+
+  // Accumulate all tool calls and duration into one work group.
+  // Intermediate text (model narration between tools) is dropped.
+  const allToolCalls: ToolCall[] = [];
+  let totalDurationMs = 0;
+  let firstKey: number | null = null;
+  const finalBlocks: GroupedBlock[] = [];
+
+  for (let i = 0; i <= lastWorkIdx; i++) {
+    const g = groups[i];
+    if (g.type === "work-group") {
+      firstKey ??= g.key;
+      allToolCalls.push(...g.toolCalls);
+      totalDurationMs += g.durationMs;
+    } else if (g.type === "tool-group") {
+      firstKey ??= g.key;
+      allToolCalls.push(...g.toolCalls);
+    } else if (g.type === "connection-action") {
+      finalBlocks.push(g);
+    }
+    // text and thinking blocks before the boundary are dropped
+  }
+
+  // Build the merged work group
+  if (allToolCalls.length > 0) {
+    finalBlocks.unshift({
+      type: "work-group",
+      toolCalls: allToolCalls,
+      durationMs: totalDurationMs,
+      key: firstKey ?? 0,
+    });
+  }
+
+  // Everything after lastWorkIdx is the final response
+  for (let i = lastWorkIdx + 1; i < groups.length; i++) {
+    finalBlocks.push(groups[i]);
+  }
+
+  return finalBlocks;
 }
 
 function InlineConnectionActionCard({
@@ -1294,7 +1368,10 @@ function toolWorkEndedAt(toolCalls: ToolCall[]): number | undefined {
   return undefined;
 }
 
-function formatLocalizedDurationParts(durationMs: number, t: TFunction): string {
+function formatLocalizedDurationParts(
+  durationMs: number,
+  t: TFunction,
+): string {
   const totalSeconds = Math.max(1, Math.floor(durationMs / 1000));
   if (totalSeconds < 60) {
     return t("chat.duration.seconds", { count: totalSeconds });
@@ -1308,14 +1385,30 @@ function formatLocalizedDurationParts(durationMs: number, t: TFunction): string 
   return t("chat.duration.minutesSeconds", { minutes, seconds });
 }
 
-function formatCompletedWorkDuration(durationMs: number | undefined, t: TFunction): string {
+function formatCompletedWorkDuration(
+  durationMs: number | undefined,
+  t: TFunction,
+): string {
   if (!durationMs || durationMs <= 0) return t("chat.work.worked");
   return t("chat.work.workedFor", {
     duration: formatLocalizedDurationParts(durationMs, t),
   });
 }
 
-function formatStoppedWorkDurationLocalized(durationMs: number | undefined, t: TFunction): string {
+function formatThoughtDuration(
+  durationMs: number | undefined,
+  t: TFunction,
+): string {
+  if (!durationMs || durationMs <= 0) return t("chat.work.thought");
+  return t("chat.work.thoughtFor", {
+    duration: formatLocalizedDurationParts(durationMs, t),
+  });
+}
+
+function formatStoppedWorkDurationLocalized(
+  durationMs: number | undefined,
+  t: TFunction,
+): string {
   if (!durationMs || durationMs <= 0) return t("chat.work.youStopped");
   return t("chat.work.youStoppedAfter", {
     duration: formatLocalizedDurationParts(durationMs, t),
@@ -1456,42 +1549,57 @@ function ToolCallGroup({
     }
   }, [endedAtMs, isWorking, startedAtMs, t]);
 
-  // Auto-expand while running, auto-collapse when done (user can override).
-  // `defaultExpanded` keeps the group open even when done — used for
-  // messages whose entire output is tool calls (typical pipe-runs)
-  // where the tool result is the whole story.
-  const isExpanded =
-    manualExpand !== null ? manualExpand : hasRunningTool || defaultExpanded;
+  // While working → always expanded, no user toggle.
+  // When done → auto-collapse (user can re-expand). `defaultExpanded`
+  // keeps it open even when done for messages whose entire output is
+  // tool calls (typical pipe-runs without a final prose response).
+  const isExpanded = isWorking
+    ? true
+    : manualExpand !== null
+      ? manualExpand
+      : defaultExpanded;
 
   return (
     <div className="w-full min-w-0 self-stretch">
       <div className="mb-2 w-full min-w-full">
-        {/* Header bar — clickable to toggle */}
-        <button
-          onClick={() => setManualExpand(isExpanded ? false : true)}
-          className="w-full flex items-center gap-1.5 py-1 text-left min-w-0 group cursor-pointer"
-        >
-          {/* Summary text */}
-          <span className="truncate text-xs font-mono text-foreground/50 group-hover:text-foreground/80 transition-colors duration-150">
-            <WorkSummaryText
-              text={isWorking ? runningSummary : summary || t("chat.work.steps", { count: total })}
-              animateRunningDuration={isWorking}
-              workingPrefix={t("chat.work.working")}
-            />
-            {hasError && allDone && (
-              <span className="ml-1.5 text-foreground/30">
-                · {t("chat.work.failedCount", { count: toolCalls.filter((tc) => tc.isError).length })}
-              </span>
+        {/* Header — plain text while working, clickable with chevron when done */}
+        {isWorking ? (
+          <div className="w-full flex items-center gap-1.5 py-1 text-left min-w-0">
+            <span className="truncate text-xs font-mono text-foreground/50">
+              <WorkSummaryText
+                text={runningSummary}
+                animateRunningDuration
+                workingPrefix={t("chat.work.working")}
+              />
+            </span>
+          </div>
+        ) : (
+          <button
+            onClick={() => setManualExpand(isExpanded ? false : true)}
+            className="w-full flex items-center gap-1.5 py-1 text-left min-w-0 group cursor-pointer"
+          >
+            <span className="truncate text-xs font-mono text-foreground/50 group-hover:text-foreground/80 transition-colors duration-150">
+              <WorkSummaryText
+                text={summary || t("chat.work.steps", { count: total })}
+                animateRunningDuration={false}
+                workingPrefix={t("chat.work.working")}
+              />
+              {hasError && allDone && (
+                <span className="ml-1.5 text-foreground/30">
+                  ·{" "}
+                  {t("chat.work.failedCount", {
+                    count: toolCalls.filter((tc) => tc.isError).length,
+                  })}
+                </span>
+              )}
+            </span>
+            {isExpanded ? (
+              <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-foreground/30 group-hover:text-foreground/60 transition-colors duration-150" />
+            ) : (
+              <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-foreground/30 group-hover:text-foreground/60 transition-colors duration-150" />
             )}
-          </span>
-
-          {/* Expand chevron */}
-          {isExpanded ? (
-            <ChevronDown className="h-3.5 w-3.5 flex-shrink-0 text-foreground/30 group-hover:text-foreground/60 transition-colors duration-150" />
-          ) : (
-            <ChevronRight className="h-3.5 w-3.5 flex-shrink-0 text-foreground/30 group-hover:text-foreground/60 transition-colors duration-150" />
-          )}
-        </button>
+          </button>
+        )}
         <div className="w-full min-w-full border-t border-border/50" />
       </div>
 
@@ -1735,13 +1843,34 @@ export function MessageContent({
   // Group consecutive tool blocks into collapsible containers
   if (message.contentBlocks && message.contentBlocks.length > 0) {
     const grouped = groupContentBlocks(message.contentBlocks);
-    const displayGroups = collapseHiddenWorkGroups(grouped, hideThinkingBlocks);
-    // When the message has no rendered prose (no text block — common for
-    // pipe-run executions whose entire output is thinking + tool calls),
-    // expand thinking blocks by default. Otherwise the collapsed
-    // "thought for 0s" pill is the only visible thing on the message
-    // and the chat panel reads as empty even though there's real
-    // content to see.
+    const collapsed = collapseHiddenWorkGroups(grouped, hideThinkingBlocks);
+    const displayGroups = mergeWorkAndIntermediateText(collapsed);
+
+    // If all blocks were absorbed (e.g. thinking-only message with no tool
+    // calls), show a "Thought for Xs" header so the bubble isn't blank.
+    // Skip while still generating — the loader handles that state.
+    if (displayGroups.length === 0 && !isGenerating) {
+      const thinkingMs = grouped
+        .filter(
+          (g): g is Extract<GroupedBlock, { type: "thinking" }> =>
+            g.type === "thinking",
+        )
+        .reduce((sum, g) => sum + (g.durationMs ?? 0), 0);
+      const fallbackLabel =
+        thinkingMs > 0
+          ? formatThoughtDuration(thinkingMs, t)
+          : message.workDurationMs
+            ? formatThoughtDuration(message.workDurationMs, t)
+            : t("chat.work.thought");
+      return (
+        <div className="space-y-2 min-w-0 w-full overflow-hidden">
+          <WorkStatusHeader label={fallbackLabel} />
+          {sourceFooter}
+          {retryCta}
+        </div>
+      );
+    }
+
     const hasText = grouped.some((g) => g.type === "text");
     const stoppedSummary = message.stoppedByUser
       ? formatStoppedWorkDurationLocalized(message.workDurationMs, t)

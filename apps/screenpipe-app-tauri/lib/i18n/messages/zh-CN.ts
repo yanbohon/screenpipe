@@ -45,8 +45,7 @@ export const zhCNMessages = {
   "common.validation.minLength": "至少需要 {count} 个字符",
   "common.validation.maxLength": "最多允许 {count} 个字符",
   "textOverlay.openLinkTitle": "打开 {url}",
-  "settings.applyRestartBar.defaultMessage":
-    "有未保存的更改，重启后生效。",
+  "settings.applyRestartBar.defaultMessage": "有未保存的更改，重启后生效。",
   "settings.applyRestartBar.action": "应用并重启",
   "splash.logoAlt": "screenpipe 标志",
   "splash.tagline": "你的 AI 数字记忆",
@@ -61,8 +60,7 @@ export const zhCNMessages = {
   "onboarding.connectApps.card.notion.aha": "笔记上下文已启用",
   "onboarding.connectApps.card.codex.valueProp":
     "让 OpenAI Codex 获得你的完整工作记忆",
-  "onboarding.connectApps.card.obsidian.valueProp":
-    "和屏幕一起搜索你的 vault",
+  "onboarding.connectApps.card.obsidian.valueProp": "和屏幕一起搜索你的 vault",
   "onboarding.connectApps.card.obsidian.aha": "vault 已连接",
   "onboarding.connectApps.card.claude.valueProp":
     "让 Claude Desktop 获得你的完整屏幕记忆",
@@ -88,8 +86,7 @@ export const zhCNMessages = {
   "onboarding.connectApps.error.cancelled": "{name} 登录未完成 — 请重试",
   "onboarding.connectApps.error.unsupported": "此设备不可用",
   "onboarding.connectApps.error.needsApp": "先打开 {name} 一次，然后重试",
-  "onboarding.connectApps.error.configWrite":
-    "无法更新 {name} 的设置 — 请重试",
+  "onboarding.connectApps.error.configWrite": "无法更新 {name} 的设置 — 请重试",
   "onboarding.connectApps.error.network": "连接中断 — 请重试",
   "onboarding.connectApps.error.unknown": "无法连接 — 请重试",
   "onboarding.loginGate.tagline": "AI 终于知道你在做什么",
@@ -108,8 +105,7 @@ export const zhCNMessages = {
   "onboarding.loginGate.activatePlan": "登录以激活你的套餐",
   "onboarding.loginGate.skipDev": "开发环境跳过 - 不使用账号继续",
   "onboarding.permissions.title": "解锁完整体验",
-  "onboarding.permissions.description":
-    "启用这些权限，以充分使用 Screenpipe",
+  "onboarding.permissions.description": "启用这些权限，以充分使用 Screenpipe",
   "onboarding.permissions.granted": "已授权",
   "onboarding.permissions.grant": "授权 →",
   "onboarding.permissions.permission.screen.title": "捕获你的屏幕",
@@ -118,8 +114,7 @@ export const zhCNMessages = {
   "onboarding.permissions.permission.mic.title": "捕获你说的话",
   "onboarding.permissions.permission.mic.subtitle":
     "让 Screenpipe 转写会议和通话中的语音",
-  "onboarding.permissions.permission.accessibility.title":
-    "读取屏幕文字",
+  "onboarding.permissions.permission.accessibility.title": "读取屏幕文字",
   "onboarding.permissions.permission.accessibility.subtitle":
     "让 Screenpipe 不依赖 OCR 也能理解应用内容",
   "onboarding.permissions.permission.browsers.title": "捕获浏览器 URL",
@@ -133,8 +128,7 @@ export const zhCNMessages = {
   "onboarding.pickPipe.notification.title": "设置完成",
   "onboarding.pickPipe.notification.body":
     "Screenpipe 已设置完成。第一批结果很快会到达。",
-  "onboarding.pickPipe.error.setupFailed":
-    "未能完成全部设置，请重试或跳过",
+  "onboarding.pickPipe.error.setupFailed": "未能完成全部设置，请重试或跳过",
   "onboarding.pickPipe.recording": "录制中 · {seconds} 秒",
   "onboarding.pickPipe.settingUp": "正在设置...",
   "onboarding.pickPipe.title": "我们为你选了这些",
@@ -174,18 +168,13 @@ export const zhCNMessages = {
   "onboarding.engineStartup.permission.required": "需要屏幕录制权限。",
   "onboarding.engineStartup.permission.description":
     "macOS 会按应用签名分别记录此权限。如果你在正式版 / beta / dev 构建之间切换，之前的授权不会沿用，每个 bundle id 都有自己的记录。",
-  "onboarding.engineStartup.permission.currentlyRunningAs":
-    "当前运行身份：",
-  "onboarding.engineStartup.permission.openSystemSettings":
-    "打开系统设置 →",
-  "onboarding.engineStartup.permission.resetAndRerequest":
-    "重置并重新请求",
-  "onboarding.engineStartup.permission.troubleshootingGuide":
-    "故障排查指南 ↗",
+  "onboarding.engineStartup.permission.currentlyRunningAs": "当前运行身份：",
+  "onboarding.engineStartup.permission.openSystemSettings": "打开系统设置 →",
+  "onboarding.engineStartup.permission.resetAndRerequest": "重置并重新请求",
+  "onboarding.engineStartup.permission.troubleshootingGuide": "故障排查指南 ↗",
   "onboarding.engineStartup.stuck.engineFailed": "引擎启动失败。",
   "onboarding.engineStartup.stuck.runningAs": "运行身份：",
-  "onboarding.engineStartup.stuck.continueWithoutRecording":
-    "不录制并继续 →",
+  "onboarding.engineStartup.stuck.continueWithoutRecording": "不录制并继续 →",
   "onboarding.engineStartup.stuck.logs": "日志",
   "onboarding.engineStartup.stuck.sent": "已发送",
   "onboarding.engineStartup.stuck.sendLogs": "发送日志",
@@ -228,7 +217,8 @@ export const zhCNMessages = {
   "browserSidebar.reload": "重新加载",
   "browserSidebar.pageLoading": "页面加载中",
   "browserSidebar.sessionAccess.macosMayAskTitle": "macOS 可能会请求访问权限",
-  "browserSidebar.sessionAccess.useBrowserLoginTitle": "使用你的浏览器登录状态？",
+  "browserSidebar.sessionAccess.useBrowserLoginTitle":
+    "使用你的浏览器登录状态？",
   "browserSidebar.sessionAccess.alreadyGrantedDescription":
     "Screenpipe 即将复制浏览器会话 Cookie。macOS 接下来可能会请求访问浏览器安全存储。",
   "browserSidebar.sessionAccess.description":
@@ -414,7 +404,8 @@ export const zhCNMessages = {
   "chat.customSummary.quick.blockers": "阻碍事项",
   "chat.customSummary.quickPrompt.statusUpdate": "生成一段简短的成果状态更新",
   "chat.customSummary.quickPrompt.keyDecisions": "我做出或遇到了哪些关键决策？",
-  "chat.customSummary.quickPrompt.actionItems": "从我的活动中提取所有行动项和待办",
+  "chat.customSummary.quickPrompt.actionItems":
+    "从我的活动中提取所有行动项和待办",
   "chat.customSummary.quickPrompt.meetingPrep": "总结我接下来开会需要的上下文",
   "chat.customSummary.quickPrompt.blockers": "我遇到了哪些问题、错误或阻碍？",
   "chat.customSummary.prompt.timeContext": "分析我在{time}的屏幕和音频录制。",
@@ -552,12 +543,10 @@ export const zhCNMessages = {
   "chat.schedulePrompt.description": "按计划自动运行此提示",
   "chat.schedulePrompt.promptPreview": "提示预览",
   "chat.schedulePrompt.pipeName": "Pipe 名称",
-  "chat.schedulePrompt.pipeNamePlaceholder":
-    "例如 daily-recap、standup-notes",
+  "chat.schedulePrompt.pipeNamePlaceholder": "例如 daily-recap、standup-notes",
   "chat.schedulePrompt.schedule": "计划",
   "chat.schedulePrompt.customCron": "自定义 cron...",
-  "chat.schedulePrompt.customCronPlaceholder":
-    "例如 0 */2 * * *（每 2 小时）",
+  "chat.schedulePrompt.customCronPlaceholder": "例如 0 */2 * * *（每 2 小时）",
   "chat.schedulePrompt.cancel": "取消",
   "chat.schedulePrompt.createPipe": "创建 Pipe",
   "chat.controls.dropImageHere": "将图片拖到这里",
@@ -613,22 +602,17 @@ export const zhCNMessages = {
   "chat.connectionSuggestions.previewUses": "使用 {name}",
   "chat.connectionSuggestions.calendarWithDescriptor":
     "从 {name} 准备{day}{descriptor}",
-  "chat.connectionSuggestions.calendar":
-    "从 {name} 准备即将到来的会议简报",
+  "chat.connectionSuggestions.calendar": "从 {name} 准备即将到来的会议简报",
   "chat.connectionSuggestions.emailInvites":
     "把最近的 {name} 邀请整理成具体准备笔记",
   "chat.connectionSuggestions.docsPrepSheet":
     "把最近的 {name} 文件整理成准备表",
   "chat.connectionSuggestions.tasks":
     "在 {name} 中查找与这项工作相关的未完成任务",
-  "chat.connectionSuggestions.sentryIssue":
-    "找出最近 {name} 事件背后的问题",
-  "chat.connectionSuggestions.posthogTrend":
-    "找出最近 {name} 活动背后的趋势",
-  "chat.connectionSuggestions.crmBriefs":
-    "从 {name} 准备客户通话简报",
-  "chat.connectionSuggestions.meetingBriefs":
-    "从 {name} 提取最近会议简报",
+  "chat.connectionSuggestions.sentryIssue": "找出最近 {name} 事件背后的问题",
+  "chat.connectionSuggestions.posthogTrend": "找出最近 {name} 活动背后的趋势",
+  "chat.connectionSuggestions.crmBriefs": "从 {name} 准备客户通话简报",
+  "chat.connectionSuggestions.meetingBriefs": "从 {name} 提取最近会议简报",
   "chat.connectionSuggestions.browserCurrentPage": "用 {name} 读取当前页面",
   "chat.connectionSuggestions.financeData":
     "总结与这项工作相关的最近 {name} 数据",
@@ -686,8 +670,7 @@ export const zhCNMessages = {
   "chat.message.collapsePrompt": "收起提示词",
   "chat.searchTool.noResults":
     "没有找到结果。请尝试更宽泛的搜索词或更大的时间范围。",
-  "chat.searchTool.tooMuchData":
-    "搜索返回的数据太多。请尝试更窄的时间范围。",
+  "chat.searchTool.tooMuchData": "搜索返回的数据太多。请尝试更窄的时间范围。",
   "chat.searchTool.foundResults": "找到 {count} 条结果：",
   "chat.searchTool.timedOut":
     "搜索超时。请缩小时间范围，并将 start_time 限制在最近 30-60 分钟内。",
@@ -700,6 +683,8 @@ export const zhCNMessages = {
   "chat.loader.runningTool": "正在运行工具...",
   "chat.loader.writing": "正在写入...",
   "chat.loader.analyzing": "分析中...",
+  "chat.thinking.runningWithSeconds": "思考中...（{seconds} 秒）",
+  "chat.thinking.thoughtForSeconds": "思考了 {seconds} 秒",
 
   "chat.duration.seconds": "{count} 秒",
   "chat.duration.minutes": "{count} 分钟",
@@ -708,6 +693,8 @@ export const zhCNMessages = {
   "chat.work.workingFor": "工作中 {duration}",
   "chat.work.worked": "已完成",
   "chat.work.workedFor": "已工作 {duration}",
+  "chat.work.thought": "已思考",
+  "chat.work.thoughtFor": "思考了 {duration}",
   "chat.work.steps": "{count} 个步骤",
   "chat.work.failedCount": "{count} 个失败",
   "chat.work.youStopped": "你已停止",
@@ -937,13 +924,11 @@ export const zhCNMessages = {
   "chat.toasts.unsupportedFile": "不支持的文件",
   "chat.toasts.unsupportedFileDescription": "无法读取 .{extension} 文件",
   "chat.toasts.noTextFound": "未找到文本",
-  "chat.toasts.noExtractableText":
-    "{name} 看起来为空，或没有可提取的文本",
+  "chat.toasts.noExtractableText": "{name} 看起来为空，或没有可提取的文本",
   "chat.toasts.readFileFailed": "无法读取文件",
   "chat.toasts.pipeStopFailed": "停止 pipe 失败",
   "chat.toasts.stoppingPipe": "正在停止 pipe",
-  "chat.toasts.pipeStopPending":
-    "{name} 会在 agent 子进程完成启动后停止",
+  "chat.toasts.pipeStopPending": "{name} 会在 agent 子进程完成启动后停止",
   "chat.toasts.pipeShuttingDown": "{name} 正在关闭",
   "chat.toasts.modelSwitchAfterResponse": "模型会在当前回复结束后切换",
   "chat.toasts.signInRequired": "需要登录",
@@ -958,8 +943,7 @@ export const zhCNMessages = {
   "chat.mainPane.newContent": "新内容",
   "chat.pi.disabled.noAiPresets": "未配置 AI preset",
   "chat.pi.disabled.noPresetSelected": "未选择 preset",
-  "chat.pi.disabled.noModelSelectedInPreset":
-    "preset“{preset}”未选择模型",
+  "chat.pi.disabled.noModelSelectedInPreset": "preset“{preset}”未选择模型",
   "chat.pi.disabled.startingPiAgent": "Pi agent 启动中...",
   "chat.pi.error.didNotStart": "Pi 未启动",
   "chat.errors.sessionExpired":
@@ -984,10 +968,8 @@ export const zhCNMessages = {
     "Ollama 模型“{model}”未安装。请运行 `ollama pull {model}`，或在 AI preset 中切换到 `ollama list` 里的模型。",
   "chat.errors.ollamaModelMissingGeneric":
     "选中的 Ollama 模型未找到。请检查设置中的 AI preset。",
-  "chat.errors.ollamaNotRunning":
-    "Ollama 未运行。请用 `ollama serve` 启动。",
-  "chat.errors.aiAgentCrashedRestarting":
-    "AI agent 已崩溃 - 正在自动重启...",
+  "chat.errors.ollamaNotRunning": "Ollama 未运行。请用 `ollama serve` 启动。",
+  "chat.errors.aiAgentCrashedRestarting": "AI agent 已崩溃 - 正在自动重启...",
   "chat.errors.requestFailedAfterRetries": "多次重试后请求仍失败",
   "chat.errors.midResponse": "你的消息到达时，AI 仍在回复中。",
   "chat.errors.somethingWentWrong": "出现错误",
@@ -1071,10 +1053,8 @@ export const zhCNMessages = {
   "status.permissionButtons.toast.restartRequired.description":
     "请重启应用以应用屏幕录制权限",
   "status.permissionButtons.toast.error": "错误",
-  "status.permissionButtons.toast.requestFailed":
-    "请求{type}权限失败",
-  "status.permissionButtons.toast.openSettingsFailed":
-    "打开{type}权限设置失败",
+  "status.permissionButtons.toast.requestFailed": "请求{type}权限失败",
+  "status.permissionButtons.toast.openSettingsFailed": "打开{type}权限设置失败",
   "status.permissionButtons.type.screen": "屏幕",
   "status.permissionButtons.type.audio": "音频",
   "status.permissionButtons.allowAccess": "允许{type}访问",
@@ -1092,8 +1072,7 @@ export const zhCNMessages = {
   "notifications.action.source": "来源",
   "notifications.action.fallback": "操作",
   "notifications.welcome.title": "欢迎使用 screenpipe",
-  "notifications.welcome.body":
-    "screenpipe 已准备好在本地捕获你的屏幕和音频。",
+  "notifications.welcome.body": "screenpipe 已准备好在本地捕获你的屏幕和音频。",
   "notifications.firstRun.title": "2 小时记忆已准备好",
   "notifications.firstRun.body":
     "已录制 2 小时屏幕和音频。浏览时间线，或向 AI 询问你今天的情况。",
@@ -1155,10 +1134,8 @@ export const zhCNMessages = {
   "pipeAdvisory.body.dailyLimitWithUsage":
     "每日 AI 使用额度已用完（{used}/{limit}）",
   "pipeAdvisory.body.dailyLimit": "每日 AI 使用额度已用完",
-  "pipeAdvisory.body.creditsExhausted":
-    "每日 AI 额度已用完，请升级或等到明天",
-  "pipeAdvisory.body.quotaExhausted":
-    "供应商配额或账单限制已触发",
+  "pipeAdvisory.body.creditsExhausted": "每日 AI 额度已用完，请升级或等到明天",
+  "pipeAdvisory.body.quotaExhausted": "供应商配额或账单限制已触发",
   "pipeAdvisory.body.modelNotAllowed":
     "此 pipe 使用了需要 Business 的模型，请切换到免费模型（自动）或升级",
   "pipeAdvisory.upgrade": "升级",
@@ -1483,17 +1460,14 @@ export const zhCNMessages = {
   "rewind.searchModal.chatBucket.yesterday": "昨天",
   "rewind.searchModal.chatBucket.week": "过去 7 天",
   "rewind.searchModal.chatBucket.older": "更早",
-  "rewind.searchModal.empty.noTranscriptionsFor":
-    "未找到 {name} 的转写",
+  "rewind.searchModal.empty.noTranscriptionsFor": "未找到 {name} 的转写",
   "rewind.searchModal.empty.parenthetical": "（空）",
   "rewind.searchModal.empty.noResultsFor": "没有“{query}”的结果",
   "rewind.searchModal.empty.noTagsMatching": "没有匹配“{query}”的标签",
   "rewind.searchModal.empty.noTagsFound": "未找到标签",
-  "rewind.searchModal.empty.noPeopleMatching":
-    "没有匹配“{query}”的人",
+  "rewind.searchModal.empty.noPeopleMatching": "没有匹配“{query}”的人",
   "rewind.searchModal.empty.noSpeakersFound": "未找到说话人",
-  "rewind.searchModal.empty.noChatsMatching":
-    "没有匹配“{query}”的聊天",
+  "rewind.searchModal.empty.noChatsMatching": "没有匹配“{query}”的聊天",
   "rewind.searchModal.empty.noChatsYet": "还没有聊天",
   "rewind.searchModal.filter.all": "全部",
   "rewind.searchModal.filter.screen": "屏幕",
@@ -1515,8 +1489,7 @@ export const zhCNMessages = {
   "rewind.searchModal.scrollForMore": "滚动查看更多",
   "rewind.searchModal.suggestions.fromRecentActivity": "来自你的最近活动",
   "rewind.searchModal.suggestions.typeToSearch": "输入以搜索你的屏幕历史",
-  "rewind.searchModal.placeholder":
-    "搜索记忆和聊天...（# 标签，@ 人物）",
+  "rewind.searchModal.placeholder": "搜索记忆和聊天...（# 标签，@ 人物）",
   "rewind.searchModal.hint.navigateVertical": "↑↓ 导航",
   "rewind.searchModal.hint.goToTimeline": "⏎ 跳到时间线",
   "rewind.searchModal.hint.escBack": "esc 返回",
@@ -1538,11 +1511,9 @@ export const zhCNMessages = {
   "rewind.tagToolbar.toast.applySuccessDescription":
     "已将“{tag}”应用到 {count} 帧",
   "rewind.tagToolbar.toast.applyFailedTitle": "添加标签失败",
-  "rewind.tagToolbar.toast.applyFailedDescription":
-    "部分帧无法添加标签",
+  "rewind.tagToolbar.toast.applyFailedDescription": "部分帧无法添加标签",
   "rewind.tagToolbar.toast.removeFailedTitle": "移除失败",
-  "rewind.tagToolbar.toast.removeFailedDescription":
-    "无法移除“{tag}”",
+  "rewind.tagToolbar.toast.removeFailedDescription": "无法移除“{tag}”",
   "rewind.tagToolbar.toast.deleteSuccessTitle": "已删除",
   "rewind.tagToolbar.toast.deleteSuccessDescription":
     "已删除 {frames} 帧、{segments} 段音频",
@@ -1551,8 +1522,7 @@ export const zhCNMessages = {
   "rewind.tagToolbar.deleteSelectedRange": "删除所选范围",
   "rewind.tagToolbar.askAi": "问 AI",
   "rewind.tagToolbar.morePipes": "还有 {count} 个 pipe",
-  "rewind.tagToolbar.retranscribeTitle":
-    "通过 AI 重新转写此范围内的音频",
+  "rewind.tagToolbar.retranscribeTitle": "通过 AI 重新转写此范围内的音频",
   "rewind.tagToolbar.retranscribe": "重新转写",
   "rewind.tagToolbar.deleteConfirm":
     "永久删除 {startTime} 到 {endTime}（{duration}）之间的所有屏幕录制、音频和转写？此操作无法撤销。",
@@ -1568,14 +1538,12 @@ export const zhCNMessages = {
   "rewind.audioTranscript.toast.noDataToSend": "没有可发送的转写数据",
   "rewind.audioTranscript.chat.meetingTranscriptLabel":
     "会议转写（{timeRange}）",
-  "rewind.audioTranscript.chat.nearbyAudioLabel":
-    "附近音频（{timeRange}）",
+  "rewind.audioTranscript.chat.nearbyAudioLabel": "附近音频（{timeRange}）",
   "rewind.audioTranscript.chat.contextIntro":
     "这是我的{label}：\n\n{transcript}",
   "rewind.audioTranscript.tooltip.summarize": "总结",
   "rewind.audioTranscript.tooltip.noTranscription": "没有可总结的转写",
-  "rewind.audioTranscript.tooltip.summarizeMeetingSoFar":
-    "总结目前的会议内容",
+  "rewind.audioTranscript.tooltip.summarizeMeetingSoFar": "总结目前的会议内容",
   "rewind.audioTranscript.tooltip.summarizeMeeting": "总结会议",
   "rewind.audioTranscript.tooltip.summarizeNearbyAudio": "总结附近音频",
   "rewind.audioTranscript.summaryPrompt.meeting": "会议",
@@ -1583,8 +1551,7 @@ export const zhCNMessages = {
   "rewind.audioTranscript.summaryPrompt.ongoingNote": "（仍在进行中）",
   "rewind.audioTranscript.summaryPrompt.contextTimeRange":
     "{label}，从 {start} 到 {end}{ongoingNote}",
-  "rewind.audioTranscript.summaryPrompt.participants":
-    "参与者：{speakers}",
+  "rewind.audioTranscript.summaryPrompt.participants": "参与者：{speakers}",
   "rewind.audioTranscript.summaryPrompt.segments": "片段数：{count}",
   "rewind.audioTranscript.summaryPrompt.searchInstruction":
     "使用 screenpipe search API，参数 content_type=audio、start_time={startUtc}、end_time={endUtc} 获取转写",
@@ -1602,7 +1569,8 @@ export const zhCNMessages = {
   "rewind.audioTranscript.action.retranscribe": "重新转写",
   "rewind.audioTranscript.action.selectReassign": "选择并重新分配",
   "rewind.audioTranscript.empty.meeting": "此会议中没有转写",
-  "rewind.audioTranscript.action.loadEarlier": "加载更早内容（还有 {count} 条）",
+  "rewind.audioTranscript.action.loadEarlier":
+    "加载更早内容（还有 {count} 条）",
   "rewind.audioTranscript.empty.timeWindow": "此时间窗口内没有音频",
   "rewind.audioTranscript.selection.selectedCount": "已选择 {count} 条",
   "rewind.audioTranscript.selection.assignTo": "分配给...",
@@ -1611,7 +1579,8 @@ export const zhCNMessages = {
   "rewind.audioTranscript.conversation.noTranscription": "（无转写）",
   "rewind.audioTranscript.conversation.showLess": "收起",
   "rewind.audioTranscript.conversation.showMore": "显示更多",
-  "rewind.audioTranscript.conversation.jumpToTimelineMoment": "跳到时间线中的此刻",
+  "rewind.audioTranscript.conversation.jumpToTimelineMoment":
+    "跳到时间线中的此刻",
   "rewind.audioTranscript.conversation.source.input": "麦克风",
   "rewind.audioTranscript.conversation.source.output": "输出",
   "rewind.audioTranscript.conversation.speakerWithId": "说话人 #{id}",
@@ -1678,10 +1647,8 @@ export const zhCNMessages = {
     "正在带着所选范围上下文运行 pipe",
   "rewind.timeline.chatContext.timeRange": "时间范围：{startTime} - {endTime}",
   "rewind.timeline.chatContext.apps": "应用：{apps}",
-  "rewind.timeline.chatContext.screenTextSamples":
-    "屏幕文本样本：\n{samples}",
-  "rewind.timeline.chatContext.audioTranscriptions":
-    "音频转写：\n{samples}",
+  "rewind.timeline.chatContext.screenTextSamples": "屏幕文本样本：\n{samples}",
+  "rewind.timeline.chatContext.audioTranscriptions": "音频转写：\n{samples}",
   "rewind.timeline.chatContext.selectionPrompt":
     "根据我从 {startTime} 到 {endTime} 的活动，",
   "rewind.timeline.disabled.title": "时间线已禁用",
@@ -1790,8 +1757,7 @@ export const zhCNMessages = {
     "请输入类似 ENT-XXXX-XXXX-XXXX-XXXX 的许可证密钥",
   "enterpriseLicense.validationFailed": "验证许可证密钥失败",
   "enterpriseLicense.title": "企业许可证",
-  "enterpriseLicense.description":
-    "输入 IT 管理员提供的许可证密钥以配置此设备",
+  "enterpriseLicense.description": "输入 IT 管理员提供的许可证密钥以配置此设备",
   "enterpriseLicense.validating": "验证中...",
   "enterpriseLicense.activate": "激活",
   "enterpriseLicense.contactAdmin": "如果没有许可证密钥，请联系管理员",
@@ -1998,12 +1964,10 @@ export const zhCNMessages = {
   "meetingNotes.liveCapture.idle.label": "会议已保存",
   "meetingNotes.liveCapture.idle.shortLabel": "已保存",
   "meetingNotes.liveCapture.idle.description": "会议已不再实时。",
-  "meetingNotes.liveCapture.idle.transcriptEmptyCopy":
-    "此会议没有捕获到转写",
+  "meetingNotes.liveCapture.idle.transcriptEmptyCopy": "此会议没有捕获到转写",
   "meetingNotes.liveCapture.recording.label": "录制中",
   "meetingNotes.liveCapture.recording.shortLabel": "录制中",
-  "meetingNotes.liveCapture.recording.description":
-    "正在为此会议捕获音频。",
+  "meetingNotes.liveCapture.recording.description": "正在为此会议捕获音频。",
   "meetingNotes.liveCapture.recording.transcriptEmptyCopy":
     "正在监听 - 第一段转写到达后会显示",
   "meetingNotes.liveCapture.audio-disabled.label": "音频已关闭",
@@ -2811,8 +2775,7 @@ export const zhCNMessages = {
     "要从后台转写积压中丢弃音频片段 {id} 吗？",
   "settings.recording.backlog.toast.loadFailed": "无法加载积压",
   "settings.recording.backlog.toast.audioLoadFailed": "无法加载音频",
-  "settings.recording.backlog.toast.audioPreviewFailedTitle":
-    "无法播放音频",
+  "settings.recording.backlog.toast.audioPreviewFailedTitle": "无法播放音频",
   "settings.recording.backlog.toast.audioPreviewFailedDescription":
     "无法打开音频文件进行预览",
   "settings.recording.backlog.toast.chunkTranscribed": "片段已转写",
@@ -2873,8 +2836,7 @@ export const zhCNMessages = {
   "settings.aiPresets.model.haikuFast": "Haiku 4.5（快速）",
   "settings.aiPresets.model.sonnetBalanced": "Sonnet 4.5（均衡）",
   "settings.aiPresets.model.opusPowerfulPro": "Opus 4.8（强力，Pro）",
-  "settings.aiPresets.model.fableMostCapablePro":
-    "Fable 5（能力最强，Pro）",
+  "settings.aiPresets.model.fableMostCapablePro": "Fable 5（能力最强，Pro）",
   "settings.aiPresets.model.geminiFlashFast": "Gemini 3 Flash（快速）",
   "settings.aiPresets.model.geminiFlashLiteCheapest":
     "Gemini 3.1 Flash-Lite（最便宜）",
@@ -2978,8 +2940,7 @@ export const zhCNMessages = {
   "settings.aiPresets.form.tooltip.selectModel": "选择模型后继续",
   "settings.aiPresets.form.tooltip.fixErrors": "修复验证错误后继续",
   "settings.aiPresets.validation.nameRequired": "预设名称为必填项",
-  "settings.aiPresets.validation.nameCannotEndCopy":
-    "预设名称不能以“copy”结尾",
+  "settings.aiPresets.validation.nameCannotEndCopy": "预设名称不能以“copy”结尾",
   "settings.aiPresets.validation.nameAlreadyExists": "已存在同名预设",
   "settings.aiPresets.validation.nameAllowedCharacters":
     "只能使用字母、数字、空格、连字符和下划线",
@@ -3048,13 +3009,11 @@ export const zhCNMessages = {
   "settings.aiPresets.toast.cannotDeleteCloud.title": "无法删除云端预设",
   "settings.aiPresets.toast.cannotDeleteCloud.description":
     "此预设包含在你的商业版订阅中",
-  "settings.aiPresets.toast.cannotDeleteDefault.title":
-    "无法删除默认预设",
+  "settings.aiPresets.toast.cannotDeleteDefault.title": "无法删除默认预设",
   "settings.aiPresets.toast.cannotDeleteDefault.description":
     "请先将其他预设设为默认",
   "settings.aiPresets.toast.presetNotFound.title": "未找到预设",
-  "settings.aiPresets.toast.presetNotFound.description":
-    "你要删除的预设不存在",
+  "settings.aiPresets.toast.presetNotFound.description": "你要删除的预设不存在",
   "settings.aiPresets.toast.presetDeleted.title": "预设已删除",
   "settings.aiPresets.toast.presetDeleted.description": "预设已成功移除",
   "settings.aiPresets.toast.deleteError.title": "删除预设出错",
@@ -3063,10 +3022,8 @@ export const zhCNMessages = {
   "settings.aiPresets.toast.defaultLocked.description":
     "你的管理员控制默认 AI 预设",
   "settings.aiPresets.toast.defaultUpdated.title": "默认预设已更新",
-  "settings.aiPresets.toast.defaultUpdated.description":
-    "该预设已设为默认",
-  "settings.aiPresets.toast.defaultUpdateError.title":
-    "更新默认预设出错",
+  "settings.aiPresets.toast.defaultUpdated.description": "该预设已设为默认",
+  "settings.aiPresets.toast.defaultUpdateError.title": "更新默认预设出错",
   "settings.aiPresets.toast.defaultUpdateError.description":
     "更新默认预设时出错",
 
@@ -3273,9 +3230,9 @@ export const zhCNMessages = {
   "settings.connections.mcpSetup.cursorWriteFailed":
     "无法写入 Cursor MCP 配置。\n\n请手动添加到 ~/.cursor/mcp.json：\n\n{config}",
   "settings.connections.mcpSetup.codexWriteFailed":
-    "无法写入 Codex MCP 配置。\n\n请手动将 [mcp_servers.screenpipe] 块添加到 ~/.codex/config.toml，command 使用 npx，args 使用 [\"-y\", \"screenpipe-mcp@latest\"]。",
+    '无法写入 Codex MCP 配置。\n\n请手动将 [mcp_servers.screenpipe] 块添加到 ~/.codex/config.toml，command 使用 npx，args 使用 ["-y", "screenpipe-mcp@latest"]。',
   "settings.connections.mcpSetup.grokWriteFailed":
-    "无法写入 Grok CLI MCP 配置。\n\n请手动将 screenpipe 条目添加到 ~/.grok/user-settings.json 的 mcp.servers 数组，command 使用 npx，args 使用 [\"-y\", \"screenpipe-mcp@latest\"]。",
+    '无法写入 Grok CLI MCP 配置。\n\n请手动将 screenpipe 条目添加到 ~/.grok/user-settings.json 的 mcp.servers 数组，command 使用 npx，args 使用 ["-y", "screenpipe-mcp@latest"]。',
   "settings.connections.relative.justNow": "刚刚",
   "settings.connections.relative.secondsAgo": "{count} 秒前",
   "settings.connections.relative.minutesAgo": "{count} 分钟前",
@@ -3377,8 +3334,7 @@ export const zhCNMessages = {
   "settings.connections.memorySync.toast.failedTitle": "记忆同步失败",
   "settings.connections.memorySync.outcome.wroteOne": "写入 1 条记忆",
   "settings.connections.memorySync.outcome.wroteMany": "写入 {count} 条记忆",
-  "settings.connections.memorySync.outcome.unchangedOne":
-    "已是最新 · 1 条记忆",
+  "settings.connections.memorySync.outcome.unchangedOne": "已是最新 · 1 条记忆",
   "settings.connections.memorySync.outcome.unchangedMany":
     "已是最新 · {count} 条记忆",
   "settings.connections.memorySync.outcome.skipped": "已跳过 · {reason}",
@@ -3578,8 +3534,7 @@ export const zhCNMessages = {
     "搜索服务器 — notion、github、postgres...",
   "settings.registryBrowser.searching": "正在搜索 registry...",
   "settings.registryBrowser.recommended": "推荐",
-  "settings.registryBrowser.searchToBrowse":
-    "在上方搜索以浏览完整 registry。",
+  "settings.registryBrowser.searchToBrowse": "在上方搜索以浏览完整 registry。",
   "settings.registryBrowser.noMatches": "没有服务器匹配“{query}”。",
   "settings.registryBrowser.loadMore": "加载更多",
   "settings.registryBrowser.footer":
@@ -3589,8 +3544,7 @@ export const zhCNMessages = {
   "settings.registryBrowser.kind.catalog": "目录",
   "settings.registryBrowser.repository": "代码仓库",
   "settings.registryBrowser.added": "已添加",
-  "settings.registryBrowser.notInstallable":
-    "未列出可安装的远程端点或包",
+  "settings.registryBrowser.notInstallable": "未列出可安装的远程端点或包",
   "settings.registryBrowser.add": "添加",
   "settings.registryBrowser.authHint.needsAuth":
     "此服务器需要认证 — 使用“连接”登录，或在手动认证中粘贴 token",
@@ -3699,8 +3653,7 @@ export const zhCNMessages = {
   "settings.settingPreviews.power.batteryLife": "电池续航",
   "settings.settingPreviews.power.performance": "完整频率和质量 - 忽略电量",
   "settings.settingPreviews.power.auto": "根据是否接入电源自动调整",
-  "settings.settingPreviews.power.batterySaver":
-    "降低捕获频率和质量以延长续航",
+  "settings.settingPreviews.power.batterySaver": "降低捕获频率和质量以延长续航",
   "settings.settingPreviews.cloudMedia.audio": "音频",
   "settings.settingPreviews.cloudMedia.videoImages": "视频 · 图片",
   "settings.settingPreviews.cloudMedia.enclave": "安全 enclave",
@@ -3708,8 +3661,7 @@ export const zhCNMessages = {
   "settings.settingPreviews.cloudMedia.fromVideo": "来自视频",
   "settings.settingPreviews.cloudMedia.sampleTranscript":
     "...然后我们发布了修复。",
-  "settings.settingPreviews.cloudMedia.sampleVideo":
-    "仪表盘打开，图表正在上升",
+  "settings.settingPreviews.cloudMedia.sampleVideo": "仪表盘打开，图表正在上升",
   "settings.settingPreviews.cloudMedia.description":
     "语音会变成可搜索文本，视频和图片会变成描述 - 在 confidential enclave 中处理后，可供 Pi 和 Claude Code 使用。",
 
@@ -3822,7 +3774,8 @@ export const zhCNMessages = {
   "settings.cloudPipes.noCloudRunsYet": "还没有云端运行",
 
   "settings.brain.addMemory.title": "添加记忆",
-  "settings.brain.description": "AI 从你的活动中学到的内容，以及它为你生成的内容",
+  "settings.brain.description":
+    "AI 从你的活动中学到的内容，以及它为你生成的内容",
   "settings.brain.staleWarning.one":
     "已有 1 天未更新。请确认已安装并启用写入记忆或产物的 pipe",
   "settings.brain.staleWarning.many":
@@ -3863,8 +3816,7 @@ export const zhCNMessages = {
   "settings.brain.deselectAll": "取消全选",
   "settings.brain.empty.artifactsMatchingQuery":
     "标题或内容中没有匹配“{query}”的产物",
-  "settings.brain.empty.memoriesMatchingQuery":
-    "没有匹配“{query}”的记忆",
+  "settings.brain.empty.memoriesMatchingQuery": "没有匹配“{query}”的记忆",
   "settings.brain.empty.artifactsMatchFilters": "没有产物匹配所选筛选项",
   "settings.brain.empty.memoriesMatchFilters": "没有记忆匹配所选筛选项",
   "settings.brain.empty.noMemories": "暂无记忆",
@@ -3954,8 +3906,7 @@ export const zhCNMessages = {
   "settings.notifications.group.meetings.description":
     "通话期间的实时笔记和音频/转写状态",
   "settings.notifications.group.system.label": "系统",
-  "settings.notifications.group.system.description":
-    "显示器、扩展坞和电源变化",
+  "settings.notifications.group.system.description": "显示器、扩展坞和电源变化",
   "settings.notifications.group.automation.label": "pipes 与自动化",
   "settings.notifications.group.automation.description":
     "来自自动化的想法和提醒",
@@ -3967,8 +3918,7 @@ export const zhCNMessages = {
   "settings.notifications.category.meetingLiveNotes.label": "会议实时笔记",
   "settings.notifications.category.meetingLiveNotes.description":
     "检测到会议时提示打开实时笔记",
-  "settings.notifications.category.audioCaptureStalled.label":
-    "会议音频未捕获",
+  "settings.notifications.category.audioCaptureStalled.label": "会议音频未捕获",
   "settings.notifications.category.audioCaptureStalled.description":
     "检测到会议但 60 秒内没有音频到达录制器时发送系统通知",
   "settings.notifications.category.liveTranscriptStalled.label":
@@ -4019,8 +3969,7 @@ export const zhCNMessages = {
   "settings.speakers.differentPeople": "不是同一批人",
   "settings.speakers.notRealSpeaker": "不是实际说话人（噪音）",
   "settings.speakers.searchPlaceholder": "搜索说话人...",
-  "settings.speakers.progressIdentified":
-    "已识别 {named}/{total} 位说话人",
+  "settings.speakers.progressIdentified": "已识别 {named}/{total} 位说话人",
   "settings.speakers.identifiedTitle": "已识别（{count}）",
   "settings.speakers.unidentified.one": "{count} 位未识别说话人",
   "settings.speakers.unidentified.many": "{count} 位未识别说话人",
@@ -4030,8 +3979,7 @@ export const zhCNMessages = {
     "未识别说话人会在会议笔记和 pipes 中显示为“Speaker #N”。请在下方命名，以修正后续输出。",
   "settings.speakers.organizeDisplayLabel": "整理说话人",
   "settings.speakers.organizeWithAi": "用 AI 整理",
-  "settings.speakers.pendingIdentification":
-    "待识别（{speakers}，{groups}）",
+  "settings.speakers.pendingIdentification": "待识别（{speakers}，{groups}）",
   "settings.speakers.speakerCount.one": "{count} 位说话人",
   "settings.speakers.speakerCount.many": "{count} 位说话人",
   "settings.speakers.groupCount.one": "{count} 组",
@@ -4142,10 +4090,10 @@ export const zhCNMessages = {
   "settings.pipes.actions.checkingUpdates": "正在检查更新...",
   "settings.pipes.actions.checkForUpdates": "检查更新",
   "settings.pipes.actions.publishToStore": "发布到商店",
-  "settings.pipes.autoRun.configureRequired":
-    "启用自动运行前请先配置必需连接",
+  "settings.pipes.autoRun.configureRequired": "启用自动运行前请先配置必需连接",
   "settings.pipes.autoRun.enabledTooltip": "正在按计划自动运行 - 点击可禁用",
-  "settings.pipes.autoRun.disabledTooltip": "自动运行已禁用 - 仍可手动运行 pipe",
+  "settings.pipes.autoRun.disabledTooltip":
+    "自动运行已禁用 - 仍可手动运行 pipe",
   "settings.pipes.tabs.config": "配置",
   "settings.pipes.tabs.runs": "运行",
   "settings.pipes.tabs.advanced": "高级",
@@ -4337,8 +4285,7 @@ export const zhCNMessages = {
   "settings.appleCalendar.waitingForMacos": "正在等待 macOS 批准...",
   "settings.appleCalendar.promptMissing":
     "如果没有出现提示，请撤销权限后重新连接。",
-  "settings.appleCalendar.connectHint":
-    "点击连接，并批准 macOS 日历权限提示。",
+  "settings.appleCalendar.connectHint": "点击连接，并批准 macOS 日历权限提示。",
 
   "settings.voiceMemos.alt": "语音备忘录",
   "settings.voiceMemos.title": "语音备忘录",
@@ -5033,10 +4980,8 @@ export const zhCNMessages = {
   "settings.privacy.filters.option.captures": "{count} 次捕获",
   "settings.privacy.filters.option.scopedWindow":
     "限定范围：仅 {appName} 的这个窗口",
-  "settings.privacy.filters.option.installedNotCaptured":
-    "已安装 · 尚未捕获",
-  "settings.privacy.filters.option.visitsThisWeek":
-    "{count} 次访问（本周）",
+  "settings.privacy.filters.option.installedNotCaptured": "已安装 · 尚未捕获",
+  "settings.privacy.filters.option.visitsThisWeek": "{count} 次访问（本周）",
   "settings.privacy.telemetry.analytics.title": "分析",
   "settings.privacy.telemetry.analytics.description": "匿名使用数据",
 
@@ -5190,7 +5135,7 @@ export const zhCNMessages = {
   "settings.general.resetOnboarding.description": "重新运行设置向导",
   "settings.general.resetOnboarding.button": "重置",
 
-  "settings.storage.description": "本地磁盘、云归档和同步",
+  "settings.storage.description": "本地磁盘用量和存储控制",
   "settings.storage.local": "本地",
   "settings.storage.archive": "归档",
   "settings.storage.sync": "同步",

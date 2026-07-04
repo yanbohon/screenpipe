@@ -515,7 +515,7 @@ async fn main() {
         }
     }
 
-    // Check if telemetry is disabled via store setting (analyticsEnabled) or offline mode
+    // Check if telemetry is disabled via store setting (analyticsEnabled)
     let store_path = screenpipe_core::paths::default_screenpipe_data_dir().join("store.bin");
     let store_json = std::fs::read(&store_path).ok().and_then(|data| {
         if data.len() >= 8 && &data[..8] == b"SPSTORE1" {
@@ -1968,7 +1968,7 @@ async fn main() {
             // telemetry builds with SCREENPIPE_ENTERPRISE_LICENSE_KEY env set.
             let _enterprise_shutdown_tx = enterprise_sync::spawn(&app_handle);
 
-            // Auto-start cloud sync if it was enabled
+            // Disable removed Storage cloud backends if old settings enabled them.
             let app_handle_clone = app_handle.clone();
             let sync_state = app_handle.state::<sync::SyncState>();
             let sync_state_clone = sync::SyncState {
@@ -1985,7 +1985,7 @@ async fn main() {
                 sync::auto_start_sync(&app_handle_clone, &sync_state_clone).await;
             });
 
-            // Auto-start cloud archive if it was enabled (after sync so it can reuse sync manager)
+            // Disable removed Storage archive backend if old settings enabled it.
             let app_handle_clone = app_handle.clone();
             tauri::async_runtime::spawn(async move {
                 tokio::time::sleep(tokio::time::Duration::from_secs(15)).await;
