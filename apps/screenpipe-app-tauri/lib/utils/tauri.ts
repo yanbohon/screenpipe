@@ -18,8 +18,9 @@ async applyEnterpriseUiVisibility() : Promise<void> {
 /**
  * Frontend-callable gate. The banner awaits this before calling
  * `downloadAndInstall` (Windows: triggers process::exit internally) or
- * `relaunch`. Returns one of `"proceed"`, `"errored"`, or `"pending"`
- * — frontend toasts on the latter two.
+ * `relaunch`. Returns `"proceed"` when a restart may go ahead — including
+ * on an errored boot, where the relaunch IS the recovery (#4726) — or
+ * `"pending"` while a boot is still in progress (frontend toasts).
  */
 async awaitSafeRestart(timeoutSecs: number | null) : Promise<string> {
     return await TAURI_INVOKE("await_safe_restart", { timeoutSecs });
@@ -2736,9 +2737,17 @@ batchMaxDurationSecs?: number | null;
  */
 vocabularyWords?: VocabEntry[];
 /**
- * Disable all screen capture.
+ * Disable the entire vision pipeline (screen images + accessibility/OCR).
+ * Prefer `disableScreenshots` when the goal is to stop image capture while
+ * keeping accessibility text and UI events.
  */
 disableVision: boolean;
+/**
+ * Stop taking screenshot images while keeping accessibility-tree capture.
+ * This skips visual-diff screenshots, full screenshot capture, JPEG writes,
+ * and OCR fallback.
+ */
+disableScreenshots?: boolean;
 /**
  * Disable the timeline / rewind feature. When true, the engine skips
  * timeline-only work: warming the hot frame cache from the DB at startup
@@ -3169,12 +3178,6 @@ showRestartNotifications?: boolean;
  * When true, apply macOS vibrancy effect to the sidebar for a translucent look.
  */
 translucentSidebar?: boolean;
-/**
- * When true (default), hide model "thinking" reasoning blocks in the chat
- * transcript. The model still emits them server-side; we just don't
- * render the collapsible block in the UI.
- */
-hideThinkingBlocks?: boolean;
 /**
  * UI theme: "light", "dark", or "system".
  */
